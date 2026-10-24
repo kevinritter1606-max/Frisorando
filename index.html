@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisorando - Entwicklungsumgebung</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .card {
+            background: white;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 { color: #ff385c; }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e6f4ea;
+            color: #137333;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Frisorando</h1>
+        <p>Willkommen in der Testumgebung! Das Fundament steht.</p>
+        <div id="firebase-status" class="status">Verbinde mit Firebase...</div>
+    </div>
+
+    <!-- Firebase SDKs einbinden -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        // Deine Firebase Konfiguration aus der Testumgebung
+        const firebaseConfig = {
+          apiKey: "AIzaSyBmJ62-6_2d4gbSdMObFHE5XL1u9OnGNwY",
+          authDomain: "frisorando-dev.firebaseapp.com",
+          projectId: "frisorando-dev",
+          storageBucket: "frisorando-dev.firebasestorage.app",
+          messagingSenderId: "947221498541",
+          appId: "1:947221498541:web:04dd9ca3f9e3bee2e65424",
+          measurementId: "G-1W0LP8GB2K"
+        };
+
+        // Firebase initialisieren
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // Status auf der Seite aktualisieren
+        document.getElementById("firebase-status").innerText = "Firebase erfolgreich verbunden! 🚀";
+    </script>
+
+</body>
+</html>
