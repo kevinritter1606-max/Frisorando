@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisorando - Mein Profil & Stempelkarte</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { color: #ff385c; margin-top: 0; }
+        .card-box { background: linear-gradient(135deg, #ff385c 0%, #ff7693 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .stamps-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .stamp { background: rgba(255,255,255,0.2); aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        .stamp.filled { background: white; color: #ff385c; }
+        .section { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .invoice-item { display: flex; justify-content: space-between; background: #f7f9fc; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>👤 Mein Frisorando-Profil</h2>
+        
+        <!-- Digitale 10er Stempelkarte -->
+        <div class="card-box">
+            <h3>Digitale 10er-Stempelkarte</h3>
+            <p style="font-size: 13px; margin:0; opacity:0.9;">Nach 10 Haarschnitten ist der nächste Schnitt gratis!</p>
+            <div class="stamps-grid">
+                <div class="stamp filled">✓</div>
+                <div class="stamp filled">✓</div>
+                <div class="stamp filled">✓</div>
+                <div class="stamp">4</div>
+                <div class="stamp">5</div>
+                <div class="stamp">6</div>
+                <div class="stamp">7</div>
+                <div class="stamp">8</div>
+                <div class="stamp">9</div>
+                <div class="stamp" style="border: 2px dashed white;">🎁</div>
+            </div>
+        </div>
+
+        <!-- Rechnungs-Archiv -->
+        <div class="section">
+            <h3>Rechnungs-Archiv</h3>
+            <div class="invoice-item">
+                <span>14.10.2026 - HairDesign Studio Max</span>
+                <strong>35,00 € (Beleg)</strong>
+            </div>
+            <div class="invoice-item">
+                <span>02.09.2026 - Mobile Cut & Style</span>
+                <strong>45,00 € (Beleg)</strong>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
 
