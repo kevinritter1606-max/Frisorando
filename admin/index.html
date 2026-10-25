@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Admin-Zentrale & Einstellungen</title>
+    <title>Frisorando - Admin-Zentrale & Abrechnung</title>
     <style>
         :root {
             --primary: #3182ce;
@@ -12,6 +12,8 @@
             --success-bg: #e6f4ea;
             --warning: #d97706;
             --warning-bg: #fef3c7;
+            --danger: #e53e3e;
+            --danger-bg: #fff5f5;
             --bg-main: #f4f6f9;
             --card-bg: #ffffff;
             --text-main: #1a202c;
@@ -101,6 +103,7 @@
             margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .subnav-btn {
@@ -248,7 +251,7 @@
         <div class="admin-header">
             <div>
                 <h2 style="margin: 0; font-size: 20px; color: var(--text-main);">Frisorando Admin-Zentrale</h2>
-                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Marktplatz-Management</p>
+                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Marktplatz-Management & Bonitäts-Sicherung</p>
             </div>
             <div class="admin-nav">
                 <button class="nav-btn active" onclick="switchMainTab('dashboard')">📊 Dashboard</button>
@@ -274,12 +277,12 @@
                 <!-- Widget 2: Live-Kennzahlen -->
                 <div class="widget-card" id="widget-stats" draggable="true">
                     <div class="widget-header">
-                        <h3 class="widget-title">📈 Plattform-Kennzahlen</h3>
+                        <h3 class="widget-title">📈 Plattform-Kennzahlen & Guthaben</h3>
                         <span class="drag-handle">☰ Ziehen</span>
                     </div>
                     <p style="font-size: 13px; color: var(--text-muted);">Aktive Salons: <strong id="stat-salons" style="color: var(--text-main);">0</strong></p>
                     <p style="font-size: 13px; color: var(--text-muted);">Wartende Anträge: <strong id="stat-pending" style="color: var(--warning);">0</strong></p>
-                    <p style="font-size: 13px; color: var(--text-muted);">Cloud-TSE Status: <strong style="color: var(--success);">Online & GoBD-konform</strong></p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Gesperrte Salons (Minus-Limit erreicht): <strong style="color: var(--danger);">0</strong></p>
                 </div>
 
                 <!-- Widget 3: Schnellaktionen -->
@@ -295,12 +298,12 @@
             </div>
         </div>
 
-        <!-- HAUPTREITER 2: EINSTELLUNGEN (MIT UNTERPUNKTEN) -->
+        <!-- HAUPTREITER 2: EINSTELLUNGEN -->
         <div id="section-settings" class="admin-section">
             <div class="card">
                 <div class="settings-subnav">
                     <button class="subnav-btn active" onclick="switchSettingsTab('general', this)">Allgemein</button>
-                    <button class="subnav-btn" onclick="switchSettingsTab('billing', this)">Provisionen & Rechnungen</button>
+                    <button class="subnav-btn" onclick="switchSettingsTab('billing', this)">Provisionen, Barzahlung & Limits</button>
                     <button class="subnav-btn" onclick="switchSettingsTab('compliance', this)">Handwerksrecht</button>
                     <button class="subnav-btn" onclick="switchSettingsTab('widgets', this)">Dashboard-Layout (Widgets)</button>
                 </div>
@@ -320,21 +323,47 @@
                     </form>
                 </div>
 
-                <!-- Tab 2: Provisionen -->
+                <!-- Tab 2: Provisionen, Barzahlung & Guthaben-Limits -->
                 <div id="stab-billing" class="settings-tab-content">
-                    <form onsubmit="event.preventDefault(); alert('Provisionen gespeichert!');">
+                    <form onsubmit="event.preventDefault(); alert('Zahlungs- und Limits-Einstellungen erfolgreich gespeichert!');">
+                        <h3 style="font-size: 15px; color: var(--primary); margin-top: 0;">Zahlungsarten für Endkunden</h3>
+                        <div class="toggle-row">
+                            <div>
+                                <strong>Barzahlung vor Ort erlauben</strong>
+                                <div style="font-size: 12px; color: var(--text-muted);">Kunde bezahlt direkt im Salon (Provision läuft über Verrechnungskonto).</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-row" style="margin-bottom: 20px;">
+                            <div>
+                                <strong>Online-Zahlung im Voraus (PayPal / Stripe)</strong>
+                                <div style="font-size: 12px; color: var(--text-muted);">Plattform zieht Geld ein und zahlt abzgl. Provision an Friseur aus.</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <h3 style="font-size: 15px; color: var(--primary); margin-top: 20px;">Guthaben- & Minus-Limit Sicherung (Bonität)</h3>
                         <div class="form-group">
                             <label>Plattform-Provision pro Buchung (%)</label>
                             <input type="number" class="form-input" value="10">
                         </div>
                         <div class="form-group">
-                            <label>Auszahlungsintervall für Partner</label>
-                            <select class="form-select">
-                                <option>Wöchentlich</option>
-                                <option selected>Monatlich</option>
-                            </select>
+                            <label>Warnschwelle bei Minus-Saldo (€)</label>
+                            <input type="number" class="form-input" value="75.00">
+                            <small style="color: var(--text-muted);">Ab diesem offenen Provisionsbetrag erhält der Friseur eine automatische Zahlungsaufforderung.</small>
                         </div>
-                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Speichern</button>
+                        <div class="form-group">
+                            <label>Maximales Minus-Limit / Sperr-Schwelle (€)</label>
+                            <input type="number" class="form-input" value="100.00">
+                            <small style="color: var(--text-muted);">Erreicht der Friseur diesen Minusbetrag durch Barzahlungen, wird die Online-Buchung automatisch pausiert, bis ausgeglichen ist.</small>
+                        </div>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Einstellungen speichern</button>
                     </form>
                 </div>
 
@@ -370,7 +399,7 @@
                     <div class="toggle-row">
                         <div>
                             <strong>Plattform-Kennzahlen Widget</strong>
-                            <div style="font-size: 12px; color: var(--text-muted);">Zeigt aktive Salons und Anträge.</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Zeigt aktive Salons, Anträge und Sperr-Status.</div>
                         </div>
                         <label class="switch">
                             <input type="checkbox" id="toggle-stats" checked onchange="toggleWidget('widget-stats', this.checked)">
