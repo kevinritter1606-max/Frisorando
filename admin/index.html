@@ -4,82 +4,285 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frisorando - Admin-Zentrale</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body { background: #1a202c; color: #f7fafc; }
-        .admin-container { max-width: 900px; margin: 20px auto; padding: 20px; }
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: #2d3748; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }
-        .stat-card h3 { margin: 0 0 5px 0; font-size: 28px; color: #63b3ed; }
-        .stat-card p { margin: 0; color: #a0aec0; font-size: 13px; }
-        
-        .table-box { background: #2d3748; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .table-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .salon-row { display: flex; justify-content: space-between; align-items: center; background: #323d52; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
-        .action-btns { display: flex; gap: 8px; }
-        .btn-approve { background: #137333; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-deny { background: #c53030; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        :root {
+            --primary: #3182ce;
+            --primary-dark: #2b6cb0;
+            --success: #137333;
+            --success-bg: #e6f4ea;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --bg-main: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #1a202c;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+        }
+
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: var(--card-bg);
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: #e2e8f0;
+            color: var(--text-main);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .partner-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .partner-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (min-width: 768px) {
+            .partner-item {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-pending { background: var(--warning-bg); color: var(--warning); }
+        .badge-active { background: var(--success-bg); color: var(--success); }
+
+        .btn-action {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
     <div class="admin-container">
-        <!-- Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <!-- Header & Navigation -->
+        <div class="admin-header">
             <div>
-                <h1 style="margin: 0; font-size: 24px; color: #63b3ed;">Frisorando Admin-Cockpit</h1>
-                <p style="margin: 5px 0 0 0; color: #a0aec0; font-size: 13px;">Plattform-Steuerung & Partner-Freigabe (Region: Rheinfelden)</p>
+                <h2 style="margin: 0; font-size: 20px; color: var(--text-main);">Frisorando Admin</h2>
+                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Zentrale Plattform-Steuerung</p>
             </div>
-            <span style="background: #2b6cb0; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">Superadmin</span>
-        </div>
-
-        <!-- Statistiken -->
-        <div class="stat-grid">
-            <div class="stat-card">
-                <h3>14</h3>
-                <p>Aktive Salons & Mobile Partner</p>
-            </div>
-            <div class="stat-card">
-                <h3>1.240 €</h3>
-                <p>Provision (Monat)</p>
-            </div>
-            <div class="stat-card" style="border: 2px solid #d69e2e;">
-                <h3>2</h3>
-                <p>Warten auf Freigabe</p>
+            <div class="admin-nav">
+                <button class="nav-btn active" onclick="switchTab('partners')">Partner</button>
+                <button class="nav-btn" onclick="switchTab('settings')">Einstellungen</button>
             </div>
         </div>
 
-        <!-- Warteschlange: Gewerbe-Prüfung -->
-        <div class="table-box">
-            <div class="table-title">
-                <span>📋 Neue Partner im Onboarding (Gewerbeschein-Prüfung)</span>
-                <span style="font-size: 12px; color: #d69e2e;">Aktion erforderlich</span>
-            </div>
-
-            <div class="salon-row">
-                <div>
-                    <strong>Barbershop Albas (Rheinfelden)</strong>
-                    <div style="font-size: 12px; color: #a0aec0;">Gewerbeschein hochgeladen • 1 Mitarbeiter • Salon + Mobil</div>
-                </div>
-                <div class="action-btns">
-                    <button class="btn-approve" onclick="alert('Partner erfolgreich freigeschaltet & live geschaltet!')">Freigeben</button>
-                    <button class="btn-deny">Ablehnen</button>
+        <!-- Sektion 1: Partner-Verwaltung -->
+        <div id="section-partners" class="admin-section active">
+            <div class="card">
+                <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">Registrierte Partner (Warteschlange & Aktiv)</h3>
+                <div id="partners-list">
+                    <p style="color: var(--text-muted); font-size: 14px;">Lade Partner aus der Datenbank...</p>
                 </div>
             </div>
+        </div>
 
-            <div class="salon-row">
-                <div>
-                    <strong>Mobile Haarfee Sarah M.</strong>
-                    <div style="font-size: 12px; color: #a0aec0;">Gewerbeschein hochgeladen • Mobiler Service (15km)</div>
-                </div>
-                <div class="action-btns">
-                    <button class="btn-approve" onclick="alert('Partner erfolgreich freigeschaltet & live geschaltet!')">Freigeben</button>
-                    <button class="btn-deny">Ablehnen</button>
-                </div>
+        <!-- Sektion 2: Einstellungen -->
+        <div id="section-settings" class="admin-section">
+            <div class="card">
+                <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">Plattform-Einstellungen</h3>
+                <form onsubmit="event.preventDefault(); alert('Einstellungen erfolgreich gespeichert!');">
+                    <div class="form-group">
+                        <label>Plattform-Provision pro Buchung (%)</label>
+                        <input type="number" class="form-input" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Support E-Mail-Adresse</label>
+                        <input type="email" class="form-input" value="support@frisorando.de">
+                    </div>
+                    <div class="form-group">
+                        <label>Wartungsmodus</label>
+                        <select class="form-input">
+                            <option>Deaktiviert (Plattform ist live)</option>
+                            <option>Aktiviert (Wartungsseite anzeigen)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="nav-btn active" style="width: 100%; padding: 12px; margin-top: 10px;">Änderungen speichern</button>
+                </form>
             </div>
         </div>
     </div>
 
+    <!-- Firebase Logik -->
+    <script type="module">
+        import { db } from "../assets/js/firebase.js";
+        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        async function loadAdminPartners() {
+            const container = document.getElementById('partners-list');
+            try {
+                const querySnapshot = await getDocs(collection(db, "partners"));
+                container.innerHTML = "";
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Keine Partner-Registrierungen vorhanden.</p>`;
+                    return;
+                }
+
+                querySnapshot.forEach((documentSnap) => {
+                    const p = documentSnap.data();
+                    const docId = documentSnap.id;
+                    const isPending = p.status === 'pending';
+
+                    const item = document.createElement('div');
+                    item.className = 'partner-item';
+                    item.innerHTML = `
+                        <div>
+                            <h4 style="margin: 0 0 5px 0; font-size: 15px;">${p.name}</h4>
+                            <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                                Inhaber: ${p.ownerFirstname} ${p.ownerLastname} | PLZ: ${p.location}<br>
+                                HWK-Nr: <strong>${p.masterNumber || 'Nicht angegeben'}</strong> | Typ: ${p.type}
+                            </p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                            <span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">
+                                ${isPending ? 'Wartet auf Freigabe' : 'Aktiv'}
+                            </span>
+                            ${isPending ? `<button class="btn-action" onclick="approvePartner('${docId}')">Freigeben</button>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (error) {
+                console.error("Fehler beim Laden:", error);
+                container.innerHTML = `<p style="color: red; font-size: 14px;">Fehler beim Laden der Datenbank.</p>`;
+            }
+        }
+
+        // Global machen, damit der Button darauf zugreifen kann
+        window.approvePartner = async function(id) {
+            try {
+                const partnerRef = doc(db, "partners", id);
+                await updateDoc(partnerRef, { status: 'active' });
+                alert('Partner erfolgreich freigeschaltet!');
+                loadAdminPartners();
+            } catch (error) {
+                console.error("Fehler beim Freigeben:", error);
+                alert('Fehler beim Freigeben des Partners.');
+            }
+        }
+
+        loadAdminPartners();
+    </script>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if(tab === 'partners') {
+                document.getElementById('section-partners').classList.add('active');
+                event.target.classList.add('active');
+            } else if(tab === 'settings') {
+                document.getElementById('section-settings').classList.add('active');
+                event.target.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
