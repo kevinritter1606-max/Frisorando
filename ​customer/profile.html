@@ -4,43 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frisorando - Mein Profil & Stempelkarte</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h2 { color: #ff385c; margin-top: 0; }
-        .card-box { background: linear-gradient(135deg, #ff385c 0%, #ff7693 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        .stamps-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
-        .stamp { background: rgba(255,255,255,0.2); aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
-        .stamp.filled { background: white; color: #ff385c; }
-        .section { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .invoice-item { display: flex; justify-content: space-between; background: #f7f9fc; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
+        .card-box { 
+            background: linear-gradient(135deg, var(--primary) 0%, #ff7693 100%); 
+            color: white; 
+            padding: 20px; 
+            border-radius: var(--radius); 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow);
+        }
+        .stamps-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px; 
+            margin-top: 15px; 
+        }
+        .stamp { 
+            background: rgba(255,255,255,0.2); 
+            aspect-ratio: 1; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            font-size: 14px; 
+        }
+        .stamp.filled { 
+            background: white; 
+            color: var(--primary); 
+        }
+        .invoice-item { 
+            display: flex; 
+            justify-content: space-between; 
+            background: var(--bg-main); 
+            padding: 12px 15px; 
+            border-radius: 10px; 
+            margin-bottom: 8px; 
+            font-size: 14px; 
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>👤 Mein Frisorando-Profil</h2>
+
+    <!-- Header -->
+    <header style="background: white; padding: 15px 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
+        <a href="index.html" style="font-size: 22px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
+        <a href="index.html" class="fr-btn fr-btn-secondary" style="width: auto; padding: 8px 14px; font-size: 14px;">🏠 Zurück zur Suche</a>
+    </header>
+
+    <div class="fr-container" style="margin-top: 20px;">
+        <h2 style="margin-top: 0; color: var(--text-main);">👤 Mein Frisorando-Konto</h2>
         
         <!-- Digitale 10er Stempelkarte -->
         <div class="card-box">
-            <h3>Digitale 10er-Stempelkarte</h3>
-            <p style="font-size: 13px; margin:0; opacity:0.9;">Nach 10 Haarschnitten ist der nächste Schnitt gratis!</p>
-            <div class="stamps-grid">
-                <div class="stamp filled">✓</div>
-                <div class="stamp filled">✓</div>
-                <div class="stamp filled">✓</div>
-                <div class="stamp">4</div>
-                <div class="stamp">5</div>
-                <div class="stamp">6</div>
-                <div class="stamp">7</div>
-                <div class="stamp">8</div>
-                <div class="stamp">9</div>
-                <div class="stamp" style="border: 2px dashed white;">🎁</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 18px;">Digitale 10er-Stempelkarte</h3>
+                <span style="background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px; font-size: 12px;" id="stamp-counter">3 / 10 Stempel</span>
+            </div>
+            <p style="font-size: 13px; margin: 5px 0 15px 0; opacity: 0.9;">Nach 10 Besuchen ist der nächste Haarschnitt komplett gratis!</p>
+            
+            <div class="stamps-grid" id="stamps-container">
+                <!-- Wird dynamisch per Skript gefüllt -->
             </div>
         </div>
 
-        <!-- Rechnungs-Archiv -->
-        <div class="section">
-            <h3>Rechnungs-Archiv</h3>
+        <!-- Rechnungs-Archiv & Belege -->
+        <div class="fr-card">
+            <h3 style="margin-top: 0; font-size: 16px;">Rechnungs-Archiv & Belege</h3>
             <div class="invoice-item">
                 <span>14.10.2026 - HairDesign Studio Max</span>
                 <strong>35,00 € (Beleg)</strong>
@@ -51,6 +82,27 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Simulierte Stempel-Anzahl (später direkt aus Firebase geladen)
+        const currentStamps = 3; 
+        const container = document.getElementById('stamps-container');
+
+        for (let i = 1; i <= 10; i++) {
+            const stamp = document.createElement('div');
+            stamp.className = 'stamp';
+            if (i <= currentStamps) {
+                stamp.classList.add('filled');
+                stamp.innerHTML = '✓';
+            } else if (i === 10) {
+                stamp.innerHTML = '🎁';
+                stamp.style.border = '2px dashed white';
+            } else {
+                stamp.innerHTML = i;
+            }
+            container.appendChild(stamp);
+        }
+    </script>
+
 </body>
 </html>
-
