@@ -1,1 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisorando - Dein Friseur & Mobiles Styling</title>
+    <!-- Verbindung zu unserer zentralen Design-Datei -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #ff5a79 100%);
+            color: white;
+            padding: 30px 20px 40px 20px;
+            text-align: center;
+        }
+        .mode-switch {
+            display: flex;
+            background: rgba(255,255,255,0.2);
+            padding: 4px;
+            border-radius: 12px;
+            max-width: 350px;
+            margin: 0 auto 20px auto;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .mode-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .search-box-wrapper {
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            display: flex;
+            max-width: 450px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
 
+    <!-- Header -->
+    <header style="background: white; padding: 15px 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
+        <a href="index.html" style="font-size: 22px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
+        <a href="profile.html" class="fr-btn fr-btn-secondary" style="width: auto; padding: 8px 14px; font-size: 14px;">👤 Mein Profil</a>
+    </header>
+
+    <!-- Hero / Suchbereich -->
+    <div class="hero">
+        <h1 style="margin: 0 0 10px 0; font-size: 24px;">Dein Friseur. Wann & wo du willst.</h1>
+        <p style="margin: 0 0 20px 0; font-size: 14px; opacity: 0.9;">Im Salon oder direkt nach Hause mit mobiler Pauschale.</p>
+
+        <!-- Lieferando-Modus-Umschaltung -->
+        <div class="mode-switch">
+            <button class="mode-btn active" onclick="switchMode('salon')">✂️ Im Salon</button>
+            <button class="mode-btn" onclick="switchMode('mobile')">🚗 Hausbesuch</button>
+        </div>
+
+        <!-- Suchleiste -->
+        <div class="search-box-wrapper">
+            <input type="text" class="search-input" value="Rheinfelden (Baden)" placeholder="PLZ oder Ort...">
+            <button class="fr-btn" style="width: auto; padding: 10px 20px;">Suchen</button>
+        </div>
+    </div>
+
+    <!-- Hauptinhalt: Salons / Friseure -->
+    <div class="fr-container" style="margin-top: -20px;">
+        <h3 style="font-size: 18px; margin-bottom: 15px;">Verfügbare Partner in der Nähe</h3>
+
+        <!-- Salon Karte 1 -->
+        <div class="fr-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <h4 style="margin: 0; font-size: 17px;">HairDesign Studio Max</h4>
+                <span class="fr-badge">⚡ Heute frei</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 15px 0;">📍 1.2 km entfernt • ⭐ 4.9 (120+ Bewertungen)</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                <span style="font-size: 13px;">Nächster Slot: <strong>15:30 Uhr</strong></span>
+                <a href="booking.html" class="fr-btn" style="width: auto; padding: 8px 16px; font-size: 13px;">Termin wählen</a>
+            </div>
+        </div>
+
+        <!-- Salon Karte 2 (Mandar/Mobil) -->
+        <div class="fr-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <h4 style="margin: 0; font-size: 17px;">Mobile Cut & Style (Sarah)</h4>
+                <span class="fr-badge" style="background:#eef2ff; color:#4f46e5;">🚗 Mobiler Service</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 15px 0;">📍 Umkreis 15 km um Rheinfelden • Pauschale: 10,00 €</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                <span style="font-size: 13px;">Inkl. Ausrüstung & Reinigung</span>
+                <a href="booking.html" class="fr-btn" style="width: auto; padding: 8px 16px; font-size: 13px;">Hausbesuch buchen</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchMode(mode) {
+            const buttons = document.querySelectorAll('.mode-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if(mode === 'salon') {
+                buttons[0].classList.add('active');
+            } else {
+                buttons[1].classList.add('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
