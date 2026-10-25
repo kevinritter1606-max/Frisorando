@@ -4,26 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frisorando - Kasse (Studiolution Stil)</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
-        .pos-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; max-width: 900px; margin: 0 auto; }
-        .panel { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h3 { margin-top: 0; color: #2d3748; }
-        .tse-badge { background: #e6f4ea; color: #137333; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+        body { background: #1a202c; color: #fff; padding: 10px; margin: 0; }
+        .pos-container { max-width: 1100px; margin: 0 auto; background: #2d3748; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: grid; grid-template-columns: 1.3fr 1fr; height: 90vh; }
+        
+        /* Linke Spalte: Katalog */
+        .pos-left { padding: 20px; border-right: 1px solid #4a5568; display: flex; flex-direction: column; overflow-y: auto; }
+        .catalog-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; background: #4a5568; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+        .tab-btn.active { background: #3182ce; }
+        
+        .grid-icons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .icon-tile { background: #4a5568; border: none; border-radius: 10px; padding: 15px; color: white; text-align: center; cursor: pointer; transition: 0.2s; }
+        .icon-tile:hover { background: #edf2f7; color: #2d3748; }
+        .icon-tile span { display: block; font-size: 24px; margin-bottom: 5px; }
+        .icon-tile label { font-size: 13px; font-weight: 600; cursor: pointer; }
+
+        /* Rechte Spalte: Kasse / Bon */
+        .pos-right { padding: 20px; background: #242b38; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; }
+        .receipt-header { font-size: 14px; color: #a0aec0; margin-bottom: 10px; border-bottom: 1px solid #4a5568; padding-bottom: 8px; }
+        .item-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+        
+        .pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .pay-btn { background: #4a5568; border: 2px solid transparent; border-radius: 8px; padding: 10px; color: white; font-weight: bold; text-align: center; cursor: pointer; }
+        .pay-btn.active { border-color: #3182ce; background: #ebf8ff; color: #3182ce; }
+        
+        .total-box { background: #1a202c; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
-    <div class="pos-grid">
-        <div class="panel">
-            <h3>Katalog / Leistungen</h3>
-            <p>Hier klickt der Friseur die Belege zusammen (Damen, Herren, Bart, Produkte, Gutscheine)...</p>
+
+    <div class="pos-container">
+        <!-- LINKE SEITE: Leistungen & Produkte -->
+        <div class="pos-left">
+            <div style="font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>Kasse & Abrechnung</span>
+                <span style="font-size: 12px; background: #137333; color: #e6f4ea; padding: 2px 8px; border-radius: 4px;">🔒 Cloud-TSE aktiv</span>
+            </div>
+            
+            <div class="catalog-tabs">
+                <button class="tab-btn active">Leistungen</button>
+                <button class="tab-btn">Produkte</button>
+            </div>
+
+            <input type="text" placeholder="Suche (Name, Abkürzung)..." style="padding: 10px; border-radius: 8px; border: none; margin-bottom: 15px; background: #1a202c; color: white;">
+
+            <div class="grid-icons">
+                <button class="icon-tile"><span>✂️</span><label>Damen</label></button>
+                <button class="icon-tile"><span>🎨</span><label>Farbe</label></button>
+                <button class="icon-tile"><span>🧔</span><label>Herren</label></button>
+                <button class="icon-tile"><span>👶</span><label>Kids</label></button>
+                <button class="icon-tile"><span>🧴</span><label>Pflege</label></button>
+                <button class="icon-tile"><span>⭐</span><label>VIP</label></button>
+            </div>
         </div>
-        <div class="panel">
-            <h3>Kasse & Checkout</h3>
-            <div class="tse-badge">🔒 Cloud-TSE & GoBD aktiv</div>
-            <p><strong>Summe:</strong> 0,00 €</p>
-            <button style="width:100%; padding:10px; background:#3182ce; color:white; border:none; border-radius:6px; font-weight:bold;">Beleg drucken / E-Mail</button>
+
+        <!-- RECHTE SEITE: Bon & Zahlungsarten (Studiolution Vorbild) -->
+        <div class="pos-right">
+            <div>
+                <div class="receipt-header">Beleg für: <strong>Laufkunde / Salon</strong></div>
+                
+                <div class="item-row">
+                    <span>1x Cut & Go (kurz) [Paul]</span>
+                    <strong>45,00 €</strong>
+                </div>
+                <div class="item-row">
+                    <span>1x Blondierung [Paul]</span>
+                    <strong>60,00 €</strong>
+                </div>
+
+                <div style="margin-top: 15px; font-size: 13px; color: #a0aec0;">Trinkgeld hinzufügen:</div>
+                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <button style="flex:1; padding:6px; background:#4a5568; border:none; border-radius:6px; color:white;">+2 €</button>
+                    <button style="flex:1; padding:6px; background:#3182ce; border:none; border-radius:6px; color:white;">+5 €</button>
+                    <button style="flex:1; padding:6px; background:#4a5568; border:none; border-radius:6px; color:white;">Gutschein</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="total-box">
+                    <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold;">
+                        <span>Gesamtbetrag:</span>
+                        <span style="color: #63b3ed;">110,00 €</span>
+                    </div>
+                </div>
+
+                <div style="font-size: 13px; color: #a0aec0; margin-bottom: 5px;">Zahlungsart wählen:</div>
+                <div class="pay-methods">
+                    <button class="pay-btn">Bar</button>
+                    <button class="pay-btn active">Unbar (Karte)</button>
+                    <button class="pay-btn">Überweisung</button>
+                </div>
+
+                <button class="fr-btn" style="background: #3182ce; margin-top: 10px;" onclick="alert('Beleg GoBD-konform gespeichert & TSE signiert!')">Kassieren & Beleg drucken</button>
+            </div>
         </div>
     </div>
+
 </body>
 </html>
