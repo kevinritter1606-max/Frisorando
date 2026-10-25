@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Modulares Admin-Dashboard</title>
+    <title>Frisorando - Admin-Zentrale & Einstellungen</title>
     <style>
         :root {
             --primary: #3182ce;
@@ -49,21 +49,24 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .admin-nav {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
             background: #e2e8f0;
             color: var(--text-main);
             border: none;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -81,7 +84,74 @@
             display: block;
         }
 
-        /* Modulares Grid & Widgets */
+        /* Karten & Layout */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        /* Untermenü für Einstellungen */
+        .settings-subnav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .subnav-btn {
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .subnav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .settings-tab-content {
+            display: none;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        /* Formulare */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            background: #ffffff;
+            color: var(--text-main);
+        }
+
+        /* Modulares Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -102,7 +172,6 @@
             border: 1px solid var(--border-color);
             cursor: move;
             position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .widget-card.dragging {
@@ -120,7 +189,7 @@
         }
 
         .widget-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: var(--primary);
             margin: 0;
@@ -128,120 +197,66 @@
 
         .drag-handle {
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 13px;
             cursor: grab;
         }
 
-        /* Einstellungen & Checkboxen */
-        .settings-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .toggle-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .toggle-row:last-child {
-            border-bottom: none;
-        }
-
-        /* Schalter (Switch) Design */
+        /* Schalter (Switch) */
         .switch {
             position: relative;
             display: inline-block;
-            width: 48px;
-            height: 24px;
+            width: 44px;
+            height: 22px;
         }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
+        .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1;
-            transition: .3s;
-            border-radius: 24px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1; transition: .3s; border-radius: 22px;
         }
-
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
         }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
-        input:checked + .slider {
-            background-color: var(--primary);
+        .toggle-row {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color);
         }
+        .toggle-row:last-child { border-bottom: none; }
 
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-
-        /* Partner List Items im Widget */
         .partner-item {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 13px;
+            padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;
         }
         .partner-item:last-child { border-bottom: none; }
 
         .badge {
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
+            padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block;
         }
         .badge-pending { background: var(--warning-bg); color: var(--warning); }
         .badge-active { background: var(--success-bg); color: var(--success); }
 
         .btn-action {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 12px;
-            float: right;
+            background: var(--success); color: white; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; float: right;
         }
     </style>
 </head>
 <body>
 
     <div class="admin-container">
-        <!-- Header & Navigation -->
+        <!-- Header & Hauptnavigation -->
         <div class="admin-header">
             <div>
                 <h2 style="margin: 0; font-size: 20px; color: var(--text-main);">Frisorando Admin-Zentrale</h2>
-                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Modulares Enterprise Dashboard</p>
+                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Marktplatz-Management</p>
             </div>
             <div class="admin-nav">
-                <button class="nav-btn active" onclick="switchTab('dashboard')">Dashboard</button>
-                <button class="nav-btn" onclick="switchTab('settings')">Modul-Einstellungen</button>
+                <button class="nav-btn active" onclick="switchMainTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-btn" onclick="switchMainTab('settings')">⚙️ Einstellungen</button>
             </div>
         </div>
 
-        <!-- SEKTION 1: MODULARES DASHBOARD (DRAG & DROP) -->
+        <!-- HAUPTREITER 1: DASHBOARD (DRAG & DROP) -->
         <div id="section-dashboard" class="admin-section active">
             <div class="dashboard-grid" id="widget-grid">
                 
@@ -252,32 +267,22 @@
                         <span class="drag-handle">☰ Ziehen</span>
                     </div>
                     <div id="admin-partners-list">
-                        <p style="color: var(--text-muted); font-size: 13px;">Lade Partner aus der Datenbank...</p>
+                        <p style="color: var(--text-muted); font-size: 13px;">Lade Partner...</p>
                     </div>
                 </div>
 
-                <!-- Widget 2: Plattform-Statistik -->
+                <!-- Widget 2: Live-Kennzahlen -->
                 <div class="widget-card" id="widget-stats" draggable="true">
                     <div class="widget-header">
-                        <h3 class="widget-title">📊 Live-Kennzahlen</h3>
+                        <h3 class="widget-title">📈 Plattform-Kennzahlen</h3>
                         <span class="drag-handle">☰ Ziehen</span>
                     </div>
                     <p style="font-size: 13px; color: var(--text-muted);">Aktive Salons: <strong id="stat-salons" style="color: var(--text-main);">0</strong></p>
                     <p style="font-size: 13px; color: var(--text-muted);">Wartende Anträge: <strong id="stat-pending" style="color: var(--warning);">0</strong></p>
-                    <p style="font-size: 13px; color: var(--text-muted);">Umsatzprovision (heute): <strong style="color: var(--success);">0,00 €</strong></p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Cloud-TSE Status: <strong style="color: var(--success);">Online & GoBD-konform</strong></p>
                 </div>
 
-                <!-- Widget 3: TSE / GoBD Status -->
-                <div class="widget-card" id="widget-tse" draggable="true">
-                    <div class="widget-header">
-                        <h3 class="widget-title">🔒 TSE & GoBD Sicherheitsprotokoll</h3>
-                        <span class="drag-handle">☰ Ziehen</span>
-                    </div>
-                    <p style="font-size: 13px; color: var(--success);">● Cloud-TSE Verbindung: <strong>Aktiv & Verschlüsselt</strong></p>
-                    <p style="font-size: 13px; color: var(--text-muted);">Letzter Kassen-Export an DATEV: Heute, 04:00 Uhr</p>
-                </div>
-
-                <!-- Widget 4: Schnellauswahl / Support -->
+                <!-- Widget 3: Schnellaktionen -->
                 <div class="widget-card" id="widget-support" draggable="true">
                     <div class="widget-header">
                         <h3 class="widget-title">⚡ Schnellaktionen</h3>
@@ -290,59 +295,106 @@
             </div>
         </div>
 
-        <!-- SEKTION 2: EINSTELLUNGEN (MODULE AKTIVIEREN / DEAKTIVIEREN) -->
+        <!-- HAUPTREITER 2: EINSTELLUNGEN (MIT UNTERPUNKTEN) -->
         <div id="section-settings" class="admin-section">
-            <div class="settings-card">
-                <h3 style="margin-top: 0; font-size: 16px; color: var(--primary); margin-bottom: 20px;">Dashboard-Module steuern</h3>
-                
-                <div class="toggle-row">
-                    <div>
-                        <strong>Partner-Freigaben Widget</strong>
-                        <div style="font-size: 12px; color: var(--text-muted);">Ermöglicht die Prüfung von Gewerbeschein und Meisterbrief.</div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-partners" checked onchange="toggleWidget('widget-partners', this.checked)">
-                        <span class="slider"></span>
-                    </label>
+            <div class="card">
+                <div class="settings-subnav">
+                    <button class="subnav-btn active" onclick="switchSettingsTab('general', this)">Allgemein</button>
+                    <button class="subnav-btn" onclick="switchSettingsTab('billing', this)">Provisionen & Rechnungen</button>
+                    <button class="subnav-btn" onclick="switchSettingsTab('compliance', this)">Handwerksrecht</button>
+                    <button class="subnav-btn" onclick="switchSettingsTab('widgets', this)">Dashboard-Layout (Widgets)</button>
                 </div>
 
-                <div class="toggle-row">
-                    <div>
-                        <strong>Live-Kennzahlen Widget</strong>
-                        <div style="font-size: 12px; color: var(--text-muted);">Zeigt aktive Salons, Anträge und Provisionsvolumen.</div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-stats" checked onchange="toggleWidget('widget-stats', this.checked)">
-                        <span class="slider"></span>
-                    </label>
+                <!-- Tab 1: Allgemein -->
+                <div id="stab-general" class="settings-tab-content active">
+                    <form onsubmit="event.preventDefault(); alert('Allgemeine Einstellungen gespeichert!');">
+                        <div class="form-group">
+                            <label>Plattform-Name</label>
+                            <input type="text" class="form-input" value="Frisorando">
+                        </div>
+                        <div class="form-group">
+                            <label>Support E-Mail-Adresse</label>
+                            <input type="email" class="form-input" value="support@frisorando.de">
+                        </div>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Speichern</button>
+                    </form>
                 </div>
 
-                <div class="toggle-row">
-                    <div>
-                        <strong>TSE & GoBD Sicherheitsprotokoll</strong>
-                        <div style="font-size: 12px; color: var(--text-muted);">Überwacht die rechtssichere Kassenanbindung.</div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-tse" checked onchange="toggleWidget('widget-tse', this.checked)">
-                        <span class="slider"></span>
-                    </label>
+                <!-- Tab 2: Provisionen -->
+                <div id="stab-billing" class="settings-tab-content">
+                    <form onsubmit="event.preventDefault(); alert('Provisionen gespeichert!');">
+                        <div class="form-group">
+                            <label>Plattform-Provision pro Buchung (%)</label>
+                            <input type="number" class="form-input" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Auszahlungsintervall für Partner</label>
+                            <select class="form-select">
+                                <option>Wöchentlich</option>
+                                <option selected>Monatlich</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Speichern</button>
+                    </form>
                 </div>
 
-                <div class="toggle-row">
-                    <div>
-                        <strong>Schnellaktionen Widget</strong>
-                        <div style="font-size: 12px; color: var(--text-muted);">Bietet direkte Buttons für System-Wartung und DATEV.</div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-support" checked onchange="toggleWidget('widget-support', this.checked)">
-                        <span class="slider"></span>
-                    </label>
+                <!-- Tab 3: Handwerksrecht -->
+                <div id="stab-compliance" class="settings-tab-content">
+                    <form onsubmit="event.preventDefault(); alert('Compliance-Einstellungen gespeichert!');">
+                        <div class="form-group">
+                            <label>Meisterbrief-Pflicht bei Registrierung</label>
+                            <select class="form-select">
+                                <option selected>Zwingend erforderlich (§ 1 HwO)</option>
+                                <option>Optional / Nachprüfung im Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Speichern</button>
+                    </form>
                 </div>
+
+                <!-- Tab 4: Dashboard-Layout (Widgets ein/aus) -->
+                <div id="stab-widgets" class="settings-tab-content">
+                    <h3 style="font-size: 15px; color: var(--primary); margin-top: 0;">Widgets im Admin-Dashboard steuern</h3>
+                    
+                    <div class="toggle-row">
+                        <div>
+                            <strong>Partner-Freigaben Widget</strong>
+                            <div style="font-size: 12px; color: var(--text-muted);">Prüfung von Gewerbeschein und Meisterbrief.</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-partners" checked onchange="toggleWidget('widget-partners', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div>
+                            <strong>Plattform-Kennzahlen Widget</strong>
+                            <div style="font-size: 12px; color: var(--text-muted);">Zeigt aktive Salons und Anträge.</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-stats" checked onchange="toggleWidget('widget-stats', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div>
+                            <strong>Schnellaktionen Widget</strong>
+                            <div style="font-size: 12px; color: var(--text-muted);">System-Wartung und DATEV-Export.</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-support" checked onchange="toggleWidget('widget-support', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Firebase & Dashboard Logik -->
+    <!-- Firebase Logik -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
         import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -386,8 +438,8 @@
                     container.appendChild(item);
                 });
 
-                statSalons.innerText = activeCount;
-                statPending.innerText = pendingCount;
+                if(statSalons) statSalons.innerText = activeCount;
+                if(statPending) statPending.innerText = pendingCount;
 
             } catch (error) {
                 console.error("Fehler:", error);
@@ -411,9 +463,9 @@
 
     <!-- UI & Drag & Drop Logik -->
     <script>
-        function switchTab(tab) {
+        function switchMainTab(tab) {
             document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-header .nav-btn').forEach(btn => btn.classList.remove('active'));
             
             if(tab === 'dashboard') {
                 document.getElementById('section-dashboard').classList.add('active');
@@ -424,6 +476,14 @@
             }
         }
 
+        function switchSettingsTab(tabName, btnElement) {
+            document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('stab-' + tabName).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
         window.toggleWidget = function(widgetId, show) {
             const widget = document.getElementById(widgetId);
             if(widget) {
@@ -431,7 +491,7 @@
             }
         }
 
-        // Drag & Drop Implementierung für die Widgets
+        // Drag & Drop
         const grid = document.getElementById('widget-grid');
         let draggedItem = null;
 
