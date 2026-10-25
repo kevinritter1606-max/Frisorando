@@ -22,34 +22,33 @@
             <p style="margin: 5px 0 0 0; color: #a0aec0; font-size: 13px;">Gewinne neue Kunden im Salon oder starte mit mobilen Hausbesuchen durch.</p>
         </div>
 
-        <form onsubmit="event.preventDefault(); alert('Registrierung erfolgreich! Dein Gewerbeschein wird nun vom Admin geprüft. Du erhältst in Kürze eine Freigabe.');">
-            
+        <form id="reg-form">
             <div class="form-group">
                 <label>Name des Salons oder Stylisten</label>
-                <input type="text" class="form-input" placeholder="z. B. HairDesign Max oder Mobile Haarfee Sarah" required>
+                <input type="text" id="salon-name" class="form-input" placeholder="z. B. HairDesign Max oder Mobile Haarfee Sarah" required>
             </div>
 
             <div class="form-group">
                 <label>Dein Haupt-Standort / Einsatzgebiet (PLZ & Ort)</label>
-                <input type="text" class="form-input" placeholder="z. B. 79618 Rheinfelden (Baden)" required>
+                <input type="text" id="salon-location" class="form-input" placeholder="z. B. 79618 Rheinfelden (Baden)" required>
             </div>
 
             <div class="form-group">
                 <label>Wie möchtest du arbeiten? (Lieferando-Prinzip)</label>
-                <select class="form-select">
-                    <option>Klassisch im Salon</option>
-                    <option>Rein Mobiler Hausbesuch (Umkreis)</option>
-                    <option>Beides (Salon & Mobile Hausbesuche)</option>
+                <select id="salon-type" class="form-select">
+                    <option value="salon">Klassisch im Salon</option>
+                    <option value="mobile">Rein Mobiler Hausbesuch (Umkreis)</option>
+                    <option value="both">Beides (Salon & Mobile Hausbesuche)</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label>E-Mail-Adresse für Buchungen & Belege</label>
-                <input type="email" class="form-input" placeholder="kontakt@dein-salon.de" required>
+                <input type="email" id="salon-email" class="form-input" placeholder="kontakt@dein-salon.de" required>
             </div>
 
             <div class="form-group">
-                <label>Gewerbeschein oder Handwerkskarten-Nachweis hochladen</label>
+                <label>Gewerbeschein oder Handwerkskarten-Nachweis</label>
                 <input type="file" class="form-input" style="padding: 8px; background: #242b38;" required>
                 <span style="font-size: 11px; color: #a0aec0; margin-top: 4px; display: block;">Wichtig zur Qualitätssicherung und Freigabe im Admin-Cockpit.</span>
             </div>
@@ -59,10 +58,47 @@
                 <span>Ich akzeptiere die Partner-AGB und die GoBD-konforme Provisionsvereinbarung.</span>
             </div>
 
-            <button type="submit" class="fr-btn" style="background: #3182ce; margin-top: 25px;">Jetzt Partner-Konto beantragen</button>
+            <button type="submit" id="submit-btn" class="fr-btn" style="background: #3182ce; margin-top: 25px;">Jetzt Partner-Konto beantragen</button>
         </form>
     </div>
 
+    <!-- Firebase Logik Anbindung -->
+    <script type="module">
+        import { db } from "../assets/js/firebase.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const form = document.getElementById('reg-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Wird gespeichert...";
+            btn.disabled = true;
+
+            try {
+                // Daten für Firestore vorbereiten
+                const newPartner = {
+                    name: document.getElementById('salon-name').value,
+                    location: document.getElementById('salon-location').value,
+                    type: document.getElementById('salon-type').value,
+                    email: document.getElementById('salon-email').value,
+                    status: 'pending', // Wartet auf Admin-Freigabe
+                    createdAt: new Date().toISOString()
+                };
+
+                // In Firestore Collection "partners" speichern
+                await addDoc(collection(db, "partners"), newPartner);
+
+                alert('Registrierung erfolgreich! Dein Partner-Konto wurde erstellt und wartet nun im Admin-Cockpit auf die Freigabe.');
+                form.reset();
+                btn.innerText = "Jetzt Partner-Konto beantragen";
+                btn.disabled = false;
+            } catch (error) {
+                console.error("Fehler beim Speichern:", error);
+                alert('Fehler bei der Registrierung. Bitte versuche es erneut.');
+                btn.innerText = "Jetzt Partner-Konto beantragen";
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
-
