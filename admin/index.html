@@ -3,29 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Admin Zentrale</title>
+    <title>Frisorando - Admin-Zentrale</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1a202c; color: #f7fafc; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #2d3748; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        h1 { color: #63b3ed; text-align: center; }
-        .stats { display: flex; gap: 10px; margin-top: 20px; }
-        .stat-box { flex: 1; background: #4a5568; padding: 15px; border-radius: 10px; text-align: center; }
+        body { background: #1a202c; color: #f7fafc; }
+        .admin-container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #2d3748; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }
+        .stat-card h3 { margin: 0 0 5px 0; font-size: 28px; color: #63b3ed; }
+        .stat-card p { margin: 0; color: #a0aec0; font-size: 13px; }
+        
+        .table-box { background: #2d3748; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .table-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .salon-row { display: flex; justify-content: space-between; align-items: center; background: #323d52; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
+        .action-btns { display: flex; gap: 8px; }
+        .btn-approve { background: #137333; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-deny { background: #c53030; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Admin Cockpit</h1>
-        <p style="text-align: center; color: #a0aec0;">Plattform-Verwaltung & Gewerbe-Prüfung</p>
-
-        <div class="stats">
-            <div class="stat-box">
-                <h3>0</h3>
-                <p style="font-size: 12px; margin:0;">Neue Friseure</p>
+    <div class="admin-container">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <div>
+                <h1 style="margin: 0; font-size: 24px; color: #63b3ed;">Frisorando Admin-Cockpit</h1>
+                <p style="margin: 5px 0 0 0; color: #a0aec0; font-size: 13px;">Plattform-Steuerung & Partner-Freigabe (Region: Rheinfelden)</p>
             </div>
-            <div class="stat-box">
-                <h3>0 €</h3>
-                <p style="font-size: 12px; margin:0;">Provision Monats</p>
+            <span style="background: #2b6cb0; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">Superadmin</span>
+        </div>
+
+        <!-- Statistiken -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <h3>14</h3>
+                <p>Aktive Salons & Mobile Partner</p>
+            </div>
+            <div class="stat-card">
+                <h3>1.240 €</h3>
+                <p>Provision (Monat)</p>
+            </div>
+            <div class="stat-card" style="border: 2px solid #d69e2e;">
+                <h3>2</h3>
+                <p>Warten auf Freigabe</p>
+            </div>
+        </div>
+
+        <!-- Warteschlange: Gewerbe-Prüfung -->
+        <div class="table-box">
+            <div class="table-title">
+                <span>📋 Neue Partner im Onboarding (Gewerbeschein-Prüfung)</span>
+                <span style="font-size: 12px; color: #d69e2e;">Aktion erforderlich</span>
+            </div>
+
+            <div class="salon-row">
+                <div>
+                    <strong>Barbershop Albas (Rheinfelden)</strong>
+                    <div style="font-size: 12px; color: #a0aec0;">Gewerbeschein hochgeladen • 1 Mitarbeiter • Salon + Mobil</div>
+                </div>
+                <div class="action-btns">
+                    <button class="btn-approve" onclick="alert('Partner erfolgreich freigeschaltet & live geschaltet!')">Freigeben</button>
+                    <button class="btn-deny">Ablehnen</button>
+                </div>
+            </div>
+
+            <div class="salon-row">
+                <div>
+                    <strong>Mobile Haarfee Sarah M.</strong>
+                    <div style="font-size: 12px; color: #a0aec0;">Gewerbeschein hochgeladen • Mobiler Service (15km)</div>
+                </div>
+                <div class="action-btns">
+                    <button class="btn-approve" onclick="alert('Partner erfolgreich freigeschaltet & live geschaltet!')">Freigeben</button>
+                    <button class="btn-deny">Ablehnen</button>
+                </div>
             </div>
         </div>
     </div>
