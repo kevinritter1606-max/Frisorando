@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Partner-Registrierung</title>
+    <title>Frisorando - Partner-Registrierung & Verifizierung</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         body { background: #1a202c; color: #f7fafc; padding: 15px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; }
@@ -21,7 +21,7 @@
     <div class="reg-container">
         <div style="text-align: center; margin-bottom: 25px;">
             <h2 style="margin: 0; color: #63b3ed; font-size: 22px;">Frisorando Partner-Portal</h2>
-            <p style="margin: 6px 0 0 0; color: #a0aec0; font-size: 13px;">Registriere deinen Salon oder mobilen Service.</p>
+            <p style="margin: 6px 0 0 0; color: #a0aec0; font-size: 13px;">Registrierung & rechtssichere Verifizierung.</p>
         </div>
 
         <form id="reg-form">
@@ -64,19 +64,27 @@
                 <input type="text" id="salon-location" class="form-input" placeholder="z. B. 79618 Rheinfelden" required>
             </div>
 
-            <!-- Verifizierung -->
-            <div class="section-title">3. Verifizierung</div>
+            <!-- Verifizierung & Meisterbrief -->
+            <div class="section-title">3. Handwerksrecht & Verifizierung</div>
             <div class="form-group">
-                <label>Gewerbeschein-Nachweis</label>
+                <label>Meisternummer / Handwerksrollennummer</label>
+                <input type="text" id="master-number" class="form-input" placeholder="z. B. HWK-1234567" required>
+            </div>
+            <div class="form-group">
+                <label>Gewerbeschein hochladen</label>
                 <input type="file" id="salon-license" class="form-input" style="padding: 10px; background: #242b38;" required>
+            </div>
+            <div class="form-group">
+                <label>Meisterbrief / Nachweis Handwerkskammer</label>
+                <input type="file" id="master-certificate" class="form-input" style="padding: 10px; background: #242b38;" required>
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" required style="width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0;">
-                <span>Ich akzeptiere die Partner-AGB und die GoBD-konforme Abwicklung.</span>
+                <span>Ich bestätige das Vorliegen der handwerksrechtlichen Voraussetzungen, akzeptiere die AGB und die GoBD-Abwicklung.</span>
             </div>
 
-            <button type="submit" id="submit-btn" class="fr-btn" style="background: #3182ce; margin-top: 25px; padding: 14px; font-size: 15px;">Partner-Antrag absenden</button>
+            <button type="submit" id="submit-btn" class="fr-btn" style="background: #3182ce; margin-top: 25px; padding: 14px; font-size: 15px;">Verifizierten Partner-Antrag absenden</button>
         </form>
     </div>
 
@@ -89,7 +97,7 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
-            btn.innerText = "Wird übermittelt...";
+            btn.innerText = "Daten werden übermittelt...";
             btn.disabled = true;
 
             try {
@@ -101,19 +109,20 @@
                     name: document.getElementById('salon-name').value,
                     type: document.getElementById('salon-type').value,
                     location: document.getElementById('salon-location').value,
+                    masterNumber: document.getElementById('master-number').value,
                     status: 'pending',
                     createdAt: new Date().toISOString()
                 };
 
                 await addDoc(collection(db, "partners"), newPartner);
-                alert('Antrag erfolgreich eingereicht!');
+                alert('Antrag erfolgreich eingereicht! Gewerbeschein und Meisterbrief werden vom Administrator geprüft.');
                 form.reset();
-                btn.innerText = "Partner-Antrag absenden";
+                btn.innerText = "Verifizierten Partner-Antrag absenden";
                 btn.disabled = false;
             } catch (error) {
                 console.error("Fehler:", error);
-                alert('Fehler beim Speichern.');
-                btn.innerText = "Partner-Antrag absenden";
+                alert('Fehler beim Speichern der Daten.');
+                btn.innerText = "Verifizierten Partner-Antrag absenden";
                 btn.disabled = false;
             }
         });
