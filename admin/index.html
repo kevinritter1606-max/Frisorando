@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -359,15 +358,15 @@
                             </select>
                         </div>
 
-                        <!-- Vorname & Nachname -->
+                        <!-- Vorname & Nachname (Optionaler gemacht, keine strikte Zwangspflicht) -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div class="form-group">
-                                <label>Vorname</label>
-                                <input type="text" id="user-firstname" class="form-input" required>
+                                <label>Vorname (Optional)</label>
+                                <input type="text" id="user-firstname" class="form-input" placeholder="Vorname">
                             </div>
                             <div class="form-group">
-                                <label>Nachname</label>
-                                <input type="text" id="user-lastname" class="form-input" required>
+                                <label>Nachname (Optional)</label>
+                                <input type="text" id="user-lastname" class="form-input" placeholder="Nachname">
                             </div>
                         </div>
 
@@ -549,7 +548,7 @@
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                        <td><strong>${p.name || p.salonName || 'Kein Salonname'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
                         <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
                         <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
                         <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
@@ -643,8 +642,8 @@
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const roleType = document.getElementById('user-role-type').value;
-            const firstname = document.getElementById('user-firstname').value;
-            const lastname = document.getElementById('user-lastname').value;
+            const firstname = document.getElementById('user-firstname').value.trim();
+            const lastname = document.getElementById('user-lastname').value.trim();
             const email = document.getElementById('user-email').value.trim() || 'Keine E-Mail';
             const password = document.getElementById('user-password').value;
 
@@ -661,8 +660,8 @@
                 if (roleType === 'admin') {
                     await addDoc(collection(db, "admin_users"), { firstname, lastname, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
                 } else if (roleType === 'partner') {
-                    const salonName = document.getElementById('user-salonname').value || 'Salon';
-                    const location = document.getElementById('user-location').value || 'Rheinfelden';
+                    const salonName = document.getElementById('user-salonname').value.trim() || 'Salon ohne Namen';
+                    const location = document.getElementById('user-location').value.trim() || 'Rheinfelden';
                     const type = document.getElementById('user-service-type').value;
                     await addDoc(collection(db, "partners"), { name: salonName, salonName, firstname, lastname, email, location, type, status: 'active', createdAt: new Date().toISOString() });
                 } else if (roleType === 'customer') {
@@ -675,7 +674,7 @@
                 loadAdminDataFromFirebase();
             } catch (error) {
                 console.error("Fehler:", error);
-                alert('Fehler beim Speichern.');
+                alert('Fehler beim Speichern in Firestore.');
             }
         });
     </script>
