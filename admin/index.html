@@ -57,6 +57,22 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
         /* Linke Sidebar */
         aside {
             width: 260px;
@@ -241,17 +257,21 @@
         <div class="login-card">
             <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin</h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
-            <form id="login-form">
-                <div class="form-group">
-                    <label>Benutzername oder E-Mail</label>
-                    <input type="text" id="login-user" class="form-input" required autocomplete="username">
+            
+            <div class="form-group">
+                <label>Benutzername oder E-Mail</label>
+                <input type="text" id="login-user" class="form-input" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label>Passwort</label>
+                <div class="password-wrapper">
+                    <input type="password" id="login-pass" class="form-input" required autocomplete="current-password" style="padding-right: 35px;">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">👁️</button>
                 </div>
-                <div class="form-group">
-                    <label>Passwort</label>
-                    <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px;">Anmelden</button>
-            </form>
+            </div>
+
+            <button type="button" class="btn-action" onclick="handleLogin()" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
             <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center;"></div>
         </div>
     </div>
@@ -463,23 +483,18 @@
         </div>
     </div>
 
-    <!-- Firebase & Login Logik -->
-    <script type="module">
-        import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
-            if (loggedIn === 'true') {
-                document.getElementById('login-overlay').style.display = 'none';
-                loadAdminData();
+    <!-- Login- & Passwort-Sichtbarkeits-Logik -->
+    <script>
+        window.togglePasswordVisibility = function() {
+            const passInput = document.getElementById('login-pass');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+            } else {
+                passInput.type = 'password';
             }
-        });
+        }
 
-        // Login Formular absenden (Mit deinen exakten Daten und direktem Feedback)
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        window.handleLogin = function() {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value;
             const errDiv = document.getElementById('login-error');
@@ -490,9 +505,17 @@
             if (validUser && validPass) {
                 sessionStorage.setItem('frisorando_admin_logged', 'true');
                 document.getElementById('login-overlay').style.display = 'none';
-                loadAdminData();
+                loadAdminDataFromFirebase();
             } else {
                 errDiv.innerText = "Falscher Benutzername oder falsches Passwort!";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
+            if (loggedIn === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                loadAdminDataFromFirebase();
             }
         });
 
@@ -500,17 +523,14 @@
             sessionStorage.removeItem('frisorando_admin_logged');
             location.reload();
         }
+    </script>
 
-        function isPasswordSecure(password) {
-            const minLength = password.length >= 8;
-            const hasUpper = /[A-Z]/.test(password);
-            const hasLower = /[a-z]/.test(password);
-            const hasNum = /[0-9]/.test(password);
-            const hasSpecial = /[^A-Za-z0-9]/.test(password);
-            return minLength && hasUpper && hasLower && hasNum && hasSpecial;
-        }
+    <!-- Firebase & Hauptlogik -->
+    <script type="module">
+        import { db } from "../assets/js/firebase.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        async function loadAdminData() {
+        window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
             const inboxList = document.getElementById('inbox-messages-container');
             const allUsersTable = document.getElementById('all-users-table');
@@ -620,7 +640,7 @@
             try {
                 await updateDoc(doc(db, "partners", id), { status: 'active' });
                 alert('Partner erfolgreich freigeschaltet!');
-                loadAdminData();
+                loadAdminDataFromFirebase();
             } catch (error) {
                 alert('Fehler beim Freigeben.');
             }
@@ -633,6 +653,10 @@
             const name = document.getElementById('user-name').value;
             const email = document.getElementById('user-email').value;
             const password = document.getElementById('user-password').value;
+
+            function isPasswordSecure(password) {
+                return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
+            }
 
             if (!isPasswordSecure(password)) {
                 alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
@@ -653,7 +677,7 @@
                 alert('Benutzer erfolgreich mit sicherem Passwort angelegt!');
                 userForm.reset();
                 toggleUserFields();
-                loadAdminData();
+                loadAdminDataFromFirebase();
             } catch (error) {
                 console.error("Fehler:", error);
                 alert('Fehler beim Speichern.');
