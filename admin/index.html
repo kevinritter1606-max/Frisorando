@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Admin-Zentrale & Abrechnung</title>
+    <title>Frisorando - Enterprise Admin-Zentrale</title>
     <style>
         :root {
             --primary: #3182ce;
@@ -23,41 +23,39 @@
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
             margin: 0;
-            padding: 15px;
+            padding: 20px;
         }
 
         .admin-container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Header */
+        /* Top Header */
         .admin-header {
             background: var(--card-bg);
-            padding: 20px 25px;
+            padding: 20px 30px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
             gap: 15px;
         }
 
         .admin-nav {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -65,10 +63,10 @@
             background: #e2e8f0;
             color: var(--text-main);
             border: none;
-            padding: 8px 14px;
+            padding: 10px 18px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -78,22 +76,36 @@
             color: white;
         }
 
-        .admin-section {
-            display: none;
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+
+        /* KPI Cards oben */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
         }
 
-        .admin-section.active {
-            display: block;
+        .kpi-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
         }
 
-        /* Karten & Layout */
+        .kpi-title { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .kpi-value { font-size: 26px; font-weight: 800; color: var(--text-main); }
+
+        /* Cards & Layout */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
             padding: 25px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         /* Untermenü für Einstellungen */
@@ -102,7 +114,7 @@
             gap: 10px;
             margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             flex-wrap: wrap;
         }
 
@@ -113,7 +125,7 @@
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 6px;
         }
 
@@ -122,49 +134,54 @@
             color: white;
         }
 
-        .settings-tab-content {
-            display: none;
+        .settings-tab-content { display: none; }
+        .settings-tab-content.active { display: block; }
+
+        /* Formulare & Tabellen */
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; }
+        .form-input, .form-select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
+
+        .pro-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
         }
 
-        .settings-tab-content.active {
-            display: block;
+        .pro-table th, .pro-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        /* Formulare */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 5px;
+        .pro-table th {
+            background: #f8fafc;
             color: var(--text-muted);
+            font-weight: 700;
+            font-size: 12px;
             text-transform: uppercase;
         }
 
-        .form-input, .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 14px;
-            background: #ffffff;
-            color: var(--text-main);
-        }
+        /* Badges */
+        .badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block; }
+        .badge-pending { background: var(--warning-bg); color: var(--warning); }
+        .badge-active { background: var(--success-bg); color: var(--success); }
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
 
-        /* Modulares Dashboard Grid */
+        .btn-action {
+            background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+        }
+        .btn-action:hover { opacity: 0.9; }
+
+        /* Modulares Grid für Widgets */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
         }
-
-        @media (min-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        @media (min-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
         }
 
         .widget-card {
@@ -174,131 +191,111 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             cursor: move;
-            position: relative;
         }
+        .widget-card.dragging { opacity: 0.4; border: 2px dashed var(--primary); }
+        .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .widget-title { font-size: 15px; font-weight: bold; color: var(--primary); margin: 0; }
+        .drag-handle { color: var(--text-muted); font-size: 12px; cursor: grab; }
 
-        .widget-card.dragging {
-            opacity: 0.4;
-            border: 2px dashed var(--primary);
-        }
-
-        .widget-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .widget-title {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 0;
-        }
-
-        .drag-handle {
-            color: var(--text-muted);
-            font-size: 13px;
-            cursor: grab;
-        }
-
-        /* Schalter (Switch) */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 22px;
-        }
+        /* Switch */
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1; transition: .3s; border-radius: 22px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
-            background-color: white; transition: .3s; border-radius: 50%;
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); }
-
-        .toggle-row {
-            display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color);
-        }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
         .toggle-row:last-child { border-bottom: none; }
-
-        .partner-item {
-            padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;
-        }
-        .partner-item:last-child { border-bottom: none; }
-
-        .badge {
-            padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block;
-        }
-        .badge-pending { background: var(--warning-bg); color: var(--warning); }
-        .badge-active { background: var(--success-bg); color: var(--success); }
-
-        .btn-action {
-            background: var(--success); color: white; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; float: right;
-        }
     </style>
 </head>
 <body>
 
     <div class="admin-container">
-        <!-- Header & Hauptnavigation -->
+        
+        <!-- Header -->
         <div class="admin-header">
             <div>
-                <h2 style="margin: 0; font-size: 20px; color: var(--text-main);">Frisorando Admin-Zentrale</h2>
-                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Marktplatz-Management & Bonitäts-Sicherung</p>
+                <h2 style="margin: 0; font-size: 20px; color: var(--text-main);">Frisorando Enterprise Admin</h2>
+                <p style="margin: 3px 0 0 0; font-size: 13px; color: var(--text-muted);">Zentrale Plattform-Steuerung & Bonitäts-Management</p>
             </div>
             <div class="admin-nav">
-                <button class="nav-btn active" onclick="switchMainTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-btn active" onclick="switchMainTab('dashboard')">📊 Cockpit</button>
+                <button class="nav-btn" onclick="switchMainTab('partners')">✂️ Partner & Prüfung</button>
                 <button class="nav-btn" onclick="switchMainTab('settings')">⚙️ Einstellungen</button>
             </div>
         </div>
 
-        <!-- HAUPTREITER 1: DASHBOARD (DRAG & DROP) -->
+        <!-- 1. COCKPIT / DASHBOARD (DRAG & DROP) -->
         <div id="section-dashboard" class="admin-section active">
+            <!-- KPI Übersicht -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title">Aktive Salons</div>
+                    <div class="kpi-value" id="kpi-active">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Wartende Anträge</div>
+                    <div class="kpi-value" id="kpi-pending" style="color: var(--warning);">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Gesperrte Salons (Minus-Limit)</div>
+                    <div class="kpi-value" style="color: var(--danger);">0</div>
+                </div>
+            </div>
+
             <div class="dashboard-grid" id="widget-grid">
-                
-                <!-- Widget 1: Partner-Freigabe -->
+                <!-- Widget 1 -->
                 <div class="widget-card" id="widget-partners" draggable="true">
                     <div class="widget-header">
-                        <h3 class="widget-title">📋 Partner-Freigaben</h3>
+                        <h3 class="widget-title">📋 Neueste Partner-Anträge</h3>
                         <span class="drag-handle">☰ Ziehen</span>
                     </div>
-                    <div id="admin-partners-list">
-                        <p style="color: var(--text-muted); font-size: 13px;">Lade Partner...</p>
+                    <div id="dash-partners-list">
+                        <p style="color: var(--text-muted); font-size: 13px;">Lade Daten...</p>
                     </div>
                 </div>
 
-                <!-- Widget 2: Live-Kennzahlen -->
-                <div class="widget-card" id="widget-stats" draggable="true">
+                <!-- Widget 2 -->
+                <div class="widget-card" id="widget-tse" draggable="true">
                     <div class="widget-header">
-                        <h3 class="widget-title">📈 Plattform-Kennzahlen & Guthaben</h3>
+                        <h3 class="widget-title">🔒 TSE & GoBD Sicherheit</h3>
                         <span class="drag-handle">☰ Ziehen</span>
                     </div>
-                    <p style="font-size: 13px; color: var(--text-muted);">Aktive Salons: <strong id="stat-salons" style="color: var(--text-main);">0</strong></p>
-                    <p style="font-size: 13px; color: var(--text-muted);">Wartende Anträge: <strong id="stat-pending" style="color: var(--warning);">0</strong></p>
-                    <p style="font-size: 13px; color: var(--text-muted);">Gesperrte Salons (Minus-Limit erreicht): <strong style="color: var(--danger);">0</strong></p>
+                    <p style="font-size: 13px; color: var(--success);">● Cloud-TSE: <strong>Aktiv & Verschlüsselt</strong></p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Letzter DATEV-Export: Heute, 04:00 Uhr</p>
+                    <button class="nav-btn active" style="width: 100%; margin-top: 10px; padding: 8px;" onclick="alert('DATEV-Export wird erstellt...')">DATEV-Export anfordern</button>
                 </div>
-
-                <!-- Widget 3: Schnellaktionen -->
-                <div class="widget-card" id="widget-support" draggable="true">
-                    <div class="widget-header">
-                        <h3 class="widget-title">⚡ Schnellaktionen</h3>
-                        <span class="drag-handle">☰ Ziehen</span>
-                    </div>
-                    <button class="nav-btn active" style="width: 100%; margin-bottom: 8px; padding: 10px;" onclick="alert('System-Cache erfolgreich bereinigt!')">System-Cache leeren</button>
-                    <button class="nav-btn" style="width: 100%; padding: 10px;" onclick="alert('DATEV-Export wird generiert...')">DATEV-Export anfordern</button>
-                </div>
-
             </div>
         </div>
 
-        <!-- HAUPTREITER 2: EINSTELLUNGEN -->
+        <!-- 2. PARTNER- & COMPLIANCE-VERWALTUNG -->
+        <div id="section-partners" class="admin-section">
+            <div class="card">
+                <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">Partner-Verifizierung (§ 1 HwO & Handwerksrolle)</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Prüfe hier eingereichte Meisterbriefe und Gewerbescheine vor der Freischaltung.</p>
+                
+                <div style="overflow-x: auto;">
+                    <table class="pro-table">
+                        <thead>
+                            <tr>
+                                <th>Salon / Inhaber</th>
+                                <th>Standort & Typ</th>
+                                <th>HWK-Nr. / Meisterbrief</th>
+                                <th>Status</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="full-partners-table">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted);">Lade Partner-Datenbank...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. EINSTELLUNGEN MIT UNTERREITERN -->
         <div id="section-settings" class="admin-section">
             <div class="card">
                 <div class="settings-subnav">
@@ -308,117 +305,59 @@
                     <button class="subnav-btn" onclick="switchSettingsTab('widgets', this)">Dashboard-Layout (Widgets)</button>
                 </div>
 
-                <!-- Tab 1: Allgemein -->
+                <!-- Tab 1 -->
                 <div id="stab-general" class="settings-tab-content active">
-                    <form onsubmit="event.preventDefault(); alert('Allgemeine Einstellungen gespeichert!');">
-                        <div class="form-group">
-                            <label>Plattform-Name</label>
-                            <input type="text" class="form-input" value="Frisorando">
-                        </div>
-                        <div class="form-group">
-                            <label>Support E-Mail-Adresse</label>
-                            <input type="email" class="form-input" value="support@frisorando.de">
-                        </div>
-                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Speichern</button>
+                    <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
+                        <div class="form-group"><label>Plattform-Name</label><input type="text" class="form-input" value="Frisorando"></div>
+                        <div class="form-group"><label>Support E-Mail</label><input type="email" class="form-input" value="support@frisorando.de"></div>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px;">Speichern</button>
                     </form>
                 </div>
 
                 <!-- Tab 2: Provisionen, Barzahlung & Guthaben-Limits -->
                 <div id="stab-billing" class="settings-tab-content">
-                    <form onsubmit="event.preventDefault(); alert('Zahlungs- und Limits-Einstellungen erfolgreich gespeichert!');">
-                        <h3 style="font-size: 15px; color: var(--primary); margin-top: 0;">Zahlungsarten für Endkunden</h3>
+                    <form onsubmit="event.preventDefault(); alert('Zahlungs- und Limits-Einstellungen gespeichert!');">
+                        <h3 style="font-size: 15px; color: var(--primary); margin-top: 0;">Zahlungsarten</h3>
                         <div class="toggle-row">
-                            <div>
-                                <strong>Barzahlung vor Ort erlauben</strong>
-                                <div style="font-size: 12px; color: var(--text-muted);">Kunde bezahlt direkt im Salon (Provision läuft über Verrechnungskonto).</div>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
+                            <div><strong>Barzahlung vor Ort erlauben</strong><div style="font-size: 12px; color: var(--text-muted);">Provision läuft über das virtuelle Verrechnungskonto.</div></div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                         </div>
                         <div class="toggle-row" style="margin-bottom: 20px;">
-                            <div>
-                                <strong>Online-Zahlung im Voraus (PayPal / Stripe)</strong>
-                                <div style="font-size: 12px; color: var(--text-muted);">Plattform zieht Geld ein und zahlt abzgl. Provision an Friseur aus.</div>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
+                            <div><strong>Online-Zahlung im Voraus (PayPal / Stripe)</strong><div style="font-size: 12px; color: var(--text-muted);">Automatischer Einzug durch Plattform.</div></div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                         </div>
 
-                        <h3 style="font-size: 15px; color: var(--primary); margin-top: 20px;">Guthaben- & Minus-Limit Sicherung (Bonität)</h3>
-                        <div class="form-group">
-                            <label>Plattform-Provision pro Buchung (%)</label>
-                            <input type="number" class="form-input" value="10">
-                        </div>
-                        <div class="form-group">
-                            <label>Warnschwelle bei Minus-Saldo (€)</label>
-                            <input type="number" class="form-input" value="75.00">
-                            <small style="color: var(--text-muted);">Ab diesem offenen Provisionsbetrag erhält der Friseur eine automatische Zahlungsaufforderung.</small>
-                        </div>
-                        <div class="form-group">
-                            <label>Maximales Minus-Limit / Sperr-Schwelle (€)</label>
-                            <input type="number" class="form-input" value="100.00">
-                            <small style="color: var(--text-muted);">Erreicht der Friseur diesen Minusbetrag durch Barzahlungen, wird die Online-Buchung automatisch pausiert, bis ausgeglichen ist.</small>
-                        </div>
-                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Einstellungen speichern</button>
+                        <h3 style="font-size: 15px; color: var(--primary); margin-top: 20px;">Guthaben- & Minus-Sicherung (Bonität)</h3>
+                        <div class="form-group"><label>Plattform-Provision (%)</label><input type="number" class="form-input" value="10"></div>
+                        <div class="form-group"><label>Warnschwelle bei Minus-Saldo (€)</label><input type="number" class="form-input" value="75.00"><small style="color: var(--text-muted);">Erinnert den Friseur an ausstehende Bar-Provisionen.</small></div>
+                        <div class="form-group"><label>Maximales Minus-Limit / Sperr-Schwelle (€)</label><input type="number" class="form-input" value="100.00"><small style="color: var(--text-muted);">Pausiert Online-Buchungen automatisch bei Überschreitung.</small></div>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px;">Speichern</button>
                     </form>
                 </div>
 
-                <!-- Tab 3: Handwerksrecht -->
+                <!-- Tab 3 -->
                 <div id="stab-compliance" class="settings-tab-content">
-                    <form onsubmit="event.preventDefault(); alert('Compliance-Einstellungen gespeichert!');">
+                    <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
                         <div class="form-group">
-                            <label>Meisterbrief-Pflicht bei Registrierung</label>
-                            <select class="form-select">
-                                <option selected>Zwingend erforderlich (§ 1 HwO)</option>
-                                <option>Optional / Nachprüfung im Admin</option>
-                            </select>
+                            <label>Meisterbrief-Pflicht (§ 1 HwO)</label>
+                            <select class="form-select"><option selected>Zwingend erforderlich</option><option>Optional</option></select>
                         </div>
-                        <button type="submit" class="nav-btn active" style="padding: 10px 20px; margin-top: 10px;">Speichern</button>
+                        <button type="submit" class="nav-btn active" style="padding: 10px 20px;">Speichern</button>
                     </form>
                 </div>
 
-                <!-- Tab 4: Dashboard-Layout (Widgets ein/aus) -->
+                <!-- Tab 4 -->
                 <div id="stab-widgets" class="settings-tab-content">
-                    <h3 style="font-size: 15px; color: var(--primary); margin-top: 0;">Widgets im Admin-Dashboard steuern</h3>
-                    
+                    <h3 style="font-size: 15px; color: var(--primary); margin-top: 0;">Dashboard-Layout steuern</h3>
                     <div class="toggle-row">
-                        <div>
-                            <strong>Partner-Freigaben Widget</strong>
-                            <div style="font-size: 12px; color: var(--text-muted);">Prüfung von Gewerbeschein und Meisterbrief.</div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="toggle-partners" checked onchange="toggleWidget('widget-partners', this.checked)">
-                            <span class="slider"></span>
-                        </label>
+                        <div><strong>Partner-Anträge Widget</strong></div>
+                        <label class="switch"><input type="checkbox" checked onchange="toggleWidget('widget-partners', this.checked)"><span class="slider"></span></label>
                     </div>
-
                     <div class="toggle-row">
-                        <div>
-                            <strong>Plattform-Kennzahlen Widget</strong>
-                            <div style="font-size: 12px; color: var(--text-muted);">Zeigt aktive Salons, Anträge und Sperr-Status.</div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="toggle-stats" checked onchange="toggleWidget('widget-stats', this.checked)">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="toggle-row">
-                        <div>
-                            <strong>Schnellaktionen Widget</strong>
-                            <div style="font-size: 12px; color: var(--text-muted);">System-Wartung und DATEV-Export.</div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="toggle-support" checked onchange="toggleWidget('widget-support', this.checked)">
-                            <span class="slider"></span>
-                        </label>
+                        <div><strong>TSE & GoBD Widget</strong></div>
+                        <label class="switch"><input type="checkbox" checked onchange="toggleWidget('widget-tse', this.checked)"><span class="slider"></span></label>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -429,18 +368,21 @@
         import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         async function loadAdminData() {
-            const container = document.getElementById('admin-partners-list');
-            const statSalons = document.getElementById('stat-salons');
-            const statPending = document.getElementById('stat-pending');
+            const dashList = document.getElementById('dash-partners-list');
+            const fullTable = document.getElementById('full-partners-table');
+            const kpiActive = document.getElementById('kpi-active');
+            const kpiPending = document.getElementById('kpi-pending');
 
             try {
                 const querySnapshot = await getDocs(collection(db, "partners"));
-                container.innerHTML = "";
+                dashList.innerHTML = "";
+                fullTable.innerHTML = "";
                 let activeCount = 0;
                 let pendingCount = 0;
 
                 if (querySnapshot.empty) {
-                    container.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Anträge vorhanden.</p>`;
+                    dashList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Anträge vorhanden.</p>`;
+                    fullTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keine Partner in der Datenbank.</td></tr>`;
                     return;
                 }
 
@@ -452,37 +394,48 @@
                     if (isPending) pendingCount++;
                     else activeCount++;
 
-                    const item = document.createElement('div');
-                    item.className = 'partner-item';
-                    item.innerHTML = `
-                        <strong>${p.name}</strong> (${p.location})<br>
-                        <span style="color: var(--text-muted);">Inh: ${p.ownerFirstname} ${p.ownerLastname} | HWK: ${p.masterNumber || 'k.A.'}</span>
-                        <div style="margin-top: 6px;">
-                            <span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">
-                                ${isPending ? 'Wartet' : 'Aktiv'}
-                            </span>
-                            ${isPending ? `<button class="btn-action" onclick="approvePartner('${docId}')">Freigeben</button>` : ''}
-                        </div>
+                    // Dashboard Liste
+                    if (isPending) {
+                        const item = document.createElement('div');
+                        item.style.cssText = "padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;";
+                        item.innerHTML = `
+                            <strong>${p.name}</strong> (${p.location})<br>
+                            <span style="color: var(--text-muted);">Inh: ${p.ownerFirstname} ${p.ownerLastname} | HWK: ${p.masterNumber || 'k.A.'}</span>
+                            <button class="btn-action" style="float: right;" onclick="approvePartner('${docId}')">Freigeben</button>
+                        `;
+                        dashList.appendChild(item);
+                    }
+
+                    // Volle Tabelle
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${p.name}</strong><br><span style="font-size: 12px; color: var(--text-muted);">${p.ownerFirstname} ${p.ownerLastname}</span></td>
+                        <td>${p.location}<br><span style="font-size: 12px; color: var(--text-muted);">Typ: ${p.type}</span></td>
+                        <td>HWK: <strong>${p.masterNumber || 'k.A.'}</strong><br><span style="font-size: 12px; color: var(--primary); cursor: pointer;" onclick="alert('Dokumenten-Prüfung aktiv')">📁 Gewerbe / Meisterbrief ansehen</span></td>
+                        <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
+                        <td>${isPending ? `<button class="btn-action" onclick="approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 12px; color: var(--success);">Freigegeben</span>'}</td>
                     `;
-                    container.appendChild(item);
+                    fullTable.appendChild(row);
                 });
 
-                if(statSalons) statSalons.innerText = activeCount;
-                if(statPending) statPending.innerText = pendingCount;
+                if(dashList.innerHTML === "") {
+                    dashList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine wartenden Anträge.</p>`;
+                }
+
+                kpiActive.innerText = activeCount;
+                kpiPending.innerText = pendingCount;
 
             } catch (error) {
                 console.error("Fehler:", error);
-                container.innerHTML = `<p style="color: red; font-size: 13px;">Fehler beim Laden.</p>`;
             }
         }
 
         window.approvePartner = async function(id) {
             try {
                 await updateDoc(doc(db, "partners", id), { status: 'active' });
-                alert('Partner erfolgreich freigeschaltet!');
+                alert('Partner erfolgreich geprüft und freigeschaltet!');
                 loadAdminData();
             } catch (error) {
-                console.error("Fehler:", error);
                 alert('Fehler beim Freigeben.');
             }
         }
@@ -490,7 +443,7 @@
         loadAdminData();
     </script>
 
-    <!-- UI & Drag & Drop Logik -->
+    <!-- UI Logik -->
     <script>
         function switchMainTab(tab) {
             document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
@@ -498,6 +451,9 @@
             
             if(tab === 'dashboard') {
                 document.getElementById('section-dashboard').classList.add('active');
+                event.target.classList.add('active');
+            } else if(tab === 'partners') {
+                document.getElementById('section-partners').classList.add('active');
                 event.target.classList.add('active');
             } else if(tab === 'settings') {
                 document.getElementById('section-settings').classList.add('active');
@@ -508,56 +464,13 @@
         function switchSettingsTab(tabName, btnElement) {
             document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
-
             document.getElementById('stab-' + tabName).classList.add('active');
             btnElement.classList.add('active');
         }
 
         window.toggleWidget = function(widgetId, show) {
             const widget = document.getElementById(widgetId);
-            if(widget) {
-                widget.style.display = show ? 'block' : 'none';
-            }
-        }
-
-        // Drag & Drop
-        const grid = document.getElementById('widget-grid');
-        let draggedItem = null;
-
-        grid.addEventListener('dragstart', (e) => {
-            draggedItem = e.target.closest('.widget-card');
-            if (draggedItem) draggedItem.classList.add('dragging');
-        });
-
-        grid.addEventListener('dragend', (e) => {
-            if (draggedItem) draggedItem.classList.remove('dragging');
-            draggedItem = null;
-        });
-
-        grid.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(grid, e.clientY);
-            const currentCard = document.querySelector('.dragging');
-            if (currentCard) {
-                if (afterElement == null) {
-                    grid.appendChild(currentCard);
-                } else {
-                    grid.insertBefore(currentCard, afterElement);
-                }
-            }
-        });
-
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.widget-card:not(.dragging)')];
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
+            if(widget) widget.style.display = show ? 'block' : 'none';
         }
     </script>
 </body>
