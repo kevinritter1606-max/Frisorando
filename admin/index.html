@@ -57,7 +57,6 @@
             }
         }
 
-        /* Auf dem Handy standardmäßig eingeklappt */
         @media (max-width: 777px) {
             aside {
                 transform: translateX(-260px);
@@ -192,7 +191,6 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             margin-bottom: 20px;
-            overflow-x: auto;
         }
 
         /* Einstellungen Unter-Navigation */
@@ -231,7 +229,6 @@
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 13px;
-            min-width: 600px; /* Ermöglicht horizontales Scrollen auf dem Handy */
         }
         .pro-table th, .pro-table td {
             padding: 10px 12px;
@@ -251,7 +248,7 @@
         .badge-active { background: var(--success-bg); color: var(--success); }
 
         .btn-action {
-            background: var(--success); color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+            background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
         }
 
         .form-group { margin-bottom: 15px; }
@@ -270,7 +267,7 @@
 </head>
 <body>
 
-    <!-- Linke Sidebar (Mobil & PC) -->
+    <!-- Linke Sidebar -->
     <aside id="sidebar">
         <div class="sidebar-brand">
             Frisorando Admin
@@ -280,6 +277,7 @@
             <li class="sidebar-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
             <li class="sidebar-item" onclick="switchTab('partners', this)">✂️ Partner & Prüfung</li>
             <li class="sidebar-item" onclick="switchTab('inbox', this)">📥 Postkasten</li>
+            <li class="sidebar-item" onclick="switchTab('admins', this)">👥 Admin-Benutzer</li>
             <li class="sidebar-item" onclick="switchTab('settings', this)">⚙️ Einstellungen</li>
         </ul>
     </aside>
@@ -314,8 +312,8 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Mobil-optimiertes Admin-Cockpit</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du kannst dieses Admin-Panel jetzt auf jedem Smartphone, Tablet oder PC flüssig bedienen. Nutze das Menü oben links.</p>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Willkommen im Admin-Cockpit</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Über die linke Navigation kannst du nun auch neue Admin-Benutzer anlegen, die Zugriff auf das Backend erhalten.</p>
                 </div>
             </div>
 
@@ -352,7 +350,50 @@
                 </div>
             </div>
 
-            <!-- 4. Einstellungen -->
+            <!-- 4. Admin-Benutzer (NEU) -->
+            <div id="section-admins" class="admin-section">
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Neuen Administrator anlegen</h3>
+                    <form id="admin-create-form" style="margin-bottom: 25px;">
+                        <div class="form-group">
+                            <label>Name des Administrators</label>
+                            <input type="text" id="new-admin-name" class="form-input" placeholder="z. B. Max Mustermann" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-Mail-Adresse</label>
+                            <input type="email" id="new-admin-email" class="form-input" placeholder="admin@frisorando.de" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Rolle / Berechtigung</label>
+                            <select id="new-admin-role" class="form-select">
+                                <option value="Super-Admin">Super-Admin (Vollzugriff)</option>
+                                <option value="Support">Support & Postkasten</option>
+                                <option value="Buchhaltung">Buchhaltung & Finanzen</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Admin-Zugang erstellen</button>
+                    </form>
+
+                    <h3 style="font-size: 14px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 20px;">Berechtigte Administratoren</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="pro-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>E-Mail</th>
+                                    <th>Rolle</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Lade Administratoren...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Einstellungen -->
             <div id="section-settings" class="admin-section">
                 <div class="card">
                     <div class="settings-subnav">
@@ -411,16 +452,19 @@
     <!-- Firebase Logik -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         async function loadAdminData() {
             const fullTable = document.getElementById('full-partners-table');
             const inboxList = document.getElementById('inbox-messages-container');
+            const adminUsersTable = document.getElementById('admin-users-table');
+            
             const kpiActive = document.getElementById('kpi-active');
             const kpiPending = document.getElementById('kpi-pending');
             const kpiMessages = document.getElementById('kpi-messages');
 
             try {
+                // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
                 fullTable.innerHTML = "";
                 let activeCount = 0;
@@ -450,6 +494,7 @@
                 kpiActive.innerText = activeCount;
                 kpiPending.innerText = pendingCount;
 
+                // 2. Postkasten laden
                 try {
                     const msgSnapshot = await getDocs(collection(db, "support_messages"));
                     inboxList.innerHTML = "";
@@ -475,6 +520,31 @@
                     inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten.</p>`;
                 }
 
+                // 3. Admin-Benutzer laden (Collection: admin_users)
+                try {
+                    const adminSnapshot = await getDocs(collection(db, "admin_users"));
+                    adminUsersTable.innerHTML = "";
+
+                    if (adminSnapshot.empty) {
+                        adminUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine zusätzlichen Admins angelegt.</td></tr>`;
+                        return;
+                    }
+
+                    adminSnapshot.forEach((adminDoc) => {
+                        const a = adminDoc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${a.name}</strong></td>
+                            <td>${a.email}</td>
+                            <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">${a.role}</span></td>
+                            <td><span class="badge badge-active">Aktiv</span></td>
+                        `;
+                        adminUsersTable.appendChild(row);
+                    });
+                } catch(e) {
+                    adminUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Admin-Tabelle wird initialisiert...</td></tr>`;
+                }
+
             } catch (error) {
                 console.error("Fehler:", error);
             }
@@ -489,6 +559,30 @@
                 alert('Fehler beim Freigeben.');
             }
         }
+
+        // Neuen Admin speichern
+        const adminForm = document.getElementById('admin-create-form');
+        adminForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('new-admin-name').value;
+            const email = document.getElementById('new-admin-email').value;
+            const role = document.getElementById('new-admin-role').value;
+
+            try {
+                await addDoc(collection(db, "admin_users"), {
+                    name: name,
+                    email: email,
+                    role: role,
+                    createdAt: new Date().toISOString()
+                });
+                alert('Administrator erfolgreich angelegt!');
+                adminForm.reset();
+                loadAdminData();
+            } catch (error) {
+                console.error("Fehler:", error);
+                alert('Fehler beim Speichern des Administrators.');
+            }
+        });
 
         loadAdminData();
     </script>
@@ -511,11 +605,11 @@
                 'dashboard': 'Dashboard & Live-Kennzahlen',
                 'partners': 'Partner & Verifizierung',
                 'inbox': 'Postkasten & Support-Anfragen',
+                'admins': 'Admin-Benutzerverwaltung',
                 'settings': 'Plattform-Einstellungen'
             };
             document.getElementById('page-title').innerText = titles[tabId];
 
-            // Auf dem Handy nach Klick auf Menüpunkt die Sidebar automatisch schließen
             if (window.innerWidth < 768) {
                 toggleSidebar();
             }
