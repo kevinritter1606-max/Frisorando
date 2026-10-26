@@ -521,10 +521,10 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Firebase & Hauptlogik als sauberes Modul mit Cache-Bypass -->
+    <!-- Firebase & Hauptlogik als sauberes Modul mit frischer Cache-ID -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=111";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=FIXED";
 
         window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
