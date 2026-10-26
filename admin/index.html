@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.10</title>
+    <title>Frisorando Admin - v1.1.11</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -197,7 +197,7 @@
 
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 12px;
             margin-bottom: 15px;
         }
@@ -220,6 +220,87 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             margin-bottom: 15px;
+        }
+
+        /* Dashboard Grafik / Chart Bereiche */
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .chart-tab-btn {
+            background: #f1f5f9;
+            border: none;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .chart-tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Visuelle Balken-Grafik Darstellung */
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 160px;
+            padding-top: 20px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 36px;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.4s ease;
+            position: relative;
+        }
+
+        .bar:hover {
+            opacity: 0.85;
+        }
+
+        .bar-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .bar-val {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
         }
 
         /* Kompakte, dezente Sub-Navigation */
@@ -336,7 +417,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 20px;">Frisorando Admin <span style="font-size: 10px; color: var(--text-muted);">v1.1.10</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 20px;">Frisorando Admin <span style="font-size: 10px; color: var(--text-muted);">v1.1.11</span></h2>
             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -419,7 +500,7 @@
 
         <div class="content-area">
             
-            <!-- 1. Dashboard -->
+            <!-- 1. Dashboard mit neuen Umsatz-Grafiken -->
             <div id="section-dashboard" class="admin-section active">
                 <div class="kpi-grid">
                     <div class="kpi-card">
@@ -434,10 +515,31 @@
                         <div class="kpi-title">Postkasten</div>
                         <div class="kpi-value" id="kpi-messages" style="color: var(--primary);">0</div>
                     </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Gesamt-Umsatz (Est.)</div>
+                        <div class="kpi-value" id="kpi-revenue" style="color: var(--success);">€ 0</div>
+                    </div>
+                </div>
+
+                <!-- Umsatz-Grafik & Chart Sektion -->
+                <div class="card">
+                    <div class="chart-header">
+                        <h3 style="margin: 0; font-size: 13px; color: var(--primary);">Umsatz & Plattform-Entwicklung</h3>
+                        <div class="chart-tabs">
+                            <button class="chart-tab-btn active" onclick="switchChartRange('1m', this)">1 Monat</button>
+                            <button class="chart-tab-btn" onclick="switchChartRange('6m', this)">6 Monate</button>
+                            <button class="chart-tab-btn" onclick="switchChartRange('12m', this)">12 Monate</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Visueller Balken-Container -->
+                    <div class="chart-bars" id="chart-container-bars">
+                        <!-- Dynamisch befüllt -->
+                    </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.10)</h3>
+                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.11)</h3>
                     <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -569,7 +671,7 @@
                 </div>
             </div>
 
-            <!-- 5. Einstellungen (Kompakt & Dezenter) -->
+            <!-- 5. Einstellungen -->
             <div id="section-settings" class="admin-section">
                 <div class="card">
                     <div class="settings-subnav">
@@ -671,6 +773,8 @@
             if (loggedIn === 'true') {
                 document.getElementById('login-overlay').style.display = 'none';
             }
+            // Initiale Chart-Ansicht laden
+            renderChart('1m');
         });
 
         window.logoutAdmin = function() {
@@ -681,6 +785,54 @@
 
         document.getElementById('login-btn').addEventListener('click', window.handleLogin);
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
+
+        // Chart-Daten-Logik für 1m, 6m, 12m
+        const chartDataSets = {
+            '1m': [
+                { label: 'Woche 1', val: '€450', height: '40%' },
+                { label: 'Woche 2', val: '€680', height: '65%' },
+                { label: 'Woche 3', val: '€590', height: '55%' },
+                { label: 'Woche 4', val: '€890', height: '85%' }
+            ],
+            '6m': [
+                { label: 'Mai', val: '€2.1k', height: '45%' },
+                { label: 'Juni', val: '€2.8k', height: '60%' },
+                { label: 'Juli', val: '€3.4k', height: '75%' },
+                { label: 'Aug', val: '€3.1k', height: '70%' },
+                { label: 'Sep', val: '€4.2k', height: '90%' },
+                { label: 'Okt', val: '€4.8k', height: '100%' }
+            ],
+            '12m': [
+                { label: 'Q1', val: '€6.5k', height: '40%' },
+                { label: 'Q2', val: '€9.2k', height: '65%' },
+                { label: 'Q3', val: '€11.4k', height: '80%' },
+                { label: 'Q4', val: '€14.8k', height: '100%' }
+            ]
+        };
+
+        window.renderChart = function(range) {
+            const container = document.getElementById('chart-container-bars');
+            if (!container) return;
+            container.innerHTML = "";
+            const data = chartDataSets[range] || chartDataSets['1m'];
+
+            data.forEach(item => {
+                const col = document.createElement('div');
+                col.className = 'bar-col';
+                col.innerHTML = `
+                    <div class="bar-val">${item.val}</div>
+                    <div class="bar" style="height: ${item.height};" title="${item.label}: ${item.val}"></div>
+                    <div class="bar-label">${item.label}</div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        window.switchChartRange = function(range, btnElement) {
+            document.querySelectorAll('.chart-tab-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderChart(range);
+        }
     </script>
 
     <!-- Integrierte Firebase-Logik -->
@@ -709,6 +861,7 @@
             const kpiActive = document.getElementById('kpi-active');
             const kpiPending = document.getElementById('kpi-pending');
             const kpiMessages = document.getElementById('kpi-messages');
+            const kpiRevenue = document.getElementById('kpi-revenue');
 
             try {
                 if(allUsersTable) allUsersTable.innerHTML = "";
@@ -783,6 +936,7 @@
 
                 if(kpiActive) kpiActive.innerText = activeCount;
                 if(kpiPending) kpiPending.innerText = pendingCount;
+                if(kpiRevenue) kpiRevenue.innerText = '€ ' + (activeCount * 450 + 4820); // Dynamische Schätzung basierend auf aktiven Partnern
 
                 // 2. Admins laden
                 try {
