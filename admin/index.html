@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.2</title>
+    <title>Frisorando Admin - v1.1.3</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -33,8 +33,12 @@
             color: var(--text-main);
             margin: 0;
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 768px) {
+            body { height: 100vh; overflow: hidden; }
         }
 
         /* LOGIN OVERLAY SCREEN */
@@ -69,6 +73,8 @@
             position: fixed;
             height: 100%;
             z-index: 1000;
+            top: 0;
+            left: 0;
         }
 
         @media (min-width: 768px) {
@@ -123,8 +129,12 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             width: 100%;
+            min-width: 0;
+        }
+
+        @media (min-width: 768px) {
+            .main-wrapper { height: 100vh; overflow: hidden; }
         }
 
         header {
@@ -136,6 +146,9 @@
             align-items: center;
             padding: 0 20px;
             flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 900;
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
@@ -162,7 +175,13 @@
             font-size: 12px;
         }
 
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; }
+        .content-area { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
+
         .admin-section { display: none; }
         .admin-section.active { display: block; }
 
@@ -267,7 +286,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.2</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.3</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -336,7 +355,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.2)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.3)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
