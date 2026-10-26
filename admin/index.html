@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.18</title>
+    <title>Frisorando Admin - v1.1.19</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -207,38 +207,22 @@
         .admin-section { display: none; }
         .admin-section.active { display: block; }
 
-        /* Drag & Drop Dashboard Elemente mit Grip-Griff */
-        .draggable-card {
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-            touch-action: none;
-            margin-bottom: 10px;
+        /* KPI Grid: Schönes, kompaktes Raster für die 4 Kästchen */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
         }
-        
-        .drag-handle {
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 13px;
-            color: var(--text-muted);
-            cursor: grab;
-            padding: 2px 5px;
-            background: #f1f5f9;
-            border-radius: 4px;
-            user-select: none;
-            z-index: 10;
-        }
-        .drag-handle:active { cursor: grabbing; }
-
-        .draggable-card.dragging {
-            opacity: 0.5;
-            border: 2px dashed var(--primary);
+        @media (min-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
-        /* Einzelne KPI-Karten flexibel anordenbar */
         .kpi-card {
             background: var(--card-bg);
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
@@ -247,8 +231,8 @@
             justify-content: center;
         }
 
-        .kpi-title { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
-        .kpi-value { font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .kpi-title { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px; }
+        .kpi-value { font-size: 18px; font-weight: 800; color: var(--text-main); }
 
         .card {
             background: var(--card-bg);
@@ -459,7 +443,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.18</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.19</span></h2>
             <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -542,41 +526,32 @@
 
         <div class="content-area">
             
-            <!-- 1. Dashboard (Alle Elemente einzeln frei ineinander verschiebbar) -->
+            <!-- 1. Dashboard -->
             <div id="section-dashboard" class="admin-section active">
                 <div id="sortable-dashboard-container">
                     
-                    <!-- KPI 1: Aktive Salons -->
-                    <div class="kpi-card draggable-card" draggable="true">
-                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
-                        <div class="kpi-title">Aktive Salons</div>
-                        <div class="kpi-value" id="kpi-active">0</div>
-                    </div>
-
-                    <!-- KPI 2: Wartende Anträge -->
-                    <div class="kpi-card draggable-card" draggable="true">
-                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
-                        <div class="kpi-title">Wartende Anträge</div>
-                        <div class="kpi-value" id="kpi-pending" style="color: var(--warning);">0</div>
-                    </div>
-
-                    <!-- KPI 3: Postkasten -->
-                    <div class="kpi-card draggable-card" draggable="true">
-                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
-                        <div class="kpi-title">Postkasten</div>
-                        <div class="kpi-value" id="kpi-messages" style="color: var(--primary);">0</div>
-                    </div>
-
-                    <!-- KPI 4: Gesamt-Umsatz -->
-                    <div class="kpi-card draggable-card" draggable="true">
-                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
-                        <div class="kpi-title">Gesamt-Umsatz (Est.)</div>
-                        <div class="kpi-value" id="kpi-revenue" style="color: var(--success);">€ 0</div>
+                    <!-- KPI Raster (Kompakt nebeneinander) -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-title">Aktive Salons</div>
+                            <div class="kpi-value" id="kpi-active">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Wartende Anträge</div>
+                            <div class="kpi-value" id="kpi-pending" style="color: var(--warning);">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Postkasten</div>
+                            <div class="kpi-value" id="kpi-messages" style="color: var(--primary);">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Gesamt-Umsatz (Est.)</div>
+                            <div class="kpi-value" id="kpi-revenue" style="color: var(--success);">€ 0</div>
+                        </div>
                     </div>
 
                     <!-- Umsatz-Grafik & Chart Sektion -->
-                    <div class="card draggable-card" draggable="true">
-                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
+                    <div class="card">
                         <div class="chart-header">
                             <h3 style="margin: 0; font-size: 12px; color: var(--primary);">Umsatz & Plattform-Entwicklung</h3>
                             <div class="chart-tabs">
@@ -589,9 +564,8 @@
                     </div>
 
                     <!-- Info Box -->
-                    <div class="card draggable-card" draggable="true" style="padding: 10px 12px;">
-                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
-                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.18) – Jedes einzelne Element ist frei ineinander verschiebbar.</p>
+                    <div class="card" style="padding: 10px 12px;">
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.19) – Übersichtliches und kompaktes Dashboard-Layout.</p>
                     </div>
 
                 </div>
@@ -788,7 +762,7 @@
         </div>
     </div>
 
-    <!-- Login & Drag & Drop Logik -->
+    <!-- Login & UI Logik -->
     <script>
         function togglePasswordVisibility(fieldId, btn) {
             const input = document.getElementById(fieldId);
@@ -827,7 +801,6 @@
                 document.getElementById('login-overlay').style.display = 'none';
             }
             renderChart('1m');
-            initAdvancedDragAndDrop();
         });
 
         window.logoutAdmin = function() {
@@ -838,82 +811,6 @@
 
         document.getElementById('login-btn').addEventListener('click', window.handleLogin);
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
-
-        // Einzelnes Drag & Drop für alle Dashboard-Karten und KPIs
-        function initAdvancedDragAndDrop() {
-            const container = document.getElementById('sortable-dashboard-container');
-            if (!container) return;
-
-            let cards = container.querySelectorAll('.draggable-card');
-
-            cards.forEach(card => {
-                const handle = card.querySelector('.drag-handle');
-                if (!handle) return;
-
-                let isDragging = false;
-                let startY = 0;
-
-                handle.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                    card.classList.add('dragging');
-                    startY = e.clientY;
-                    e.preventDefault();
-                });
-
-                document.addEventListener('mousemove', (e) => {
-                    if (!isDragging) return;
-                    const deltaY = e.clientY - startY;
-                    if (Math.abs(deltaY) > 30) {
-                        const siblings = Array.from(container.querySelectorAll('.draggable-card'));
-                        const currentIndex = siblings.indexOf(card);
-                        if (deltaY > 0 && currentIndex < siblings.length - 1) {
-                            container.insertBefore(siblings[currentIndex + 1], card);
-                            startY = e.clientY;
-                        } else if (deltaY < 0 && currentIndex > 0) {
-                            container.insertBefore(card, siblings[currentIndex - 1]);
-                            startY = e.clientY;
-                        }
-                    }
-                });
-
-                document.addEventListener('mouseup', () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        card.classList.remove('dragging');
-                    }
-                });
-
-                handle.addEventListener('touchstart', (e) => {
-                    isDragging = true;
-                    card.classList.add('dragging');
-                    startY = e.touches[0].clientY;
-                    e.preventDefault();
-                }, { passive: false });
-
-                document.addEventListener('touchmove', (e) => {
-                    if (!isDragging) return;
-                    const deltaY = e.touches[0].clientY - startY;
-                    if (Math.abs(deltaY) > 25) {
-                        const siblings = Array.from(container.querySelectorAll('.draggable-card'));
-                        const currentIndex = siblings.indexOf(card);
-                        if (deltaY > 0 && currentIndex < siblings.length - 1) {
-                            container.insertBefore(siblings[currentIndex + 1], card);
-                            startY = e.touches[0].clientY;
-                        } else if (deltaY < 0 && currentIndex > 0) {
-                            container.insertBefore(card, siblings[currentIndex - 1]);
-                            startY = e.touches[0].clientY;
-                        }
-                    }
-                }, { passive: false });
-
-                document.addEventListener('touchend', () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        card.classList.remove('dragging');
-                    }
-                });
-            });
-        }
 
         const chartDataSets = {
             '1m': [
