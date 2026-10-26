@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisorando Admin - v1.1.1</title>
+    <style>
+        :root {
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --sidebar-text: #94a3b8;
+            --sidebar-text-active: #ffffff;
+            --primary: #3182ce;
+            --success: #137333;
+            --success-bg: #e6f4ea;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --danger: #e53e3e;
+            --bg-main: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #1a202c;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 10px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* LOGIN OVERLAY SCREEN */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--sidebar-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: white;
+            padding: 35px;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Linke Sidebar */
+        aside {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            position: fixed;
+            height: 100%;
+            z-index: 1000;
+        }
+
+        @media (min-width: 768px) {
+            aside { position: relative; transform: translateX(0) !important; }
+        }
+
+        @media (max-width: 777px) {
+            aside { transform: translateX(-260px); }
+            aside.mobile-open { transform: translateX(0); }
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px 10px;
+            margin: 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--sidebar-text);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background: var(--sidebar-hover);
+            color: var(--sidebar-text-active);
+        }
+
+        /* Hauptbereich rechts */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        header {
+            height: 60px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-main); display: block; }
+        @media (min-width: 768px) { .menu-toggle { display: none; } }
+
+        .header-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .content-area { flex: 1; padding: 20px; overflow-y: auto; }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .kpi-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        .kpi-value { font-size: 22px; font-weight: 800; color: var(--text-main); }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .settings-subnav {
+            display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap;
+        }
+
+        .subnav-btn {
+            background: none; border: none; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 6px 12px; border-radius: 6px; transition: 0.2s;
+        }
+        .subnav-btn.active { background: var(--primary); color: white; }
+        .settings-tab-content { display: none; }
+        .settings-tab-content.active { display: block; }
+
+        .pro-table {
+            width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;
+        }
+        .pro-table th, .pro-table td {
+            padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color);
+        }
+        .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; }
+
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block; }
+        .badge-pending { background: var(--warning-bg); color: var(--warning); }
+        .badge-active { background: var(--success-bg); color: var(--success); }
+
+        .btn-action {
+            background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
+        .form-input, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
+
+        /* Passwort-Container mit Augen-Icon */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 40px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-muted);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .toggle-row:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <!-- SICHERES LOGIN-FENSTER -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.1</span></h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
+            
+            <div class="form-group">
+                <label>Benutzername oder E-Mail</label>
+                <input type="text" id="login-user" class="form-input" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label>Passwort</label>
+                <div class="password-wrapper">
+                    <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-pass', this)" title="Passwort anzeigen">👁️</button>
+                </div>
+            </div>
+
+            <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
+            <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center;"></div>
+        </div>
+    </div>
+
+    <!-- Linke Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            Frisorando Admin
+            <span style="font-size: 16px; cursor: pointer; display: inline-block;" class="menu-toggle" onclick="toggleSidebar()">✕</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
+            <li class="sidebar-item" onclick="switchTab('partners', this)">✂️ Partner & Prüfung</li>
+            <li class="sidebar-item" onclick="switchTab('inbox', this)">📥 Postkasten</li>
+            <li class="sidebar-item" onclick="switchTab('users', this)">👥 Benutzerverwaltung</li>
+            <li class="sidebar-item" onclick="switchTab('settings', this)">⚙️ Einstellungen</li>
+        </ul>
+    </aside>
+
+    <!-- Rechter Hauptbereich -->
+    <div class="main-wrapper">
+        <header>
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <div class="header-title" id="page-title">Dashboard & Live-Kennzahlen</div>
+            </div>
+            <div class="user-profile">
+                <span id="current-admin-name">👤 Administrator</span>
+                <button class="logout-btn" id="logout-btn">Abmelden</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            
+            <!-- 1. Dashboard -->
+            <div id="section-dashboard" class="admin-section active">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">Aktive Salons</div>
+                        <div class="kpi-value" id="kpi-active">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Wartende Anträge</div>
+                        <div class="kpi-value" id="kpi-pending" style="color: var(--warning);">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Postkasten</div>
+                        <div class="kpi-value" id="kpi-messages" style="color: var(--primary);">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.1)</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
+                </div>
+            </div>
+
+            <!-- 2. Partner & Freigaben -->
+            <div id="section-partners" class="admin-section">
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Partner-Verifizierung (§ 1 HwO)</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="pro-table">
+                            <thead>
+                                <tr>
+                                    <th>Salon & Inhaber</th>
+                                    <th>Standort & Typ</th>
+                                    <th>HWK-Nr.</th>
+                                    <th>Status</th>
+                                    <th>Aktion</th>
+                                </tr>
+                            </thead>
+                            <tbody id="full-partners-table">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Lade Partner...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Postkasten -->
+            <div id="section-inbox" class="admin-section">
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Postkasten / Support-Anfragen</h3>
+                    <div id="inbox-messages-container">
+                        <p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten vorhanden.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Benutzerverwaltung -->
+            <div id="section-users" class="admin-section">
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen</h3>
+                    
+                    <form id="universal-user-form" style="margin-bottom: 25px;">
+                        <div class="form-group">
+                            <label>Benutzer-Rolle / Typ</label>
+                            <select id="user-role-type" class="form-select" onchange="toggleUserFields()">
+                                <option value="admin">Administrator / Support</option>
+                                <option value="partner">Friseur / Salon-Partner</option>
+                                <option value="customer">Endkunde</option>
+                            </select>
+                        </div>
+
+                        <!-- Vorname & Nachname -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>Vorname</label>
+                                <input type="text" id="user-firstname" class="form-input" required placeholder="Vorname">
+                            </div>
+                            <div class="form-group">
+                                <label>Nachname</label>
+                                <input type="text" id="user-lastname" class="form-input" required placeholder="Nachname">
+                            </div>
+                        </div>
+
+                        <!-- Salonname (Nur bei Partnern sichtbar) -->
+                        <div class="form-group" id="group-salonname" style="display: none;">
+                            <label>Salonname</label>
+                            <input type="text" id="user-salonname" class="form-input" placeholder="z. B. Haircut Lounge">
+                        </div>
+
+                        <div class="form-group">
+                            <label>E-Mail-Adresse (Optional)</label>
+                            <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de (optional)">
+                        </div>
+
+                        <!-- Passwort-Feld mit Augen-Icon -->
+                        <div class="form-group">
+                            <label>Sicheres Passwort</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="user-password" class="form-input" required>
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-password', this)" title="Passwort anzeigen">👁️</button>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                <span style="background: var(--warning-bg); color: var(--warning); border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px;">!</span>
+                                <span>Passwort-Richtlinie: Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.</span>
+                            </div>
+                        </div>
+                        
+                        <div id="partner-extra-fields" style="display: none;">
+                            <div class="form-group">
+                                <label>Standort / PLZ</label>
+                                <input type="text" id="user-location" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Service-Typ</label>
+                                <select id="user-service-type" class="form-select">
+                                    <option value="salon">Salon vor Ort</option>
+                                    <option value="mobile">Nur Mobil</option>
+                                    <option value="both">Hybrid (Salon & Mobil)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Benutzer sicher anlegen</button>
+                    </form>
+
+                    <h3 style="font-size: 14px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 20px;">Alle im System erfassten Benutzer</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="pro-table">
+                            <thead>
+                                <tr>
+                                    <th>Name / Salon</th>
+                                    <th>E-Mail</th>
+                                    <th>Rolle / Typ</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-users-table">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Lade Benutzer...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Einstellungen -->
+            <div id="section-settings" class="admin-section">
+                <div class="card">
+                    <div class="settings-subnav">
+                        <button class="subnav-btn active" onclick="switchSettingsTab('general', this)">Allgemein</button>
+                        <button class="subnav-btn" onclick="switchSettingsTab('payments', this)">Zahlungen</button>
+                        <button class="subnav-btn" onclick="switchSettingsTab('limits', this)">Minus-Limits</button>
+                        <button class="subnav-btn" onclick="switchSettingsTab('compliance', this)">Handwerksrecht</button>
+                    </div>
+
+                    <div id="stab-general" class="settings-tab-content active">
+                        <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
+                            <div class="form-group"><label>Plattform-Name</label><input type="text" class="form-input" value="Frisorando"></div>
+                            <div class="form-group"><label>Support E-Mail</label><input type="email" class="form-input" value="support@frisorando.de"></div>
+                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                        </form>
+                    </div>
+
+                    <div id="stab-payments" class="settings-tab-content">
+                        <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
+                            <div class="toggle-row">
+                                <div><strong>Barzahlung vor Ort</strong></div>
+                                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="toggle-row" style="margin-bottom: 15px;">
+                                <div><strong>Online-Zahlung (PayPal)</strong></div>
+                                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                            </div>
+                            <div class="form-group"><label>Plattform-Provision (%)</label><input type="number" class="form-input" value="10"></div>
+                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                        </form>
+                    </div>
+
+                    <div id="stab-limits" class="settings-tab-content">
+                        <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
+                            <div class="form-group"><label>Warnschwelle Minus-Saldo (€)</label><input type="number" class="form-input" value="75.00"></div>
+                            <div class="form-group"><label>Sperr-Schwelle / Max. Minus (€)</label><input type="number" class="form-input" value="100.00"></div>
+                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                        </form>
+                    </div>
+
+                    <div id="stab-compliance" class="settings-tab-content">
+                        <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
+                            <div class="form-group">
+                                <label>Meisterbrief-Pflicht</label>
+                                <select class="form-select"><option selected>Zwingend erforderlich (§ 1 HwO)</option><option>Optional</option></select>
+                            </div>
+                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Login & Passwort-Auge Logik -->
+    <script>
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.textContent = "🙈";
+            } else {
+                input.type = "password";
+                btn.textContent = "👁️";
+            }
+        }
+
+        window.handleLogin = function() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value;
+            const errDiv = document.getElementById('login-error');
+
+            const validUser = (user === 'Ritter2407' || user === 'kevin.ritter1606@googlemail.com');
+            const validPass = (pass === '24072011V.k');
+
+            if (validUser && validPass) {
+                sessionStorage.setItem('frisorando_admin_logged', 'true');
+                document.getElementById('login-overlay').style.display = 'none';
+                if (typeof loadAdminDataFromFirebase === 'function') {
+                    loadAdminDataFromFirebase();
+                }
+            } else {
+                errDiv.innerText = "Falscher Benutzername oder falsches Passwort!";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
+            if (loggedIn === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+            }
+        });
+
+        window.logoutAdmin = function() {
+            sessionStorage.removeItem('frisorando_admin_logged');
+            location.reload();
+        }
+
+        document.getElementById('login-btn').addEventListener('click', window.handleLogin);
+        document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
+    </script>
+
+    <!-- Firebase & Hauptlogik als Modul (Pfad angepasst für das Hauptverzeichnis) -->
+    <script type="module">
+        import { db } from "./assets/js/firebase.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=clean_root_2026";
+
+        window.loadAdminDataFromFirebase = async function() {
+            const fullTable = document.getElementById('full-partners-table');
+            const inboxList = document.getElementById('inbox-messages-container');
+            const allUsersTable = document.getElementById('all-users-table');
+            
+            const kpiActive = document.getElementById('kpi-active');
+            const kpiPending = document.getElementById('kpi-pending');
+            const kpiMessages = document.getElementById('kpi-messages');
+
+            try {
+                if(allUsersTable) allUsersTable.innerHTML = "";
+                let totalUsersCount = 0;
+
+                // 1. Partner laden
+                const querySnapshot = await getDocs(collection(db, "partners"));
+                if(fullTable) fullTable.innerHTML = "";
+                let activeCount = 0;
+                let pendingCount = 0;
+
+                querySnapshot.forEach((documentSnap) => {
+                    const p = documentSnap.data();
+                    const docId = documentSnap.id;
+                    const isPending = p.status === 'pending';
+
+                    if (isPending) pendingCount++;
+                    else activeCount++;
+
+                    if (fullTable) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
+                            <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
+                            <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
+                            <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
+                        `;
+                        fullTable.appendChild(row);
+                    }
+
+                    totalUsersCount++;
+                    if (allUsersTable) {
+                        const uRow = document.createElement('tr');
+                        uRow.innerHTML = `
+                            <td><strong>${p.name || p.salonName || 'Partner'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${p.email || 'Keine E-Mail'}</td>
+                            <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
+                            <td><span class="badge badge-active">${p.status || 'active'}</span></td>
+                        `;
+                        allUsersTable.appendChild(uRow);
+                    }
+                });
+
+                if(fullTable && fullTable.innerHTML === "") fullTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keine Partner.</td></tr>`;
+
+                if(kpiActive) kpiActive.innerText = activeCount;
+                if(kpiPending) kpiPending.innerText = pendingCount;
+
+                // 2. Admins laden
+                try {
+                    const adminSnap = await getDocs(collection(db, "admin_users"));
+                    adminSnap.forEach((aDoc) => {
+                        const a = aDoc.data();
+                        totalUsersCount++;
+                        if(allUsersTable) {
+                            const uRow = document.createElement('tr');
+                            uRow.innerHTML = `
+                                <td><strong>${a.firstname || ''} ${a.lastname || ''}</strong></td>
+                                <td>${a.email || 'Keine E-Mail'}</td>
+                                <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
+                                <td><span class="badge badge-active">Aktiv</span></td>
+                            `;
+                            allUsersTable.appendChild(uRow);
+                        }
+                    });
+                } catch(e) {}
+
+                // 3. Kunden laden
+                try {
+                    const custSnap = await getDocs(collection(db, "customers"));
+                    custSnap.forEach((cDoc) => {
+                        const c = cDoc.data();
+                        totalUsersCount++;
+                        if(allUsersTable) {
+                            const uRow = document.createElement('tr');
+                            uRow.innerHTML = `
+                                <td><strong>${c.firstname || ''} ${c.lastname || ''}</strong></td>
+                                <td>${c.email || 'Keine E-Mail'}</td>
+                                <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
+                                <td><span class="badge badge-active">Aktiv</span></td>
+                            `;
+                            allUsersTable.appendChild(uRow);
+                        }
+                    });
+                } catch(e) {}
+
+                if(allUsersTable && totalUsersCount === 0) {
+                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben.</td></tr>`;
+                }
+
+                // 4. Postkasten laden
+                const msgSnapshot = await getDocs(collection(db, "support_messages"));
+                if(inboxList) inboxList.innerHTML = "";
+                let msgCount = 0;
+
+                if (!msgSnapshot.empty) {
+                    msgSnapshot.forEach((msgDoc) => {
+                        const m = msgDoc.data();
+                        msgCount++;
+                        if(inboxList) {
+                            const msgBox = document.createElement('div');
+                            msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 13px;";
+                            msgBox.innerHTML = `<strong>Salon: ${m.salonName}</strong><p style="margin: 5px 0;">${m.messageText}</p>`;
+                            inboxList.appendChild(msgBox);
+                        }
+                    });
+                } else {
+                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
+                }
+                if(kpiMessages) kpiMessages.innerText = msgCount;
+
+            } catch (error) {
+                console.error("Fehler beim Laden der Daten:", error);
+            }
+        }
+
+        window.approvePartner = async function(id) {
+            try {
+                await updateDoc(doc(db, "partners", id), { status: 'active' });
+                alert('Partner erfolgreich freigeschaltet!');
+                loadAdminDataFromFirebase();
+            } catch (error) {
+                alert('Fehler beim Freigeben.');
+            }
+        }
+
+        // Benutzer anlegen mit expliziter Event-Abfangung
+        const userForm = document.getElementById('universal-user-form');
+        if(userForm) {
+            userForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const roleType = document.getElementById('user-role-type').value;
+                const firstname = document.getElementById('user-firstname').value.trim();
+                const lastname = document.getElementById('user-lastname').value.trim();
+                const email = document.getElementById('user-email').value.trim() || 'Keine E-Mail';
+                const password = document.getElementById('user-password').value;
+
+                function isPasswordSecure(password) {
+                    return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
+                }
+
+                if (!isPasswordSecure(password)) {
+                    alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
+                    return;
+                }
+
+                try {
+                    if (roleType === 'admin') {
+                        await addDoc(collection(db, "admin_users"), { firstname, lastname, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
+                    } else if (roleType === 'partner') {
+                        const salonName = document.getElementById('user-salonname').value.trim() || 'Salon ohne Namen';
+                        const location = document.getElementById('user-location').value.trim() || 'Rheinfelden';
+                        const type = document.getElementById('user-service-type').value;
+                        await addDoc(collection(db, "partners"), { name: salonName, salonName, firstname, lastname, email, location, type, status: 'active', createdAt: new Date().toISOString() });
+                    } else if (roleType === 'customer') {
+                        await addDoc(collection(db, "customers"), { firstname, lastname, email, createdAt: new Date().toISOString() });
+                    }
+
+                    alert('Benutzer erfolgreich in Firestore gespeichert!');
+                    userForm.reset();
+                    toggleUserFields();
+                    loadAdminDataFromFirebase();
+                } catch (error) {
+                    console.error("Fehler beim Speichern:", error);
+                    alert('Fehler beim Speichern in Firestore: ' + error.message);
+                }
+            });
+        }
+
+        // Falls beim Laden direkt eingeloggt
+        if (sessionStorage.getItem('frisorando_admin_logged') === 'true') {
+            loadAdminDataFromFirebase();
+        }
+    </script>
+
+    <!-- Navigation & UI Logik -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        function toggleUserFields() {
+            const role = document.getElementById('user-role-type').value;
+            const partnerFields = document.getElementById('partner-extra-fields');
+            const salonGroup = document.getElementById('group-salonname');
+
+            if (role === 'partner') {
+                partnerFields.style.display = 'block';
+                salonGroup.style.display = 'block';
+            } else {
+                partnerFields.style.display = 'none';
+                salonGroup.style.display = 'none';
+            }
+        }
+
+        switchTab = function(tabId, element) {
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.toggle('active', sec.id === 'section-' + tabId));
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            const titles = {
+                'dashboard': 'Dashboard & Live-Kennzahlen',
+                'partners': 'Partner & Verifizierung',
+                'inbox': 'Postkasten & Support-Anfragen',
+                'users': 'Universelle Benutzerverwaltung',
+                'settings': 'Plattform-Einstellungen'
+            };
+            document.getElementById('page-title').innerText = titles[tabId];
+
+            if (window.innerWidth < 768) toggleSidebar();
+        }
+
+        switchSettingsTab = function(tabName, btnElement) {
+            document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('stab-' + tabName).classList.add('active');
+            btnElement.classList.add('active');
+        }
+    </script>
+</body>
+</html>
