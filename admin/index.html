@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.1</title>
+    <title>Frisorando Admin - v1.1.2</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -220,6 +220,10 @@
             background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
         }
 
+        .btn-danger {
+            background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+        }
+
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
         .form-input, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
@@ -263,7 +267,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.1</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.2</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -332,7 +336,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.1)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.2)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -448,10 +452,11 @@
                                     <th>E-Mail</th>
                                     <th>Rolle / Typ</th>
                                     <th>Status</th>
+                                    <th>Aktion</th>
                                 </tr>
                             </thead>
                             <tbody id="all-users-table">
-                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Lade Benutzer...</td></tr>
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Lade Benutzer...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -562,10 +567,10 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Integrierte Firebase-Logik mit neuem Projekt -->
+    <!-- Integrierte Firebase-Logik inklusive Löschfunktion -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCbfAJFizefkyNlFtdEr3Law2hGrN3GNlg",
@@ -627,6 +632,7 @@
                             <td>${p.email || 'Keine E-Mail'}</td>
                             <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
                             <td><span class="badge badge-active">${p.status || 'active'}</span></td>
+                            <td><button class="btn-danger" onclick="window.deleteUserFromSystem('partners', '${docId}')">Löschen</button></td>
                         `;
                         allUsersTable.appendChild(uRow);
                     }
@@ -642,6 +648,7 @@
                     const adminSnap = await getDocs(collection(db, "admin_users"));
                     adminSnap.forEach((aDoc) => {
                         const a = aDoc.data();
+                        const aId = aDoc.id;
                         totalUsersCount++;
                         if(allUsersTable) {
                             const uRow = document.createElement('tr');
@@ -650,6 +657,7 @@
                                 <td>${a.email || 'Keine E-Mail'}</td>
                                 <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
+                                <td><button class="btn-danger" onclick="window.deleteUserFromSystem('admin_users', '${aId}')">Löschen</button></td>
                             `;
                             allUsersTable.appendChild(uRow);
                         }
@@ -661,6 +669,7 @@
                     const custSnap = await getDocs(collection(db, "customers"));
                     custSnap.forEach((cDoc) => {
                         const c = cDoc.data();
+                        const cId = cDoc.id;
                         totalUsersCount++;
                         if(allUsersTable) {
                             const uRow = document.createElement('tr');
@@ -669,6 +678,7 @@
                                 <td>${c.email || 'Keine E-Mail'}</td>
                                 <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
+                                <td><button class="btn-danger" onclick="window.deleteUserFromSystem('customers', '${cId}')">Löschen</button></td>
                             `;
                             allUsersTable.appendChild(uRow);
                         }
@@ -676,7 +686,7 @@
                 } catch(e) {}
 
                 if(allUsersTable && totalUsersCount === 0) {
-                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben.</td></tr>`;
+                    allUsersTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben.</td></tr>`;
                 }
 
                 // 4. Postkasten laden
@@ -712,6 +722,19 @@
                 loadAdminDataFromFirebase();
             } catch (error) {
                 alert('Fehler beim Freigeben.');
+            }
+        }
+
+        window.deleteUserFromSystem = async function(collectionName, docId) {
+            if (confirm("Möchtest du diesen Benutzer wirklich unwiderruflich aus dem System löschen?")) {
+                try {
+                    await deleteDoc(doc(db, collectionName, docId));
+                    alert('Benutzer erfolgreich gelöscht!');
+                    loadAdminDataFromFirebase();
+                } catch (error) {
+                    console.error("Fehler beim Löschen:", error);
+                    alert('Fehler beim Löschen: ' + error.message);
+                }
             }
         }
 
