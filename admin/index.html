@@ -358,7 +358,7 @@
                             </select>
                         </div>
 
-                        <!-- Vorname & Nachname (Pflichtfelder) -->
+                        <!-- Vorname & Nachname -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div class="form-group">
                                 <label>Vorname</label>
@@ -381,12 +381,12 @@
                             <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de (optional)">
                         </div>
 
-                        <!-- Passwort-Feld mit dezentem Info-Hinweis direkt darunter -->
+                        <!-- Passwort-Feld mit dezentem Info-Hinweis -->
                         <div class="form-group">
                             <label>Sicheres Passwort</label>
                             <input type="password" id="user-password" class="form-input" required>
                             <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                                <span style="background: var(--warning-bg); color: var(--warning); border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px;" title="Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.">!</span>
+                                <span style="background: var(--warning-bg); color: var(--warning); border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px;">!</span>
                                 <span>Passwort-Richtlinie: Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.</span>
                             </div>
                         </div>
@@ -532,9 +532,12 @@
             const kpiMessages = document.getElementById('kpi-messages');
 
             try {
+                allUsersTable.innerHTML = "";
+                let totalUsersCount = 0;
+
+                // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
                 fullTable.innerHTML = "";
-                allUsersTable.innerHTML = "";
                 let activeCount = 0;
                 let pendingCount = 0;
 
@@ -556,6 +559,7 @@
                     `;
                     fullTable.appendChild(row);
 
+                    totalUsersCount++;
                     const uRow = document.createElement('tr');
                     uRow.innerHTML = `
                         <td><strong>${p.name || p.salonName || 'Partner'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
@@ -571,25 +575,29 @@
                 kpiActive.innerText = activeCount;
                 kpiPending.innerText = pendingCount;
 
+                // 2. Admins laden
                 try {
                     const adminSnap = await getDocs(collection(db, "admin_users"));
                     adminSnap.forEach((aDoc) => {
                         const a = aDoc.data();
+                        totalUsersCount++;
                         const uRow = document.createElement('tr');
                         uRow.innerHTML = `
                             <td><strong>${a.firstname || ''} ${a.lastname || ''}</strong></td>
                             <td>${a.email || 'Keine E-Mail'}</td>
-                            <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role})</span></td>
+                            <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
                             <td><span class="badge badge-active">Aktiv</span></td>
                         `;
                         allUsersTable.appendChild(uRow);
                     });
                 } catch(e) {}
 
+                // 3. Kunden laden
                 try {
                     const custSnap = await getDocs(collection(db, "customers"));
                     custSnap.forEach((cDoc) => {
                         const c = cDoc.data();
+                        totalUsersCount++;
                         const uRow = document.createElement('tr');
                         uRow.innerHTML = `
                             <td><strong>${c.firstname || ''} ${c.lastname || ''}</strong></td>
@@ -601,10 +609,11 @@
                     });
                 } catch(e) {}
 
-                if(allUsersTable.innerHTML === "") {
-                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Keine Benutzer erfasst.</td></tr>`;
+                if(totalUsersCount === 0) {
+                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben, um den ersten Benutzer anzulegen.</td></tr>`;
                 }
 
+                // 4. Postkasten laden
                 const msgSnapshot = await getDocs(collection(db, "support_messages"));
                 inboxList.innerHTML = "";
                 let msgCount = 0;
@@ -624,7 +633,7 @@
                 kpiMessages.innerText = msgCount;
 
             } catch (error) {
-                console.error("Fehler:", error);
+                console.error("Fehler beim Laden der Daten:", error);
             }
         }
 
@@ -668,13 +677,13 @@
                     await addDoc(collection(db, "customers"), { firstname, lastname, email, createdAt: new Date().toISOString() });
                 }
 
-                alert('Benutzer erfolgreich angelegt!');
+                alert('Benutzer erfolgreich in Firestore gespeichert!');
                 userForm.reset();
                 toggleUserFields();
                 loadAdminDataFromFirebase();
             } catch (error) {
-                console.error("Fehler:", error);
-                alert('Fehler beim Speichern in Firestore.');
+                console.error("Fehler beim Speichern:", error);
+                alert('Fehler beim Speichern in Firestore: ' + error.message);
             }
         });
     </script>
