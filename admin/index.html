@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.2</title>
+    <title>Frisorando Admin - v1.1.1</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -224,6 +224,30 @@
         .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
         .form-input, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
 
+        /* Passwort-Container mit Augen-Icon */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 40px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-muted);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 20px; }
@@ -239,7 +263,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.2</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.1</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -249,7 +273,10 @@
             
             <div class="form-group">
                 <label>Passwort</label>
-                <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
+                <div class="password-wrapper">
+                    <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-pass', this)" title="Passwort anzeigen">👁️</button>
+                </div>
             </div>
 
             <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
@@ -305,7 +332,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.2)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.1)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -381,10 +408,13 @@
                             <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de (optional)">
                         </div>
 
-                        <!-- Passwort-Feld -->
+                        <!-- Passwort-Feld mit Augen-Icon -->
                         <div class="form-group">
                             <label>Sicheres Passwort</label>
-                            <input type="password" id="user-password" class="form-input" required>
+                            <div class="password-wrapper">
+                                <input type="password" id="user-password" class="form-input" required>
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-password', this)" title="Passwort anzeigen">👁️</button>
+                            </div>
                             <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
                                 <span style="background: var(--warning-bg); color: var(--warning); border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px;">!</span>
                                 <span>Passwort-Richtlinie: Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.</span>
@@ -484,8 +514,19 @@
         </div>
     </div>
 
-    <!-- Login-Logik -->
+    <!-- Login & Passwort-Auge Logik -->
     <script>
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.textContent = "🙈";
+            } else {
+                input.type = "password";
+                btn.textContent = "👁️";
+            }
+        }
+
         window.handleLogin = function() {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value;
@@ -521,10 +562,10 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Firebase & Hauptlogik als Modul mit erzwungenem Cache-Bypass -->
+    <!-- Firebase & Hauptlogik mit absolut frischem Cache-Bypass -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=TIMESTAMP_99999";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=NEW_EYE_FIX_2026";
 
         window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
