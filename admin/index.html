@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -347,7 +348,6 @@
             <div id="section-users" class="admin-section">
                 <div class="card">
                     <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Passwort-Richtlinie: Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.</p>
                     
                     <form id="universal-user-form" style="margin-bottom: 25px;">
                         <div class="form-group">
@@ -359,14 +359,14 @@
                             </select>
                         </div>
 
-                        <!-- Vorname & Nachname (dynamisch angepasst) -->
+                        <!-- Vorname & Nachname -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div class="form-group">
-                                <label id="label-firstname">Vorname</label>
+                                <label>Vorname</label>
                                 <input type="text" id="user-firstname" class="form-input" required>
                             </div>
                             <div class="form-group">
-                                <label id="label-lastname">Nachname</label>
+                                <label>Nachname</label>
                                 <input type="text" id="user-lastname" class="form-input" required>
                             </div>
                         </div>
@@ -382,9 +382,14 @@
                             <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de (optional)">
                         </div>
 
+                        <!-- Passwort-Feld mit dezentem Info-Ausrufezeichen direkt darunter -->
                         <div class="form-group">
                             <label>Sicheres Passwort</label>
                             <input type="password" id="user-password" class="form-input" required>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                <span style="background: var(--warning-bg); color: var(--warning); border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px;" title="Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.">!</span>
+                                <span>Passwort-Richtlinie: Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.</span>
+                            </div>
                         </div>
                         
                         <div id="partner-extra-fields" style="display: none;">
@@ -640,7 +645,7 @@
             const roleType = document.getElementById('user-role-type').value;
             const firstname = document.getElementById('user-firstname').value;
             const lastname = document.getElementById('user-lastname').value;
-            const email = document.getElementById('user-email').value || 'Keine E-Mail';
+            const email = document.getElementById('user-email').value.trim() || 'Keine E-Mail';
             const password = document.getElementById('user-password').value;
 
             function isPasswordSecure(password) {
