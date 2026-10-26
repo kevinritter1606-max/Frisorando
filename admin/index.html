@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.1</title>
+    <title>Frisorando Admin - v1.1.2</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -239,7 +239,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.1</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.2</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -305,7 +305,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.1)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.2)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -521,10 +521,10 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Firebase & Hauptlogik als Modul mit brandneuer Cache-ID -->
+    <!-- Firebase & Hauptlogik als Modul mit erzwungenem Cache-Bypass -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=FRESH_BUILD_2026";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=TIMESTAMP_99999";
 
         window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
