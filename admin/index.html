@@ -236,7 +236,7 @@
 </head>
 <body>
 
-    <!-- SICHERES LOGIN-FENSTER -->
+    <!-- SICHERES LOGIN-FENSTER (Felder sind leer) -->
     <div id="login-overlay">
         <div class="login-card">
             <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin</h2>
@@ -244,11 +244,11 @@
             <form id="login-form">
                 <div class="form-group">
                     <label>Benutzername oder E-Mail</label>
-                    <input type="text" id="login-user" class="form-input" required placeholder="kevin.ritter1606@googlemail.com">
+                    <input type="text" id="login-user" class="form-input" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label>Passwort</label>
-                    <input type="password" id="login-pass" class="form-input" required placeholder="••••••••">
+                    <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px;">Anmelden</button>
             </form>
@@ -279,7 +279,7 @@
                 <div class="header-title" id="page-title">Dashboard & Live-Kennzahlen</div>
             </div>
             <div class="user-profile">
-                <span id="current-admin-name">👤 Kevin Ritter</span>
+                <span id="current-admin-name">👤 Administrator</span>
                 <button class="logout-btn" onclick="logoutAdmin()">Abmelden</button>
             </div>
         </header>
@@ -342,7 +342,7 @@
                 </div>
             </div>
 
-            <!-- 4. Benutzerverwaltung mit Passwort-Sicherheitsprüfung -->
+            <!-- 4. Benutzerverwaltung -->
             <div id="section-users" class="admin-section">
                 <div class="card">
                     <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen</h3>
@@ -359,21 +359,21 @@
                         </div>
                         <div class="form-group">
                             <label>Vollständiger Name / Salonname</label>
-                            <input type="text" id="user-name" class="form-input" placeholder="z. B. Max Mustermann" required>
+                            <input type="text" id="user-name" class="form-input" required>
                         </div>
                         <div class="form-group">
                             <label>E-Mail-Adresse</label>
-                            <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de" required>
+                            <input type="email" id="user-email" class="form-input" required>
                         </div>
                         <div class="form-group">
                             <label>Sicheres Passwort</label>
-                            <input type="password" id="user-password" class="form-input" placeholder="Mind. 8 Zeichen, Ziffern & Sonderzeichen" required>
+                            <input type="password" id="user-password" class="form-input" required>
                         </div>
                         
                         <div id="partner-extra-fields" style="display: none;">
                             <div class="form-group">
                                 <label>Standort / PLZ</label>
-                                <input type="text" id="user-location" class="form-input" placeholder="z. B. 79618 Rheinfelden">
+                                <input type="text" id="user-location" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label>Service-Typ</label>
@@ -468,7 +468,6 @@
         import { db } from "../assets/js/firebase.js";
         import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Login-Prüfung beim Start
         window.addEventListener('DOMContentLoaded', () => {
             const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
             if (loggedIn === 'true') {
@@ -477,7 +476,6 @@
             }
         });
 
-        // Login Formular absenden (Mit deinen festen Zugangsdaten)
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -502,7 +500,6 @@
             location.reload();
         }
 
-        // Passwort-Sicherheitsprüfung
         function isPasswordSecure(password) {
             const minLength = password.length >= 8;
             const hasUpper = /[A-Z]/.test(password);
