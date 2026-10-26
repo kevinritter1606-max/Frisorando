@@ -249,7 +249,6 @@
             
             <div class="form-group">
                 <label>Passwort</label>
-                <!-- Nutzt das native Browser-Auge, ohne eigenes Extra-Icon -->
                 <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
             </div>
 
@@ -359,14 +358,30 @@
                                 <option value="customer">Endkunde</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Vollständiger Name / Salonname</label>
-                            <input type="text" id="user-name" class="form-input" required>
+
+                        <!-- Vorname & Nachname (dynamisch angepasst) -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label id="label-firstname">Vorname</label>
+                                <input type="text" id="user-firstname" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label id="label-lastname">Nachname</label>
+                                <input type="text" id="user-lastname" class="form-input" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>E-Mail-Adresse</label>
-                            <input type="email" id="user-email" class="form-input" required>
+
+                        <!-- Salonname (Nur bei Partnern sichtbar) -->
+                        <div class="form-group" id="group-salonname" style="display: none;">
+                            <label>Salonname</label>
+                            <input type="text" id="user-salonname" class="form-input" placeholder="z. B. Haircut Lounge">
                         </div>
+
+                        <div class="form-group">
+                            <label>E-Mail-Adresse (Optional)</label>
+                            <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de (optional)">
+                        </div>
+
                         <div class="form-group">
                             <label>Sicheres Passwort</label>
                             <input type="password" id="user-password" class="form-input" required>
@@ -529,7 +544,7 @@
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><strong>${p.name}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.ownerFirstname || ''} ${p.ownerLastname || ''}</span></td>
+                        <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
                         <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
                         <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
                         <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
@@ -539,8 +554,8 @@
 
                     const uRow = document.createElement('tr');
                     uRow.innerHTML = `
-                        <td><strong>${p.name}</strong></td>
-                        <td>${p.email || 'k.A.'}</td>
+                        <td><strong>${p.name || p.salonName || 'Partner'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                        <td>${p.email || 'Keine E-Mail'}</td>
                         <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
                         <td><span class="badge badge-active">${p.status || 'active'}</span></td>
                     `;
@@ -558,8 +573,8 @@
                         const a = aDoc.data();
                         const uRow = document.createElement('tr');
                         uRow.innerHTML = `
-                            <td><strong>${a.name}</strong></td>
-                            <td>${a.email}</td>
+                            <td><strong>${a.firstname || ''} ${a.lastname || ''}</strong></td>
+                            <td>${a.email || 'Keine E-Mail'}</td>
                             <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role})</span></td>
                             <td><span class="badge badge-active">Aktiv</span></td>
                         `;
@@ -573,127 +588,11 @@
                         const c = cDoc.data();
                         const uRow = document.createElement('tr');
                         uRow.innerHTML = `
-                            <td><strong>${c.name}</strong></td>
-                            <td>${c.email}</td>
+                            <td><strong>${c.firstname || ''} ${c.lastname || ''}</strong></td>
+                            <td>${c.email || 'Keine E-Mail'}</td>
                             <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
                             <td><span class="badge badge-active">Aktiv</span></td>
                         `;
                         allUsersTable.appendChild(uRow);
                     });
-                } catch(e) {}
-
-                if(allUsersTable.innerHTML === "") {
-                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Keine Benutzer erfasst.</td></tr>`;
-                }
-
-                const msgSnapshot = await getDocs(collection(db, "support_messages"));
-                inboxList.innerHTML = "";
-                let msgCount = 0;
-
-                if (!msgSnapshot.empty) {
-                    msgSnapshot.forEach((msgDoc) => {
-                        const m = msgDoc.data();
-                        msgCount++;
-                        const msgBox = document.createElement('div');
-                        msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 13px;";
-                        msgBox.innerHTML = `<strong>Salon: ${m.salonName}</strong><p style="margin: 5px 0;">${m.messageText}</p>`;
-                        inboxList.appendChild(msgBox);
-                    });
-                } else {
-                    inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
-                }
-                kpiMessages.innerText = msgCount;
-
-            } catch (error) {
-                console.error("Fehler:", error);
-            }
-        }
-
-        window.approvePartner = async function(id) {
-            try {
-                await updateDoc(doc(db, "partners", id), { status: 'active' });
-                alert('Partner erfolgreich freigeschaltet!');
-                loadAdminDataFromFirebase();
-            } catch (error) {
-                alert('Fehler beim Freigeben.');
-            }
-        }
-
-        const userForm = document.getElementById('universal-user-form');
-        userForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const roleType = document.getElementById('user-role-type').value;
-            const name = document.getElementById('user-name').value;
-            const email = document.getElementById('user-email').value;
-            const password = document.getElementById('user-password').value;
-
-            function isPasswordSecure(password) {
-                return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
-            }
-
-            if (!isPasswordSecure(password)) {
-                alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
-                return;
-            }
-
-            try {
-                if (roleType === 'admin') {
-                    await addDoc(collection(db, "admin_users"), { name, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
-                } else if (roleType === 'partner') {
-                    const location = document.getElementById('user-location').value || 'Rheinfelden';
-                    const type = document.getElementById('user-service-type').value;
-                    await addDoc(collection(db, "partners"), { name, email, location, type, status: 'active', createdAt: new Date().toISOString() });
-                } else if (roleType === 'customer') {
-                    await addDoc(collection(db, "customers"), { name, email, createdAt: new Date().toISOString() });
-                }
-
-                alert('Benutzer erfolgreich mit sicherem Passwort angelegt!');
-                userForm.reset();
-                toggleUserFields();
-                loadAdminDataFromFirebase();
-            } catch (error) {
-                console.error("Fehler:", error);
-                alert('Fehler beim Speichern.');
-            }
-        });
-    </script>
-
-    <!-- Navigation & UI Logik -->
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-open');
-        }
-
-        function toggleUserFields() {
-            const role = document.getElementById('user-role-type').value;
-            const partnerFields = document.getElementById('partner-extra-fields');
-            partnerFields.style.display = (role === 'partner') ? 'block' : 'none';
-        }
-
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.toggle('active', sec.id === 'section-' + tabId));
-            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-
-            const titles = {
-                'dashboard': 'Dashboard & Live-Kennzahlen',
-                'partners': 'Partner & Verifizierung',
-                'inbox': 'Postkasten & Support-Anfragen',
-                'users': 'Universelle Benutzerverwaltung',
-                'settings': 'Plattform-Einstellungen'
-            };
-            document.getElementById('page-title').innerText = titles[tabId];
-
-            if (window.innerWidth < 768) toggleSidebar();
-        }
-
-        function switchSettingsTab(tabName, btnElement) {
-            document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('stab-' + tabName).classList.add('active');
-            btnElement.classList.add('active');
-        }
-    </script>
-</body>
-</html>
+                } catch
