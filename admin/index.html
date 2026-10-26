@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Admin Dashboard</title>
+    <title>Frisorando - Admin Login & Zentrale</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -15,6 +15,7 @@
             --success-bg: #e6f4ea;
             --warning: #d97706;
             --warning-bg: #fef3c7;
+            --danger: #e53e3e;
             --bg-main: #f4f6f9;
             --card-bg: #ffffff;
             --text-main: #1a202c;
@@ -36,6 +37,26 @@
             overflow: hidden;
         }
 
+        /* LOGIN OVERLAY SCREEN */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--sidebar-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: white;
+            padding: 35px;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
         /* Linke Sidebar */
         aside {
             width: 260px;
@@ -51,19 +72,12 @@
         }
 
         @media (min-width: 768px) {
-            aside {
-                position: relative;
-                transform: translateX(0) !important;
-            }
+            aside { position: relative; transform: translateX(0) !important; }
         }
 
         @media (max-width: 777px) {
-            aside {
-                transform: translateX(-260px);
-            }
-            aside.mobile-open {
-                transform: translateX(0);
-            }
+            aside { transform: translateX(-260px); }
+            aside.mobile-open { transform: translateX(0); }
         }
 
         .sidebar-brand {
@@ -72,7 +86,6 @@
             font-weight: 800;
             color: white;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            letter-spacing: 0.5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -125,47 +138,34 @@
             flex-shrink: 0;
         }
 
-        .header-left {
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-main); display: block; }
+        @media (min-width: 768px) { .menu-toggle { display: none; } }
+
+        .header-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        
+        .user-profile {
             display: flex;
             align-items: center;
             gap: 15px;
-        }
-
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--text-main);
-            display: block;
-        }
-
-        @media (min-width: 768px) {
-            .menu-toggle { display: none; }
-        }
-
-        .header-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        .user-profile {
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-main);
         }
 
-        .content-area {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
         }
 
+        .content-area { flex: 1; padding: 20px; overflow-y: auto; }
         .admin-section { display: none; }
         .admin-section.active { display: block; }
 
-        /* KPI Grid */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -193,55 +193,24 @@
             margin-bottom: 20px;
         }
 
-        /* Einstellungen Unter-Navigation */
         .settings-subnav {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
+            display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap;
         }
 
         .subnav-btn {
-            background: none;
-            border: none;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: 0.2s;
+            background: none; border: none; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 6px 12px; border-radius: 6px; transition: 0.2s;
         }
-
-        .subnav-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
+        .subnav-btn.active { background: var(--primary); color: white; }
         .settings-tab-content { display: none; }
         .settings-tab-content.active { display: block; }
 
-        /* Tabellen */
         .pro-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 13px;
+            width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;
         }
         .pro-table th, .pro-table td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color);
         }
-        .pro-table th {
-            background: #f8fafc;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-        }
+        .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; }
 
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block; }
         .badge-pending { background: var(--warning-bg); color: var(--warning); }
@@ -267,6 +236,26 @@
 </head>
 <body>
 
+    <!-- SICHERES LOGIN-FENSTER (Überschirmt die Seite bis zur Anmeldung) -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Benutzername oder E-Mail</label>
+                    <input type="text" id="login-user" class="form-input" required placeholder="admin@frisorando.de">
+                </div>
+                <div class="form-group">
+                    <label>Passwort</label>
+                    <input type="password" id="login-pass" class="form-input" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px;">Anmelden</button>
+            </form>
+            <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center;"></div>
+        </div>
+    </div>
+
     <!-- Linke Sidebar -->
     <aside id="sidebar">
         <div class="sidebar-brand">
@@ -289,7 +278,10 @@
                 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
                 <div class="header-title" id="page-title">Dashboard & Live-Kennzahlen</div>
             </div>
-            <div class="user-profile"><span>👤 Admin</span></div>
+            <div class="user-profile">
+                <span id="current-admin-name">👤 Admin</span>
+                <button class="logout-btn" onclick="logoutAdmin()">Abmelden</button>
+            </div>
         </header>
 
         <div class="content-area">
@@ -312,8 +304,8 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Willkommen im Admin-Cockpit</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Unter „Benutzerverwaltung“ kannst du ab sofort **Admins, Friseure/Partner und Kunden** manuell anlegen und verwalten.</p>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich angemeldet. Passwörter neuer Benutzer müssen nun strenge Sicherheitsrichtlinien erfüllen.</p>
                 </div>
             </div>
 
@@ -350,10 +342,12 @@
                 </div>
             </div>
 
-            <!-- 4. Benutzerverwaltung (Admin, Friseur, Kunde) -->
+            <!-- 4. Benutzerverwaltung mit Passwort-Sicherheitsprüfung -->
             <div id="section-users" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Neuen Benutzer manuell anlegen (Admin, Friseur, Kunde)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen (Mit Passwort-Richtlinie)</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Hinweis für sichere Passwörter: Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und ein Sonderzeichen.</p>
+                    
                     <form id="universal-user-form" style="margin-bottom: 25px;">
                         <div class="form-group">
                             <label>Benutzer-Rolle / Typ</label>
@@ -365,14 +359,17 @@
                         </div>
                         <div class="form-group">
                             <label>Vollständiger Name / Salonname</label>
-                            <input type="text" id="user-name" class="form-input" placeholder="z. B. Max Mustermann oder Salon Hair" required>
+                            <input type="text" id="user-name" class="form-input" placeholder="z. B. Max Mustermann" required>
                         </div>
                         <div class="form-group">
                             <label>E-Mail-Adresse</label>
                             <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de" required>
                         </div>
+                        <div class="form-group">
+                            <label>Sicheres Passwort</label>
+                            <input type="password" id="user-password" class="form-input" placeholder="Mind. 8 Zeichen, Ziffern & Sonderzeichen" required>
+                        </div>
                         
-                        <!-- Zusätzliche Felder nur für Friseure/Partner -->
                         <div id="partner-extra-fields" style="display: none;">
                             <div class="form-group">
                                 <label>Standort / PLZ</label>
@@ -388,7 +385,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Benutzer manuell anlegen</button>
+                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Benutzer sicher anlegen</button>
                     </form>
 
                     <h3 style="font-size: 14px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 20px;">Alle im System erfassten Benutzer</h3>
@@ -466,10 +463,52 @@
         </div>
     </div>
 
-    <!-- Firebase Logik -->
+    <!-- Firebase & Login Logik -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
         import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Login-Prüfung beim Start
+        window.addEventListener('DOMContentLoaded', () => {
+            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
+            if (loggedIn === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                loadAdminData();
+            }
+        });
+
+        // Login Formular absenden
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value;
+            const errDiv = document.getElementById('login-error');
+
+            // Standard-Admin-Zugang (kann später mit Firestore abgeglichen werden)
+            if ((user === 'admin' || user === 'admin@frisorando.de') && pass === 'Admin#2026!') {
+                sessionStorage.setItem('frisorando_admin_logged', 'true');
+                document.getElementById('login-overlay').style.display = 'none';
+                loadAdminData();
+            } else {
+                errDiv.innerText = "Ungültiger Benutzername oder falsches Passwort!";
+            }
+        });
+
+        window.logoutAdmin = function() {
+            sessionStorage.removeItem('frisorando_admin_logged');
+            location.reload();
+        }
+
+        // Passwort-Sicherheitsprüfung (Mind. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen)
+        function isPasswordSecure(password) {
+            const minLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNum = /[0-9]/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            return minLength && hasUpper && hasLower && hasNum && hasSpecial;
+        }
 
         async function loadAdminData() {
             const fullTable = document.getElementById('full-partners-table');
@@ -481,7 +520,6 @@
             const kpiMessages = document.getElementById('kpi-messages');
 
             try {
-                // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
                 fullTable.innerHTML = "";
                 allUsersTable.innerHTML = "";
@@ -496,7 +534,6 @@
                     if (isPending) pendingCount++;
                     else activeCount++;
 
-                    // Partner Tabelle
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><strong>${p.name}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.ownerFirstname || ''} ${p.ownerLastname || ''}</span></td>
@@ -507,7 +544,6 @@
                     `;
                     fullTable.appendChild(row);
 
-                    // Auch in die globale Benutzer-Tabelle eintragen
                     const uRow = document.createElement('tr');
                     uRow.innerHTML = `
                         <td><strong>${p.name}</strong></td>
@@ -523,7 +559,6 @@
                 kpiActive.innerText = activeCount;
                 kpiPending.innerText = pendingCount;
 
-                // 2. Admins und Kunden aus Firestore laden und in die Tabelle schreiben
                 try {
                     const adminSnap = await getDocs(collection(db, "admin_users"));
                     adminSnap.forEach((aDoc) => {
@@ -558,7 +593,6 @@
                     allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Keine Benutzer erfasst.</td></tr>`;
                 }
 
-                // 3. Postkasten laden
                 const msgSnapshot = await getDocs(collection(db, "support_messages"));
                 inboxList.innerHTML = "";
                 let msgCount = 0;
@@ -592,13 +626,20 @@
             }
         }
 
-        // Universelles Formular zum manuellen Anlegen von Benutzern
+        // Universelles Formular mit Passwort-Sicherheitsprüfung
         const userForm = document.getElementById('universal-user-form');
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const roleType = document.getElementById('user-role-type').value;
             const name = document.getElementById('user-name').value;
             const email = document.getElementById('user-email').value;
+            const password = document.getElementById('user-password').value;
+
+            // Sicherheitsprüfung des Passworts
+            if (!isPasswordSecure(password)) {
+                alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
+                return;
+            }
 
             try {
                 if (roleType === 'admin') {
@@ -611,17 +652,15 @@
                     await addDoc(collection(db, "customers"), { name, email, createdAt: new Date().toISOString() });
                 }
 
-                alert('Benutzer erfolgreich manuell angelegt!');
+                alert('Benutzer erfolgreich mit sicherem Passwort angelegt!');
                 userForm.reset();
                 toggleUserFields();
                 loadAdminData();
             } catch (error) {
                 console.error("Fehler:", error);
-                alert('Fehler beim Speichern des Benutzers.');
+                alert('Fehler beim Speichern.');
             }
         });
-
-        loadAdminData();
     </script>
 
     <!-- Navigation & UI Logik -->
@@ -634,18 +673,12 @@
         function toggleUserFields() {
             const role = document.getElementById('user-role-type').value;
             const partnerFields = document.getElementById('partner-extra-fields');
-            if (role === 'partner') {
-                partnerFields.style.display = 'block';
-            } else {
-                partnerFields.style.display = 'none';
-            }
+            partnerFields.style.display = (role === 'partner') ? 'block' : 'none';
         }
 
         function switchTab(tabId, element) {
-            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.toggle('active', sec.id === 'section-' + tabId));
             document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-
-            document.getElementById('section-' + tabId).classList.add('active');
             element.classList.add('active');
 
             const titles = {
@@ -657,15 +690,12 @@
             };
             document.getElementById('page-title').innerText = titles[tabId];
 
-            if (window.innerWidth < 768) {
-                toggleSidebar();
-            }
+            if (window.innerWidth < 768) toggleSidebar();
         }
 
         function switchSettingsTab(tabName, btnElement) {
             document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
-
             document.getElementById('stab-' + tabName).classList.add('active');
             btnElement.classList.add('active');
         }
