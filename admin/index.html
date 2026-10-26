@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.11</title>
+    <title>Frisorando Admin - v1.1.13</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -16,13 +16,13 @@
             --warning: #d97706;
             --warning-bg: #fef3c7;
             --danger: #e53e3e;
-            --bg-main: #f4f6f9;
+            --bg-main: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1a202c;
+            --text-main: #1e293b;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --radius: 8px;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            --radius: 6px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
 
         * { box-sizing: border-box; }
@@ -60,16 +60,16 @@
 
         .login-card {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: var(--radius);
             width: 90%;
-            max-width: 380px;
+            max-width: 360px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         /* Linke Sidebar */
         aside {
-            width: 260px;
+            width: 240px;
             background: var(--sidebar-bg);
             color: var(--sidebar-text);
             display: flex;
@@ -88,16 +88,16 @@
         }
 
         @media (max-width: 777px) {
-            aside { transform: translateX(-260px); }
+            aside { transform: translateX(-240px); }
             aside.mobile-open { transform: translateX(0); }
         }
 
         .sidebar-brand {
-            padding: 20px;
-            font-size: 18px;
-            font-weight: 800;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
             color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -105,24 +105,24 @@
 
         .sidebar-menu {
             list-style: none;
-            padding: 15px 10px;
+            padding: 10px 8px;
             margin: 0;
             flex: 1;
             overflow-y: auto;
         }
 
         .sidebar-item {
-            padding: 10px 14px;
-            border-radius: 6px;
+            padding: 9px 12px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
             color: var(--sidebar-text);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: 0.2s;
+            transition: 0.15s;
         }
 
         .sidebar-item:hover, .sidebar-item.active {
@@ -144,38 +144,38 @@
         }
 
         header {
-            height: 55px;
+            height: 50px;
             background: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 15px;
             flex-shrink: 0;
             position: sticky;
             top: 0;
             z-index: 900;
         }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-toggle { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-main); display: block; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-toggle { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-main); display: block; }
         @media (min-width: 768px) { .menu-toggle { display: none; } }
 
-        .header-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+        .header-title { font-size: 13px; font-weight: 700; color: var(--text-main); }
         
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .logout-btn {
             background: var(--danger);
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 7px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 11px;
@@ -183,70 +183,86 @@
 
         .content-area { 
             flex: 1; 
-            padding: 15px; 
+            padding: 12px; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
         }
 
         @media (min-width: 768px) {
-            .content-area { height: calc(100vh - 55px); }
+            .content-area { height: calc(100vh - 50px); }
         }
 
         .admin-section { display: none; }
         .admin-section.active { display: block; }
 
+        /* Drag & Drop Dashboard Elemente */
+        .draggable-card {
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .draggable-card:active {
+            cursor: grabbing;
+        }
+        .draggable-card.dragging {
+            opacity: 0.4;
+        }
+
+        /* Sehr dezente, kompakte KPI-Leiste */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .kpi-card {
             background: var(--card-bg);
-            padding: 14px;
+            padding: 10px 12px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .kpi-title { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-        .kpi-value { font-size: 20px; font-weight: 800; color: var(--text-main); }
+        .kpi-title { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+        .kpi-value { font-size: 16px; font-weight: 800; color: var(--text-main); }
 
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 15px;
+            padding: 12px 15px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
-        /* Dashboard Grafik / Chart Bereiche */
+        /* Chart Header & Tabs */
         .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
 
         .chart-tabs {
             display: flex;
-            gap: 4px;
+            gap: 3px;
         }
 
         .chart-tab-btn {
             background: #f1f5f9;
             border: none;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
-            transition: 0.2s;
+            transition: 0.15s;
         }
 
         .chart-tab-btn.active {
@@ -254,16 +270,16 @@
             color: white;
         }
 
-        /* Visuelle Balken-Grafik Darstellung */
+        /* Dezentes Balken-Chart */
         .chart-bars {
             display: flex;
             align-items: flex-end;
             justify-content: space-around;
-            height: 160px;
-            padding-top: 20px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 10px;
-            gap: 10px;
+            height: 130px;
+            padding-top: 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 6px;
+            gap: 8px;
         }
 
         .bar-col {
@@ -277,39 +293,36 @@
 
         .bar {
             width: 100%;
-            max-width: 36px;
-            background: var(--primary);
-            border-radius: 4px 4px 0 0;
-            transition: height 0.4s ease;
-            position: relative;
+            max-width: 28px;
+            background: #3182ce;
+            border-radius: 3px 3px 0 0;
+            transition: height 0.3s ease;
         }
 
-        .bar:hover {
-            opacity: 0.85;
-        }
+        .bar:hover { opacity: 0.85; }
 
         .bar-label {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-muted);
-            margin-top: 6px;
+            margin-top: 4px;
             text-align: center;
             white-space: nowrap;
         }
 
         .bar-val {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
-        /* Kompakte, dezente Sub-Navigation */
+        /* Kompakte Sub-Navigation */
         .settings-subnav {
-            display: flex; gap: 6px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; flex-wrap: wrap;
+            display: flex; gap: 5px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; flex-wrap: wrap;
         }
 
         .subnav-btn {
-            background: #f1f5f9; border: none; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s;
+            background: #f1f5f9; border: none; font-size: 11px; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: 0.15s;
         }
         .subnav-btn.active { background: var(--primary); color: white; }
         .settings-tab-content { display: none; }
@@ -319,54 +332,52 @@
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin-top: 8px;
+            margin-top: 6px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 5px;
         }
 
         .pro-table {
             width: 100%; 
             border-collapse: collapse; 
-            font-size: 12px;
-            min-width: 600px;
+            font-size: 11px;
+            min-width: 580px;
         }
         .pro-table th, .pro-table td {
-            padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color);
+            padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color);
             white-space: nowrap;
         }
-        .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 10px; text-transform: uppercase; }
+        .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 9px; text-transform: uppercase; }
 
-        .badge { padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; display: inline-block; }
-        .badge-pending { background: var(--warning-bg); color: var(--warning); display: inline-flex; align-items: center; gap: 3px; }
+        .badge { padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: 700; display: inline-block; }
+        .badge-pending { background: var(--warning-bg); color: var(--warning); display: inline-flex; align-items: center; gap: 2px; }
         .badge-active { background: var(--success-bg); color: var(--success); }
 
         .btn-action {
-            background: var(--success); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px;
+            background: var(--success); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 10px;
         }
 
         .btn-edit {
-            background: var(--primary); color: white; border: none; padding: 5px 8px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px; margin-right: 3px;
+            background: var(--primary); color: white; border: none; padding: 4px 7px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 10px; margin-right: 2px;
         }
 
         .btn-mail {
-            background: #805ad5; color: white; border: none; padding: 5px 8px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px; margin-right: 3px; text-decoration: none; display: inline-block;
+            background: #805ad5; color: white; border: none; padding: 4px 7px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 10px; margin-right: 2px; text-decoration: none; display: inline-block;
         }
 
         .btn-danger {
-            background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px;
+            background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 10px;
         }
 
         .btn-disabled {
-            background: #cbd5e1; color: #64748b; border: none; padding: 5px 10px; border-radius: 5px; font-weight: 600; font-size: 11px; cursor: not-allowed; opacity: 0.6;
+            background: #cbd5e1; color: #64748b; border: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 10px; cursor: not-allowed; opacity: 0.6;
         }
 
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 10px; font-weight: 700; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase; }
-        .form-input, .form-select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 13px; background: #fff; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 9px; font-weight: 700; margin-bottom: 3px; color: var(--text-muted); text-transform: uppercase; }
+        .form-input, .form-select { width: 100%; padding: 7px 9px; border-radius: 5px; border: 1px solid var(--border-color); font-size: 12px; background: #fff; }
 
-        .search-box {
-            margin-bottom: 12px;
-        }
+        .search-box { margin-bottom: 10px; }
 
         /* Modal für Bearbeitung */
         #edit-modal {
@@ -374,7 +385,7 @@
             background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 10000;
         }
         .modal-card {
-            background: white; padding: 20px; border-radius: var(--radius); width: 90%; max-width: 400px;
+            background: white; padding: 18px; border-radius: var(--radius); width: 90%; max-width: 380px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
@@ -386,15 +397,15 @@
         }
         .password-wrapper input {
             width: 100%;
-            padding-right: 35px;
+            padding-right: 32px;
         }
         .toggle-password {
             position: absolute;
-            right: 10px;
+            right: 8px;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             padding: 0;
             display: flex;
@@ -402,13 +413,13 @@
             justify-content: center;
         }
 
-        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+        .switch { position: relative; display: inline-block; width: 32px; height: 16px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 18px; }
-        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .2s; border-radius: 16px; }
+        .slider:before { position: absolute; content: ""; height: 10px; width: 10px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(18px); }
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        input:checked + .slider:before { transform: translateX(16px); }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 12px; }
         .toggle-row:last-child { border-bottom: none; }
     </style>
 </head>
@@ -417,8 +428,8 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 20px;">Frisorando Admin <span style="font-size: 10px; color: var(--text-muted);">v1.1.11</span></h2>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.13</span></h2>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
                 <label>Benutzername oder E-Mail</label>
@@ -433,15 +444,15 @@
                 </div>
             </div>
 
-            <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 10px; font-size: 13px; margin-top: 8px;">Anmelden</button>
-            <div id="login-error" style="color: var(--danger); font-size: 11px; margin-top: 8px; text-align: center;"></div>
+            <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 8px; font-size: 12px; margin-top: 6px;">Anmelden</button>
+            <div id="login-error" style="color: var(--danger); font-size: 10px; margin-top: 6px; text-align: center;"></div>
         </div>
     </div>
 
     <!-- BEARBEITUNGS-MODAL -->
     <div id="edit-modal">
         <div class="modal-card">
-            <h3 style="margin-top: 0; color: var(--primary); font-size: 16px;">Benutzer bearbeiten</h3>
+            <h3 style="margin-top: 0; color: var(--primary); font-size: 15px;">Benutzer bearbeiten</h3>
             <form id="edit-user-form" onsubmit="window.saveEditedUser(event)">
                 <input type="hidden" id="edit-col-name">
                 <input type="hidden" id="edit-doc-id">
@@ -462,9 +473,9 @@
                     </select>
                 </div>
 
-                <div style="display: flex; gap: 8px; margin-top: 15px;">
-                    <button type="submit" class="btn-action" style="flex: 1; padding: 8px;">Speichern</button>
-                    <button type="button" class="btn-danger" style="flex: 1; padding: 8px;" onclick="document.getElementById('edit-modal').style.display='none'">Abbrechen</button>
+                <div style="display: flex; gap: 6px; margin-top: 12px;">
+                    <button type="submit" class="btn-action" style="flex: 1; padding: 7px;">Speichern</button>
+                    <button type="button" class="btn-danger" style="flex: 1; padding: 7px;" onclick="document.getElementById('edit-modal').style.display='none'">Abbrechen</button>
                 </div>
             </form>
         </div>
@@ -474,7 +485,7 @@
     <aside id="sidebar">
         <div class="sidebar-brand">
             Frisorando Admin
-            <span style="font-size: 16px; cursor: pointer; display: inline-block;" class="menu-toggle" onclick="toggleSidebar()">✕</span>
+            <span style="font-size: 15px; cursor: pointer; display: inline-block;" class="menu-toggle" onclick="toggleSidebar()">✕</span>
         </div>
         <ul class="sidebar-menu">
             <li class="sidebar-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
@@ -500,54 +511,55 @@
 
         <div class="content-area">
             
-            <!-- 1. Dashboard mit neuen Umsatz-Grafiken -->
+            <!-- 1. Dashboard (Vollständig per Drag & Drop verschiebbar) -->
             <div id="section-dashboard" class="admin-section active">
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-title">Aktive Salons</div>
-                        <div class="kpi-value" id="kpi-active">0</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-title">Wartende Anträge</div>
-                        <div class="kpi-value" id="kpi-pending" style="color: var(--warning);">0</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-title">Postkasten</div>
-                        <div class="kpi-value" id="kpi-messages" style="color: var(--primary);">0</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-title">Gesamt-Umsatz (Est.)</div>
-                        <div class="kpi-value" id="kpi-revenue" style="color: var(--success);">€ 0</div>
-                    </div>
-                </div>
-
-                <!-- Umsatz-Grafik & Chart Sektion -->
-                <div class="card">
-                    <div class="chart-header">
-                        <h3 style="margin: 0; font-size: 13px; color: var(--primary);">Umsatz & Plattform-Entwicklung</h3>
-                        <div class="chart-tabs">
-                            <button class="chart-tab-btn active" onclick="switchChartRange('1m', this)">1 Monat</button>
-                            <button class="chart-tab-btn" onclick="switchChartRange('6m', this)">6 Monate</button>
-                            <button class="chart-tab-btn" onclick="switchChartRange('12m', this)">12 Monate</button>
+                <div id="sortable-dashboard-container">
+                    
+                    <!-- KPI Leiste -->
+                    <div class="kpi-grid draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
+                        <div class="kpi-card">
+                            <div class="kpi-title">Aktive Salons</div>
+                            <div class="kpi-value" id="kpi-active">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Wartende Anträge</div>
+                            <div class="kpi-value" id="kpi-pending" style="color: var(--warning);">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Postkasten</div>
+                            <div class="kpi-value" id="kpi-messages" style="color: var(--primary);">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Gesamt-Umsatz (Est.)</div>
+                            <div class="kpi-value" id="kpi-revenue" style="color: var(--success);">€ 0</div>
                         </div>
                     </div>
-                    
-                    <!-- Visueller Balken-Container -->
-                    <div class="chart-bars" id="chart-container-bars">
-                        <!-- Dynamisch befüllt -->
-                    </div>
-                </div>
 
-                <div class="card">
-                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.11)</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
+                    <!-- Umsatz-Grafik & Chart Sektion -->
+                    <div class="card draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
+                        <div class="chart-header">
+                            <h3 style="margin: 0; font-size: 12px; color: var(--primary);">Umsatz & Plattform-Entwicklung (Verschiebbar)</h3>
+                            <div class="chart-tabs">
+                                <button class="chart-tab-btn active" onclick="switchChartRange('1m', this)">1 Monat</button>
+                                <button class="chart-tab-btn" onclick="switchChartRange('6m', this)">6 Monate</button>
+                                <button class="chart-tab-btn" onclick="switchChartRange('12m', this)">12 Monate</button>
+                            </div>
+                        </div>
+                        <div class="chart-bars" id="chart-container-bars"></div>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="card draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)" style="padding: 10px 12px;">
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.13) – Tipp: Dashboard-Elemente lassen sich per Drag & Drop anordnen.</p>
+                    </div>
+
                 </div>
             </div>
 
             <!-- 2. Partner & Freigaben -->
             <div id="section-partners" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Partner-Verifizierung (§ 1 HwO)</h3>
+                    <h3 style="margin-top: 0; font-size: 12px; color: var(--primary);">Partner-Verifizierung (§ 1 HwO)</h3>
                     <div class="table-responsive">
                         <table class="pro-table">
                             <thead>
@@ -570,9 +582,9 @@
             <!-- 3. Postkasten -->
             <div id="section-inbox" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Postkasten / Support-Anfragen</h3>
+                    <h3 style="margin-top: 0; font-size: 12px; color: var(--primary);">Postkasten / Support-Anfragen</h3>
                     <div id="inbox-messages-container">
-                        <p style="color: var(--text-muted); font-size: 12px;">Keine Nachrichten vorhanden.</p>
+                        <p style="color: var(--text-muted); font-size: 11px;">Keine Nachrichten vorhanden.</p>
                     </div>
                 </div>
             </div>
@@ -580,9 +592,9 @@
             <!-- 4. Benutzerverwaltung -->
             <div id="section-users" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Benutzer manuell anlegen</h3>
+                    <h3 style="margin-top: 0; font-size: 12px; color: var(--primary);">Benutzer manuell anlegen</h3>
                     
-                    <form id="universal-user-form" style="margin-bottom: 15px;">
+                    <form id="universal-user-form" style="margin-bottom: 12px;">
                         <div class="form-group">
                             <label>Benutzer-Rolle / Typ</label>
                             <select id="user-role-type" class="form-select" onchange="toggleUserFields()">
@@ -593,7 +605,7 @@
                         </div>
 
                         <!-- Vorname & Nachname -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
                             <div class="form-group">
                                 <label>Vorname</label>
                                 <input type="text" id="user-firstname" class="form-input" required placeholder="Vorname">
@@ -622,7 +634,7 @@
                                 <input type="password" id="user-password" class="form-input" required>
                                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-password', this)" title="Passwort anzeigen">👁️</button>
                             </div>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-top: 2px;">
                                 Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.
                             </div>
                         </div>
@@ -642,10 +654,10 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-action" style="padding: 8px 14px;">Benutzer sicher anlegen</button>
+                        <button type="submit" class="btn-action" style="padding: 7px 12px; font-size: 11px;">Benutzer sicher anlegen</button>
                     </form>
 
-                    <h3 style="font-size: 13px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 15px;">Alle im System erfassten Benutzer</h3>
+                    <h3 style="font-size: 12px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 12px;">Alle im System erfassten Benutzer</h3>
                     
                     <!-- Live-Suchfeld -->
                     <div class="search-box">
@@ -685,7 +697,7 @@
                         <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
                             <div class="form-group"><label>Plattform-Name</label><input type="text" class="form-input" value="Frisorando"></div>
                             <div class="form-group"><label>Support E-Mail</label><input type="email" class="form-input" value="support@frisorando.de"></div>
-                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 7px 12px; font-size: 11px;">Speichern</button>
                         </form>
                     </div>
 
@@ -695,14 +707,14 @@
                                 <div><strong>Barzahlung vor Ort</strong></div>
                                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                             </div>
-                            <div class="toggle-row" style="margin-bottom: 10px;">
+                            <div class="toggle-row" style="margin-bottom: 8px;">
                                 <div><strong>Online-Zahlung (PayPal)</strong></div>
                                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                             </div>
                             <div class="form-group"><label>Plattform-Provision (%)</label><input type="number" class="form-input" value="10"></div>
                             <div class="form-group"><label>Warnschwelle Minus-Saldo (€)</label><input type="number" class="form-input" value="75.00"></div>
                             <div class="form-group"><label>Sperr-Schwelle / Max. Minus (€)</label><input type="number" class="form-input" value="100.00"></div>
-                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 7px 12px; font-size: 11px;">Speichern</button>
                         </form>
                     </div>
 
@@ -712,7 +724,7 @@
                                 <label>Meisterbrief-Pflicht</label>
                                 <select class="form-select"><option selected>Zwingend erforderlich (§ 1 HwO)</option><option>Optional</option></select>
                             </div>
-                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 7px 12px; font-size: 11px;">Speichern</button>
                         </form>
                     </div>
 
@@ -722,11 +734,11 @@
                                 <div><strong>Support-Mitarbeiter (Ohne Löschrechte)</strong></div>
                                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                             </div>
-                            <div class="toggle-row" style="margin-bottom: 10px;">
+                            <div class="toggle-row" style="margin-bottom: 8px;">
                                 <div><strong>Zwei-Faktor-Authentifizierung</strong></div>
                                 <label class="switch"><input type="checkbox"><span class="slider"></span></label>
                             </div>
-                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 7px 12px; font-size: 11px;">Speichern</button>
                         </form>
                     </div>
                 </div>
@@ -735,7 +747,7 @@
         </div>
     </div>
 
-    <!-- Login & Passwort-Auge Logik -->
+    <!-- Login & Drag & Drop Logik -->
     <script>
         function togglePasswordVisibility(fieldId, btn) {
             const input = document.getElementById(fieldId);
@@ -773,7 +785,6 @@
             if (loggedIn === 'true') {
                 document.getElementById('login-overlay').style.display = 'none';
             }
-            // Initiale Chart-Ansicht laden
             renderChart('1m');
         });
 
@@ -786,13 +797,46 @@
         document.getElementById('login-btn').addEventListener('click', window.handleLogin);
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
 
-        // Chart-Daten-Logik für 1m, 6m, 12m
+        // Drag & Drop Funktionen für das Dashboard
+        let draggedCard = null;
+
+        window.drag = function(e) {
+            draggedCard = e.currentTarget;
+            e.dataTransfer.effectAllowed = 'move';
+            draggedCard.classList.add('dragging');
+        };
+
+        window.allowDrop = function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        };
+
+        window.drop = function(e) {
+            e.preventDefault();
+            if (draggedCard) {
+                draggedCard.classList.remove('dragging');
+                const targetCard = e.target.closest('.draggable-card');
+                if (targetCard && targetCard !== draggedCard) {
+                    const container = document.getElementById('sortable-dashboard-container');
+                    const cards = Array.from(container.querySelectorAll('.draggable-card'));
+                    const draggedPos = cards.indexOf(draggedCard);
+                    const targetPos = cards.indexOf(targetCard);
+                    
+                    if (draggedPos < targetPos) {
+                        container.insertBefore(draggedCard, targetCard.nextSibling);
+                    } else {
+                        container.insertBefore(draggedCard, targetCard);
+                    }
+                }
+            }
+        };
+
         const chartDataSets = {
             '1m': [
-                { label: 'Woche 1', val: '€450', height: '40%' },
-                { label: 'Woche 2', val: '€680', height: '65%' },
-                { label: 'Woche 3', val: '€590', height: '55%' },
-                { label: 'Woche 4', val: '€890', height: '85%' }
+                { label: 'W1', val: '€450', height: '40%' },
+                { label: 'W2', val: '€680', height: '65%' },
+                { label: 'W3', val: '€590', height: '55%' },
+                { label: 'W4', val: '€890', height: '85%' }
             ],
             '6m': [
                 { label: 'Mai', val: '€2.1k', height: '45%' },
@@ -869,22 +913,20 @@
                 const currentLoggedUser = sessionStorage.getItem('frisorando_admin_user') || 'Ritter2407';
                 const currentEmail = currentLoggedUser.includes('@') ? currentLoggedUser : 'kevin.ritter1606@googlemail.com';
 
-                // Eigener Account
                 totalUsersCount++;
                 const myAccountRow = document.createElement('tr');
                 myAccountRow.innerHTML = `
-                    <td><strong>${currentLoggedUser}</strong><br><span style="font-size: 10px; color: var(--text-muted);">Aktiver Administrator</span></td>
+                    <td><strong>${currentLoggedUser}</strong><br><span style="font-size: 9px; color: var(--text-muted);">Admin</span></td>
                     <td>${currentEmail}</td>
                     <td><span class="badge" style="background: var(--primary); color: white;">Super-Admin (Du)</span></td>
                     <td><span class="badge badge-active">Aktiv</span></td>
                     <td>
                         <button class="btn-edit" onclick="window.openEditModal('my_account', 'self', '${currentLoggedUser}', '${currentEmail}', 'active')">Bearbeiten</button>
-                        <button class="btn-disabled" title="Eigener Account kann nicht gelöscht werden">Geschützt</button>
+                        <button class="btn-disabled" title="Geschützt">Geschützt</button>
                     </td>
                 `;
                 allUsersTable.appendChild(myAccountRow);
 
-                // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
                 if(fullTable) fullTable.innerHTML = "";
                 let activeCount = 0;
@@ -901,11 +943,11 @@
                     if (fullTable) {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 10px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
-                            <td>${p.location || 'k.A.'}<br><span style="font-size: 10px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
+                            <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 9px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${p.location || 'k.A.'}<br><span style="font-size: 9px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
                             <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
                             <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? '⏳ Wartet' : 'Aktiv'}</span></td>
-                            <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
+                            <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 10px; color: var(--success);">Aktiv</span>'}</td>
                         `;
                         fullTable.appendChild(row);
                     }
@@ -918,9 +960,9 @@
                         const safeStatus = p.status || 'active';
                         
                         uRow.innerHTML = `
-                            <td><strong>${safeName}</strong><br><span style="font-size: 10px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td><strong>${safeName}</strong><br><span style="font-size: 9px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
                             <td>${safeEmail || 'Keine E-Mail'}</td>
-                            <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
+                            <td><span class="badge" style="background: var(--primary); color: white;">Partner</span></td>
                             <td><span class="badge badge-active">${safeStatus}</span></td>
                             <td>
                                 ${safeEmail ? `<a href="mailto:${safeEmail}" class="btn-mail">E-Mail</a>` : ''}
@@ -936,9 +978,8 @@
 
                 if(kpiActive) kpiActive.innerText = activeCount;
                 if(kpiPending) kpiPending.innerText = pendingCount;
-                if(kpiRevenue) kpiRevenue.innerText = '€ ' + (activeCount * 450 + 4820); // Dynamische Schätzung basierend auf aktiven Partnern
+                if(kpiRevenue) kpiRevenue.innerText = '€ ' + (activeCount * 450 + 4820);
 
-                // 2. Admins laden
                 try {
                     const adminSnap = await getDocs(collection(db, "admin_users"));
                     adminSnap.forEach((aDoc) => {
@@ -952,7 +993,7 @@
                             uRow.innerHTML = `
                                 <td><strong>${aName}</strong></td>
                                 <td>${aEmail || 'Keine E-Mail'}</td>
-                                <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
+                                <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
                                 <td>
                                     ${aEmail ? `<a href="mailto:${aEmail}" class="btn-mail">E-Mail</a>` : ''}
@@ -965,7 +1006,6 @@
                     });
                 } catch(e) {}
 
-                // 3. Kunden laden
                 try {
                     const custSnap = await getDocs(collection(db, "customers"));
                     custSnap.forEach((cDoc) => {
@@ -979,7 +1019,7 @@
                             uRow.innerHTML = `
                                 <td><strong>${cName}</strong></td>
                                 <td>${cEmail || 'Keine E-Mail'}</td>
-                                <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
+                                <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Kunde</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
                                 <td>
                                     ${cEmail ? `<a href="mailto:${cEmail}" class="btn-mail">E-Mail</a>` : ''}
@@ -992,7 +1032,6 @@
                     });
                 } catch(e) {}
 
-                // 4. Postkasten laden
                 const msgSnapshot = await getDocs(collection(db, "support_messages"));
                 if(inboxList) inboxList.innerHTML = "";
                 let msgCount = 0;
@@ -1003,19 +1042,19 @@
                         msgCount++;
                         if(inboxList) {
                             const msgBox = document.createElement('div');
-                            msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 12px; display: flex; align-items: flex-start; gap: 8px;";
+                            msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 5px; padding: 8px 10px; margin-bottom: 6px; font-size: 11px; display: flex; align-items: flex-start; gap: 8px;";
                             msgBox.innerHTML = `
-                                <div style="font-size: 18px;">📩</div>
+                                <div style="font-size: 15px;">📩</div>
                                 <div style="flex: 1;">
                                     <strong>Salon: ${m.salonName || 'Unbekannt'}</strong>
-                                    <p style="margin: 4px 0 0 0;">${m.messageText || ''}</p>
+                                    <p style="margin: 2px 0 0 0;">${m.messageText || ''}</p>
                                 </div>
                             `;
                             inboxList.appendChild(msgBox);
                         }
                     });
                 } else {
-                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 12px;">Keine Nachrichten im Postkasten.</p>`;
+                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 11px;">Keine Nachrichten im Postkasten.</p>`;
                 }
                 if(kpiMessages) kpiMessages.innerText = msgCount;
 
