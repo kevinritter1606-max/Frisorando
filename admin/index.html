@@ -565,7 +565,7 @@
     <!-- Firebase & Hauptlogik als Modul -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=cachebust999";
 
         window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
@@ -772,7 +772,7 @@
             }
         }
 
-        function switchTab(tabId, element) {
+        switchTab = function(tabId, element) {
             document.querySelectorAll('.admin-section').forEach(sec => sec.classList.toggle('active', sec.id === 'section-' + tabId));
             document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
@@ -789,7 +789,7 @@
             if (window.innerWidth < 768) toggleSidebar();
         }
 
-        function switchSettingsTab(tabName, btnElement) {
+        switchSettingsTab = function(tabName, btnElement) {
             document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('stab-' + tabName).classList.add('active');
