@@ -595,4 +595,130 @@
                         `;
                         allUsersTable.appendChild(uRow);
                     });
-                } catch
+                } catch(e) {}
+
+                if(allUsersTable.innerHTML === "") {
+                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Keine Benutzer erfasst.</td></tr>`;
+                }
+
+                const msgSnapshot = await getDocs(collection(db, "support_messages"));
+                inboxList.innerHTML = "";
+                let msgCount = 0;
+
+                if (!msgSnapshot.empty) {
+                    msgSnapshot.forEach((msgDoc) => {
+                        const m = msgDoc.data();
+                        msgCount++;
+                        const msgBox = document.createElement('div');
+                        msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 13px;";
+                        msgBox.innerHTML = `<strong>Salon: ${m.salonName}</strong><p style="margin: 5px 0;">${m.messageText}</p>`;
+                        inboxList.appendChild(msgBox);
+                    });
+                } else {
+                    inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
+                }
+                kpiMessages.innerText = msgCount;
+
+            } catch (error) {
+                console.error("Fehler:", error);
+            }
+        }
+
+        window.approvePartner = async function(id) {
+            try {
+                await updateDoc(doc(db, "partners", id), { status: 'active' });
+                alert('Partner erfolgreich freigeschaltet!');
+                loadAdminDataFromFirebase();
+            } catch (error) {
+                alert('Fehler beim Freigeben.');
+            }
+        }
+
+        const userForm = document.getElementById('universal-user-form');
+        userForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const roleType = document.getElementById('user-role-type').value;
+            const firstname = document.getElementById('user-firstname').value;
+            const lastname = document.getElementById('user-lastname').value;
+            const email = document.getElementById('user-email').value || 'Keine E-Mail';
+            const password = document.getElementById('user-password').value;
+
+            function isPasswordSecure(password) {
+                return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
+            }
+
+            if (!isPasswordSecure(password)) {
+                alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
+                return;
+            }
+
+            try {
+                if (roleType === 'admin') {
+                    await addDoc(collection(db, "admin_users"), { firstname, lastname, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
+                } else if (roleType === 'partner') {
+                    const salonName = document.getElementById('user-salonname').value || 'Salon';
+                    const location = document.getElementById('user-location').value || 'Rheinfelden';
+                    const type = document.getElementById('user-service-type').value;
+                    await addDoc(collection(db, "partners"), { name: salonName, salonName, firstname, lastname, email, location, type, status: 'active', createdAt: new Date().toISOString() });
+                } else if (roleType === 'customer') {
+                    await addDoc(collection(db, "customers"), { firstname, lastname, email, createdAt: new Date().toISOString() });
+                }
+
+                alert('Benutzer erfolgreich angelegt!');
+                userForm.reset();
+                toggleUserFields();
+                loadAdminDataFromFirebase();
+            } catch (error) {
+                console.error("Fehler:", error);
+                alert('Fehler beim Speichern.');
+            }
+        });
+    </script>
+
+    <!-- Navigation & UI Logik -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        function toggleUserFields() {
+            const role = document.getElementById('user-role-type').value;
+            const partnerFields = document.getElementById('partner-extra-fields');
+            const salonGroup = document.getElementById('group-salonname');
+
+            if (role === 'partner') {
+                partnerFields.style.display = 'block';
+                salonGroup.style.display = 'block';
+            } else {
+                partnerFields.style.display = 'none';
+                salonGroup.style.display = 'none';
+            }
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.toggle('active', sec.id === 'section-' + tabId));
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            const titles = {
+                'dashboard': 'Dashboard & Live-Kennzahlen',
+                'partners': 'Partner & Verifizierung',
+                'inbox': 'Postkasten & Support-Anfragen',
+                'users': 'Universelle Benutzerverwaltung',
+                'settings': 'Plattform-Einstellungen'
+            };
+            document.getElementById('page-title').innerText = titles[tabId];
+
+            if (window.innerWidth < 768) toggleSidebar();
+        }
+
+        function switchSettingsTab(tabName, btnElement) {
+            document.querySelectorAll('.settings-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('stab-' + tabName).classList.add('active');
+            btnElement.classList.add('active');
+        }
+    </script>
+</body>
+</html>
