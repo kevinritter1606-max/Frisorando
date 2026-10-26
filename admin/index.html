@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.9</title>
+    <title>Frisorando Admin - v1.1.10</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -21,8 +21,8 @@
             --text-main: #1a202c;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --radius: 10px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --radius: 8px;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
         }
 
         * { box-sizing: border-box; }
@@ -60,10 +60,10 @@
 
         .login-card {
             background: white;
-            padding: 35px;
+            padding: 30px;
             border-radius: var(--radius);
             width: 90%;
-            max-width: 400px;
+            max-width: 380px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
@@ -112,13 +112,13 @@
         }
 
         .sidebar-item {
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 10px 14px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--sidebar-text);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -144,7 +144,7 @@
         }
 
         header {
-            height: 60px;
+            height: 55px;
             background: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -158,16 +158,16 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-main); display: block; }
+        .menu-toggle { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-main); display: block; }
         @media (min-width: 768px) { .menu-toggle { display: none; } }
 
-        .header-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .header-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
         
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 13px;
+            gap: 12px;
+            font-size: 12px;
             font-weight: 600;
         }
 
@@ -175,21 +175,21 @@
             background: var(--danger);
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .content-area { 
             flex: 1; 
-            padding: 20px; 
+            padding: 15px; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
         }
 
         @media (min-width: 768px) {
-            .content-area { height: calc(100vh - 60px); }
+            .content-area { height: calc(100vh - 55px); }
         }
 
         .admin-section { display: none; }
@@ -197,37 +197,38 @@
 
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
         .kpi-card {
             background: var(--card-bg);
-            padding: 18px;
+            padding: 14px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
         }
 
-        .kpi-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
-        .kpi-value { font-size: 22px; font-weight: 800; color: var(--text-main); }
+        .kpi-title { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .kpi-value { font-size: 20px; font-weight: 800; color: var(--text-main); }
 
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 15px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
+        /* Kompakte, dezente Sub-Navigation */
         .settings-subnav {
-            display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap;
+            display: flex; gap: 6px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; flex-wrap: wrap;
         }
 
         .subnav-btn {
-            background: none; border: none; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 6px 12px; border-radius: 6px; transition: 0.2s;
+            background: #f1f5f9; border: none; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s;
         }
         .subnav-btn.active { background: var(--primary); color: white; }
         .settings-tab-content { display: none; }
@@ -237,56 +238,53 @@
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin-top: 10px;
+            margin-top: 8px;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
         }
 
         .pro-table {
             width: 100%; 
             border-collapse: collapse; 
-            font-size: 13px;
-            min-width: 650px;
+            font-size: 12px;
+            min-width: 600px;
         }
         .pro-table th, .pro-table td {
-            padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-color);
+            padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color);
             white-space: nowrap;
         }
-        .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; }
+        .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 10px; text-transform: uppercase; }
 
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block; }
-        .badge-pending { background: var(--warning-bg); color: var(--warning); display: inline-flex; align-items: center; gap: 4px; }
+        .badge { padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; display: inline-block; }
+        .badge-pending { background: var(--warning-bg); color: var(--warning); display: inline-flex; align-items: center; gap: 3px; }
         .badge-active { background: var(--success-bg); color: var(--success); }
 
         .btn-action {
-            background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+            background: var(--success); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px;
         }
 
         .btn-edit {
-            background: var(--primary); color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; margin-right: 4px;
+            background: var(--primary); color: white; border: none; padding: 5px 8px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px; margin-right: 3px;
         }
 
         .btn-mail {
-            background: #805ad5; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; margin-right: 4px; text-decoration: none; display: inline-block;
+            background: #805ad5; color: white; border: none; padding: 5px 8px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px; margin-right: 3px; text-decoration: none; display: inline-block;
         }
 
         .btn-danger {
-            background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+            background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 11px;
         }
 
         .btn-disabled {
-            background: #cbd5e1; color: #64748b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: not-allowed; opacity: 0.6;
+            background: #cbd5e1; color: #64748b; border: none; padding: 5px 10px; border-radius: 5px; font-weight: 600; font-size: 11px; cursor: not-allowed; opacity: 0.6;
         }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
-        .form-input, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 10px; font-weight: 700; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase; }
+        .form-input, .form-select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 13px; background: #fff; }
 
-        /* Suchfeld für Benutzer */
         .search-box {
-            margin-bottom: 15px;
-            display: flex;
-            gap: 10px;
+            margin-bottom: 12px;
         }
 
         /* Modal für Bearbeitung */
@@ -295,7 +293,7 @@
             background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 10000;
         }
         .modal-card {
-            background: white; padding: 25px; border-radius: var(--radius); width: 90%; max-width: 450px;
+            background: white; padding: 20px; border-radius: var(--radius); width: 90%; max-width: 400px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
@@ -307,15 +305,15 @@
         }
         .password-wrapper input {
             width: 100%;
-            padding-right: 40px;
+            padding-right: 35px;
         }
         .toggle-password {
             position: absolute;
-            right: 12px;
+            right: 10px;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             color: var(--text-muted);
             padding: 0;
             display: flex;
@@ -323,13 +321,13 @@
             justify-content: center;
         }
 
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 18px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        input:checked + .slider:before { transform: translateX(18px); }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 13px; }
         .toggle-row:last-child { border-bottom: none; }
     </style>
 </head>
@@ -338,8 +336,8 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.9</span></h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 20px;">Frisorando Admin <span style="font-size: 10px; color: var(--text-muted);">v1.1.10</span></h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
                 <label>Benutzername oder E-Mail</label>
@@ -354,15 +352,15 @@
                 </div>
             </div>
 
-            <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
-            <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center;"></div>
+            <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 10px; font-size: 13px; margin-top: 8px;">Anmelden</button>
+            <div id="login-error" style="color: var(--danger); font-size: 11px; margin-top: 8px; text-align: center;"></div>
         </div>
     </div>
 
     <!-- BEARBEITUNGS-MODAL -->
     <div id="edit-modal">
         <div class="modal-card">
-            <h3 style="margin-top: 0; color: var(--primary);">Benutzer bearbeiten</h3>
+            <h3 style="margin-top: 0; color: var(--primary); font-size: 16px;">Benutzer bearbeiten</h3>
             <form id="edit-user-form" onsubmit="window.saveEditedUser(event)">
                 <input type="hidden" id="edit-col-name">
                 <input type="hidden" id="edit-doc-id">
@@ -383,9 +381,9 @@
                     </select>
                 </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn-action" style="flex: 1; padding: 10px;">Speichern</button>
-                    <button type="button" class="btn-danger" style="flex: 1; padding: 10px;" onclick="document.getElementById('edit-modal').style.display='none'">Abbrechen</button>
+                <div style="display: flex; gap: 8px; margin-top: 15px;">
+                    <button type="submit" class="btn-action" style="flex: 1; padding: 8px;">Speichern</button>
+                    <button type="button" class="btn-danger" style="flex: 1; padding: 8px;" onclick="document.getElementById('edit-modal').style.display='none'">Abbrechen</button>
                 </div>
             </form>
         </div>
@@ -439,15 +437,15 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.9)</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
+                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.10)</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
 
             <!-- 2. Partner & Freigaben -->
             <div id="section-partners" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Partner-Verifizierung (§ 1 HwO)</h3>
+                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Partner-Verifizierung (§ 1 HwO)</h3>
                     <div class="table-responsive">
                         <table class="pro-table">
                             <thead>
@@ -470,9 +468,9 @@
             <!-- 3. Postkasten -->
             <div id="section-inbox" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Postkasten / Support-Anfragen</h3>
+                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Postkasten / Support-Anfragen</h3>
                     <div id="inbox-messages-container">
-                        <p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten vorhanden.</p>
+                        <p style="color: var(--text-muted); font-size: 12px;">Keine Nachrichten vorhanden.</p>
                     </div>
                 </div>
             </div>
@@ -480,9 +478,9 @@
             <!-- 4. Benutzerverwaltung -->
             <div id="section-users" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen</h3>
+                    <h3 style="margin-top: 0; font-size: 13px; color: var(--primary);">Benutzer manuell anlegen</h3>
                     
-                    <form id="universal-user-form" style="margin-bottom: 25px;">
+                    <form id="universal-user-form" style="margin-bottom: 15px;">
                         <div class="form-group">
                             <label>Benutzer-Rolle / Typ</label>
                             <select id="user-role-type" class="form-select" onchange="toggleUserFields()">
@@ -493,7 +491,7 @@
                         </div>
 
                         <!-- Vorname & Nachname -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                             <div class="form-group">
                                 <label>Vorname</label>
                                 <input type="text" id="user-firstname" class="form-input" required placeholder="Vorname">
@@ -522,9 +520,8 @@
                                 <input type="password" id="user-password" class="form-input" required>
                                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-password', this)" title="Passwort anzeigen">👁️</button>
                             </div>
-                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                                <span style="background: var(--warning-bg); color: var(--warning); border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px;">!</span>
-                                <span>Passwort-Richtlinie: Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.</span>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">
+                                Min. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen.
                             </div>
                         </div>
                         
@@ -543,10 +540,10 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Benutzer sicher anlegen</button>
+                        <button type="submit" class="btn-action" style="padding: 8px 14px;">Benutzer sicher anlegen</button>
                     </form>
 
-                    <h3 style="font-size: 14px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 20px;">Alle im System erfassten Benutzer</h3>
+                    <h3 style="font-size: 13px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 15px;">Alle im System erfassten Benutzer</h3>
                     
                     <!-- Live-Suchfeld -->
                     <div class="search-box">
@@ -572,13 +569,12 @@
                 </div>
             </div>
 
-            <!-- 5. Einstellungen -->
+            <!-- 5. Einstellungen (Kompakt & Dezenter) -->
             <div id="section-settings" class="admin-section">
                 <div class="card">
                     <div class="settings-subnav">
                         <button class="subnav-btn active" onclick="switchSettingsTab('general', this)">Allgemein</button>
-                        <button class="subnav-btn" onclick="switchSettingsTab('payments', this)">Zahlungen</button>
-                        <button class="subnav-btn" onclick="switchSettingsTab('limits', this)">Minus-Limits</button>
+                        <button class="subnav-btn" onclick="switchSettingsTab('payments', this)">Zahlungen & Limits</button>
                         <button class="subnav-btn" onclick="switchSettingsTab('compliance', this)">Handwerksrecht</button>
                         <button class="subnav-btn" onclick="switchSettingsTab('roles', this)">Rollen & Rechte</button>
                     </div>
@@ -587,30 +583,24 @@
                         <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
                             <div class="form-group"><label>Plattform-Name</label><input type="text" class="form-input" value="Frisorando"></div>
                             <div class="form-group"><label>Support E-Mail</label><input type="email" class="form-input" value="support@frisorando.de"></div>
-                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
                         </form>
                     </div>
 
                     <div id="stab-payments" class="settings-tab-content">
-                        <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
+                        <form onsubmit="event.preventDefault(); alert('Zahlungen & Limits gespeichert!');">
                             <div class="toggle-row">
                                 <div><strong>Barzahlung vor Ort</strong></div>
                                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                             </div>
-                            <div class="toggle-row" style="margin-bottom: 15px;">
+                            <div class="toggle-row" style="margin-bottom: 10px;">
                                 <div><strong>Online-Zahlung (PayPal)</strong></div>
                                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                             </div>
                             <div class="form-group"><label>Plattform-Provision (%)</label><input type="number" class="form-input" value="10"></div>
-                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
-                        </form>
-                    </div>
-
-                    <div id="stab-limits" class="settings-tab-content">
-                        <form onsubmit="event.preventDefault(); alert('Gespeichert!');">
                             <div class="form-group"><label>Warnschwelle Minus-Saldo (€)</label><input type="number" class="form-input" value="75.00"></div>
                             <div class="form-group"><label>Sperr-Schwelle / Max. Minus (€)</label><input type="number" class="form-input" value="100.00"></div>
-                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
                         </form>
                     </div>
 
@@ -620,21 +610,21 @@
                                 <label>Meisterbrief-Pflicht</label>
                                 <select class="form-select"><option selected>Zwingend erforderlich (§ 1 HwO)</option><option>Optional</option></select>
                             </div>
-                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
                         </form>
                     </div>
 
                     <div id="stab-roles" class="settings-tab-content">
                         <form onsubmit="event.preventDefault(); alert('Rollen-Einstellungen gespeichert!');">
                             <div class="toggle-row">
-                                <div><strong>Support-Mitarbeiter (Eingeschränkter Zugriff ohne Löschrechte)</strong></div>
+                                <div><strong>Support-Mitarbeiter (Ohne Löschrechte)</strong></div>
                                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                             </div>
-                            <div class="toggle-row" style="margin-bottom: 15px;">
-                                <div><strong>Zwei-Faktor-Authentifizierung für Admins</strong></div>
+                            <div class="toggle-row" style="margin-bottom: 10px;">
+                                <div><strong>Zwei-Faktor-Authentifizierung</strong></div>
                                 <label class="switch"><input type="checkbox"><span class="slider"></span></label>
                             </div>
-                            <button type="submit" class="btn-action" style="padding: 10px 18px;">Speichern</button>
+                            <button type="submit" class="btn-action" style="padding: 8px 14px;">Speichern</button>
                         </form>
                     </div>
                 </div>
@@ -693,7 +683,7 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Integrierte Firebase-Logik inklusive aller neuen Features -->
+    <!-- Integrierte Firebase-Logik -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -730,7 +720,7 @@
                 totalUsersCount++;
                 const myAccountRow = document.createElement('tr');
                 myAccountRow.innerHTML = `
-                    <td><strong>${currentLoggedUser}</strong><br><span style="font-size: 11px; color: var(--text-muted);">Aktiver Administrator</span></td>
+                    <td><strong>${currentLoggedUser}</strong><br><span style="font-size: 10px; color: var(--text-muted);">Aktiver Administrator</span></td>
                     <td>${currentEmail}</td>
                     <td><span class="badge" style="background: var(--primary); color: white;">Super-Admin (Du)</span></td>
                     <td><span class="badge badge-active">Aktiv</span></td>
@@ -741,7 +731,7 @@
                 `;
                 allUsersTable.appendChild(myAccountRow);
 
-                // 1. Partner laden (mit Sanduhr-Icon für wartende Anträge)
+                // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
                 if(fullTable) fullTable.innerHTML = "";
                 let activeCount = 0;
@@ -758,8 +748,8 @@
                     if (fullTable) {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
-                            <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
+                            <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 10px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${p.location || 'k.A.'}<br><span style="font-size: 10px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
                             <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
                             <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? '⏳ Wartet' : 'Aktiv'}</span></td>
                             <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
@@ -775,7 +765,7 @@
                         const safeStatus = p.status || 'active';
                         
                         uRow.innerHTML = `
-                            <td><strong>${safeName}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td><strong>${safeName}</strong><br><span style="font-size: 10px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
                             <td>${safeEmail || 'Keine E-Mail'}</td>
                             <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
                             <td><span class="badge badge-active">${safeStatus}</span></td>
@@ -848,7 +838,7 @@
                     });
                 } catch(e) {}
 
-                // 4. Postkasten laden (mit gelbem Brief-Icon 📩)
+                // 4. Postkasten laden
                 const msgSnapshot = await getDocs(collection(db, "support_messages"));
                 if(inboxList) inboxList.innerHTML = "";
                 let msgCount = 0;
@@ -859,19 +849,19 @@
                         msgCount++;
                         if(inboxList) {
                             const msgBox = document.createElement('div');
-                            msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 13px; display: flex; align-items: flex-start; gap: 10px;";
+                            msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 12px; display: flex; align-items: flex-start; gap: 8px;";
                             msgBox.innerHTML = `
-                                <div style="font-size: 20px;">📩</div>
+                                <div style="font-size: 18px;">📩</div>
                                 <div style="flex: 1;">
                                     <strong>Salon: ${m.salonName || 'Unbekannt'}</strong>
-                                    <p style="margin: 5px 0;">${m.messageText || ''}</p>
+                                    <p style="margin: 4px 0 0 0;">${m.messageText || ''}</p>
                                 </div>
                             `;
                             inboxList.appendChild(msgBox);
                         }
                     });
                 } else {
-                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
+                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 12px;">Keine Nachrichten im Postkasten.</p>`;
                 }
                 if(kpiMessages) kpiMessages.innerText = msgCount;
 
@@ -955,7 +945,6 @@
             }
         }
 
-        // Live-Suchfunktion für die Benutzertabelle
         window.filterUserTable = function() {
             const input = document.getElementById('user-search-input');
             const filter = input.value.toLowerCase();
@@ -976,7 +965,6 @@
             }
         }
 
-        // Benutzer anlegen mit expliziter Event-Abfangung
         const userForm = document.getElementById('universal-user-form');
         if(userForm) {
             userForm.addEventListener('submit', async (e) => {
@@ -1019,7 +1007,6 @@
             });
         }
 
-        // Falls beim Laden direkt eingeloggt
         if (sessionStorage.getItem('frisorando_admin_logged') === 'true') {
             loadAdminDataFromFirebase();
         }
