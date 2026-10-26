@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.14</title>
+    <title>Frisorando Admin - v1.1.17</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -45,6 +45,18 @@
 
         @media (max-width: 777px) {
             body { display: block; }
+        }
+
+        /* Hintergrund-Abdunklung für Klick zum Schließen des Menüs */
+        #mobile-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 950;
+        }
+        @media (max-width: 777px) {
+            #mobile-backdrop.active { display: block; }
         }
 
         /* LOGIN OVERLAY SCREEN */
@@ -195,16 +207,30 @@
         .admin-section { display: none; }
         .admin-section.active { display: block; }
 
-        /* Drag & Drop Dashboard Elemente */
+        /* Drag & Drop Dashboard Elemente mit Grip-Griff */
         .draggable-card {
-            cursor: grab;
+            position: relative;
             transition: transform 0.2s, box-shadow 0.2s;
+            touch-action: none;
         }
-        .draggable-card:active {
-            cursor: grabbing;
+        
+        .drag-handle {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: grab;
+            padding: 2px 6px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            user-select: none;
         }
+        .drag-handle:active { cursor: grabbing; }
+
         .draggable-card.dragging {
-            opacity: 0.4;
+            opacity: 0.5;
+            border: 2px dashed var(--primary);
         }
 
         /* Sehr dezente, kompakte KPI-Leiste */
@@ -432,10 +458,13 @@
 </head>
 <body>
 
+    <!-- Hintergrund-Abdunklung für Klick zum Schließen des Menüs -->
+    <div id="mobile-backdrop" onclick="toggleSidebar()"></div>
+
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.14</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.17</span></h2>
             <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -523,7 +552,8 @@
                 <div id="sortable-dashboard-container">
                     
                     <!-- KPI Leiste -->
-                    <div class="kpi-grid draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="kpi-grid draggable-card" draggable="true">
+                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
                         <div class="kpi-card">
                             <div class="kpi-title">Aktive Salons</div>
                             <div class="kpi-value" id="kpi-active">0</div>
@@ -543,9 +573,10 @@
                     </div>
 
                     <!-- Umsatz-Grafik & Chart Sektion -->
-                    <div class="card draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="card draggable-card" draggable="true">
+                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
                         <div class="chart-header">
-                            <h3 style="margin: 0; font-size: 12px; color: var(--primary);">Umsatz & Plattform-Entwicklung (Verschiebbar)</h3>
+                            <h3 style="margin: 0; font-size: 12px; color: var(--primary);">Umsatz & Plattform-Entwicklung</h3>
                             <div class="chart-tabs">
                                 <button class="chart-tab-btn active" onclick="switchChartRange('1m', this)">1 Monat</button>
                                 <button class="chart-tab-btn" onclick="switchChartRange('6m', this)">6 Monate</button>
@@ -556,8 +587,9 @@
                     </div>
 
                     <!-- Info Box -->
-                    <div class="card draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)" style="padding: 10px 12px;">
-                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.14) – Dashboard-Elemente sind per Drag & Drop verschiebbar.</p>
+                    <div class="card draggable-card" draggable="true" style="padding: 10px 12px;">
+                        <div class="drag-handle" title="Halten zum Verschieben">⠿</div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.17) – Nutze den Griff (⠿) zum Verschieben der Dashboard-Karten.</p>
                     </div>
 
                 </div>
@@ -754,7 +786,7 @@
         </div>
     </div>
 
-    <!-- Login & Drag & Drop Logik -->
+    <!-- Login & Drag & Drop Logik mit Touch-Unterstützung -->
     <script>
         function togglePasswordVisibility(fieldId, btn) {
             const input = document.getElementById(fieldId);
@@ -793,6 +825,7 @@
                 document.getElementById('login-overlay').style.display = 'none';
             }
             renderChart('1m');
+            initAdvancedDragAndDrop();
         });
 
         window.logoutAdmin = function() {
@@ -804,38 +837,85 @@
         document.getElementById('login-btn').addEventListener('click', window.handleLogin);
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
 
-        let draggedCard = null;
+        // Robustes Drag & Drop für PC und Touch (Handys) via Grip-Griff ⠿
+        function initAdvancedDragAndDrop() {
+            const container = document.getElementById('sortable-dashboard-container');
+            if (!container) return;
 
-        window.drag = function(e) {
-            draggedCard = e.currentTarget;
-            e.dataTransfer.effectAllowed = 'move';
-            draggedCard.classList.add('dragging');
-        };
+            let cards = container.querySelectorAll('.draggable-card');
 
-        window.allowDrop = function(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        };
+            cards.forEach(card => {
+                const handle = card.querySelector('.drag-handle');
+                if (!handle) return;
 
-        window.drop = function(e) {
-            e.preventDefault();
-            if (draggedCard) {
-                draggedCard.classList.remove('dragging');
-                const targetCard = e.target.closest('.draggable-card');
-                if (targetCard && targetCard !== draggedCard) {
-                    const container = document.getElementById('sortable-dashboard-container');
-                    const cards = Array.from(container.querySelectorAll('.draggable-card'));
-                    const draggedPos = cards.indexOf(draggedCard);
-                    const targetPos = cards.indexOf(targetCard);
-                    
-                    if (draggedPos < targetPos) {
-                        container.insertBefore(draggedCard, targetCard.nextSibling);
-                    } else {
-                        container.insertBefore(draggedCard, targetCard);
+                let isDragging = false;
+                let startY = 0;
+                let initialIndex = 0;
+
+                // Maus-Event
+                handle.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    card.classList.add('dragging');
+                    startY = e.clientY;
+                    initialIndex = Array.from(container.children).indexOf(card);
+                    e.preventDefault();
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    const deltaY = e.clientY - startY;
+                    if (Math.abs(deltaY) > 40) {
+                        const siblings = Array.from(container.querySelectorAll('.draggable-card'));
+                        const currentIndex = siblings.indexOf(card);
+                        if (deltaY > 0 && currentIndex < siblings.length - 1) {
+                            container.insertBefore(siblings[currentIndex + 1], card);
+                            startY = e.clientY;
+                        } else if (deltaY < 0 && currentIndex > 0) {
+                            container.insertBefore(card, siblings[currentIndex - 1]);
+                            startY = e.clientY;
+                        }
                     }
-                }
-            }
-        };
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        card.classList.remove('dragging');
+                    }
+                });
+
+                // Touch-Event für Smartphones
+                handle.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    card.classList.add('dragging');
+                    startY = e.touches[0].clientY;
+                    e.preventDefault();
+                }, { passive: false });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    const deltaY = e.touches[0].clientY - startY;
+                    if (Math.abs(deltaY) > 35) {
+                        const siblings = Array.from(container.querySelectorAll('.draggable-card'));
+                        const currentIndex = siblings.indexOf(card);
+                        if (deltaY > 0 && currentIndex < siblings.length - 1) {
+                            container.insertBefore(siblings[currentIndex + 1], card);
+                            startY = e.touches[0].clientY;
+                        } else if (deltaY < 0 && currentIndex > 0) {
+                            container.insertBefore(card, siblings[currentIndex - 1]);
+                            startY = e.touches[0].clientY;
+                        }
+                    }
+                }, { passive: false });
+
+                document.addEventListener('touchend', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        card.classList.remove('dragging');
+                    }
+                });
+            });
+        }
 
         const chartDataSets = {
             '1m': [
@@ -1215,13 +1295,15 @@
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('mobile-backdrop');
             sidebar.classList.toggle('mobile-open');
+            backdrop.classList.toggle('active');
         }
 
         function toggleUserFields() {
             const role = document.getElementById('user-role-type').value;
             const partnerFields = document.getElementById('partner-extra-fields');
-            const salonGroup = document.getElementById('group-salonname');
+            let salonGroup = document.getElementById('group-salonname');
 
             if (role === 'partner') {
                 partnerFields.style.display = 'block';
