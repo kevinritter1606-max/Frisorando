@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.4</title>
+    <title>Frisorando Admin - v1.1.6</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -266,6 +266,10 @@
             background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
         }
 
+        .btn-disabled {
+            background: #cbd5e1; color: #64748b; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: not-allowed; opacity: 0.6;
+        }
+
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
         .form-input, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
@@ -309,7 +313,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.4</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.6</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -378,7 +382,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.4)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.6)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -584,6 +588,7 @@
 
             if (validUser && validPass) {
                 sessionStorage.setItem('frisorando_admin_logged', 'true');
+                sessionStorage.setItem('frisorando_admin_user', user); // Speichert den aktuell eingeloggten Benutzer
                 document.getElementById('login-overlay').style.display = 'none';
                 if (typeof loadAdminDataFromFirebase === 'function') {
                     loadAdminDataFromFirebase();
@@ -602,6 +607,7 @@
 
         window.logoutAdmin = function() {
             sessionStorage.removeItem('frisorando_admin_logged');
+            sessionStorage.removeItem('frisorando_admin_user');
             location.reload();
         }
 
@@ -609,7 +615,7 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Integrierte Firebase-Logik inklusive Löschfunktion -->
+    <!-- Integrierte Firebase-Logik inklusive dynamisch geschütztem Account -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -639,6 +645,19 @@
             try {
                 if(allUsersTable) allUsersTable.innerHTML = "";
                 let totalUsersCount = 0;
+                const currentLoggedUser = sessionStorage.getItem('frisorando_admin_user') || 'Ritter2407';
+
+                // Dynamischer eigener Account-Eintrag für den aktuell angemeldeten Admin
+                totalUsersCount++;
+                const myAccountRow = document.createElement('tr');
+                myAccountRow.innerHTML = `
+                    <td><strong>${currentLoggedUser}</strong><br><span style="font-size: 11px; color: var(--text-muted);">Aktiver Administrator</span></td>
+                    <td>${currentLoggedUser.includes('@') ? currentLoggedUser : 'kevin.ritter1606@googlemail.com'}</td>
+                    <td><span class="badge" style="background: var(--primary); color: white;">Super-Admin (Du)</span></td>
+                    <td><span class="badge badge-active">Aktiv</span></td>
+                    <td><button class="btn-disabled" title="Eigener Account kann nicht gelöscht werden">Geschützt</button></td>
+                `;
+                allUsersTable.appendChild(myAccountRow);
 
                 // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
@@ -727,10 +746,6 @@
                     });
                 } catch(e) {}
 
-                if(allUsersTable && totalUsersCount === 0) {
-                    allUsersTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben.</td></tr>`;
-                }
-
                 // 4. Postkasten laden
                 const msgSnapshot = await getDocs(collection(db, "support_messages"));
                 if(inboxList) inboxList.innerHTML = "";
@@ -748,7 +763,7 @@
                         }
                     });
                 } else {
-                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
+                    if(inboxList) inboxList.innerHtml = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
                 }
                 if(kpiMessages) kpiMessages.innerText = msgCount;
 
