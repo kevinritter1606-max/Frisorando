@@ -236,7 +236,7 @@
 </head>
 <body>
 
-    <!-- SICHERES LOGIN-FENSTER (Überschirmt die Seite bis zur Anmeldung) -->
+    <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
             <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin</h2>
@@ -244,7 +244,7 @@
             <form id="login-form">
                 <div class="form-group">
                     <label>Benutzername oder E-Mail</label>
-                    <input type="text" id="login-user" class="form-input" required placeholder="admin@frisorando.de">
+                    <input type="text" id="login-user" class="form-input" required placeholder="kevin.ritter1606@googlemail.com">
                 </div>
                 <div class="form-group">
                     <label>Passwort</label>
@@ -279,7 +279,7 @@
                 <div class="header-title" id="page-title">Dashboard & Live-Kennzahlen</div>
             </div>
             <div class="user-profile">
-                <span id="current-admin-name">👤 Admin</span>
+                <span id="current-admin-name">👤 Kevin Ritter</span>
                 <button class="logout-btn" onclick="logoutAdmin()">Abmelden</button>
             </div>
         </header>
@@ -305,7 +305,7 @@
 
                 <div class="card">
                     <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich angemeldet. Passwörter neuer Benutzer müssen nun strenge Sicherheitsrichtlinien erfüllen.</p>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
 
@@ -345,8 +345,8 @@
             <!-- 4. Benutzerverwaltung mit Passwort-Sicherheitsprüfung -->
             <div id="section-users" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen (Mit Passwort-Richtlinie)</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Hinweis für sichere Passwörter: Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und ein Sonderzeichen.</p>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Benutzer manuell anlegen</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Passwort-Richtlinie: Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.</p>
                     
                     <form id="universal-user-form" style="margin-bottom: 25px;">
                         <div class="form-group">
@@ -477,7 +477,7 @@
             }
         });
 
-        // Login Formular absenden
+        // Login Formular absenden (Mit deinen festen Zugangsdaten)
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -485,8 +485,10 @@
             const pass = document.getElementById('login-pass').value;
             const errDiv = document.getElementById('login-error');
 
-            // Standard-Admin-Zugang (kann später mit Firestore abgeglichen werden)
-            if ((user === 'admin' || user === 'admin@frisorando.de') && pass === 'Admin#2026!') {
+            const validUser = (user === 'Ritter2407' || user === 'kevin.ritter1606@googlemail.com');
+            const validPass = (pass === '24072011V.k');
+
+            if (validUser && validPass) {
                 sessionStorage.setItem('frisorando_admin_logged', 'true');
                 document.getElementById('login-overlay').style.display = 'none';
                 loadAdminData();
@@ -500,7 +502,7 @@
             location.reload();
         }
 
-        // Passwort-Sicherheitsprüfung (Mind. 8 Zeichen, Groß-/Klein, Zahl, Sonderzeichen)
+        // Passwort-Sicherheitsprüfung
         function isPasswordSecure(password) {
             const minLength = password.length >= 8;
             const hasUpper = /[A-Z]/.test(password);
@@ -626,7 +628,6 @@
             }
         }
 
-        // Universelles Formular mit Passwort-Sicherheitsprüfung
         const userForm = document.getElementById('universal-user-form');
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -635,7 +636,6 @@
             const email = document.getElementById('user-email').value;
             const password = document.getElementById('user-password').value;
 
-            // Sicherheitsprüfung des Passworts
             if (!isPasswordSecure(password)) {
                 alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
                 return;
