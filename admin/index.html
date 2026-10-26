@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando - Admin Login & Zentrale</title>
+    <title>Frisorando Admin - v1.1.1</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -239,7 +239,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin</h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.1</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -305,7 +305,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.1)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -497,7 +497,9 @@
             if (validUser && validPass) {
                 sessionStorage.setItem('frisorando_admin_logged', 'true');
                 document.getElementById('login-overlay').style.display = 'none';
-                loadAdminDataFromFirebase();
+                if (typeof loadAdminDataFromFirebase === 'function') {
+                    loadAdminDataFromFirebase();
+                }
             } else {
                 errDiv.innerText = "Falscher Benutzername oder falsches Passwort!";
             }
@@ -507,7 +509,6 @@
             const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
             if (loggedIn === 'true') {
                 document.getElementById('login-overlay').style.display = 'none';
-                // Versuche Daten zu laden, sobald Firebase bereit ist
             }
         });
 
@@ -520,10 +521,10 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Firebase & Hauptlogik als sauberes Modul -->
+    <!-- Firebase & Hauptlogik als sauberes Modul mit Cache-Bypass -->
     <script type="module">
         import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=111";
 
         window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
@@ -535,12 +536,12 @@
             const kpiMessages = document.getElementById('kpi-messages');
 
             try {
-                allUsersTable.innerHTML = "";
+                if(allUsersTable) allUsersTable.innerHTML = "";
                 let totalUsersCount = 0;
 
                 // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
-                fullTable.innerHTML = "";
+                if(fullTable) fullTable.innerHTML = "";
                 let activeCount = 0;
                 let pendingCount = 0;
 
@@ -552,31 +553,35 @@
                     if (isPending) pendingCount++;
                     else activeCount++;
 
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
-                        <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
-                        <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
-                        <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
-                        <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
-                    `;
-                    fullTable.appendChild(row);
+                    if (fullTable) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${p.name || p.salonName || ''}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
+                            <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
+                            <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
+                            <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
+                        `;
+                        fullTable.appendChild(row);
+                    }
 
                     totalUsersCount++;
-                    const uRow = document.createElement('tr');
-                    uRow.innerHTML = `
-                        <td><strong>${p.name || p.salonName || 'Partner'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
-                        <td>${p.email || 'Keine E-Mail'}</td>
-                        <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
-                        <td><span class="badge badge-active">${p.status || 'active'}</span></td>
-                    `;
-                    allUsersTable.appendChild(uRow);
+                    if (allUsersTable) {
+                        const uRow = document.createElement('tr');
+                        uRow.innerHTML = `
+                            <td><strong>${p.name || p.salonName || 'Partner'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${p.email || 'Keine E-Mail'}</td>
+                            <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
+                            <td><span class="badge badge-active">${p.status || 'active'}</span></td>
+                        `;
+                        allUsersTable.appendChild(uRow);
+                    }
                 });
 
-                if(fullTable.innerHTML === "") fullTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keine Partner.</td></tr>`;
+                if(fullTable && fullTable.innerHTML === "") fullTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keine Partner.</td></tr>`;
 
-                kpiActive.innerText = activeCount;
-                kpiPending.innerText = pendingCount;
+                if(kpiActive) kpiActive.innerText = activeCount;
+                if(kpiPending) kpiPending.innerText = pendingCount;
 
                 // 2. Admins laden
                 try {
@@ -584,14 +589,16 @@
                     adminSnap.forEach((aDoc) => {
                         const a = aDoc.data();
                         totalUsersCount++;
-                        const uRow = document.createElement('tr');
-                        uRow.innerHTML = `
-                            <td><strong>${a.firstname || ''} ${a.lastname || ''}</strong></td>
-                            <td>${a.email || 'Keine E-Mail'}</td>
-                            <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
-                            <td><span class="badge badge-active">Aktiv</span></td>
-                        `;
-                        allUsersTable.appendChild(uRow);
+                        if(allUsersTable) {
+                            const uRow = document.createElement('tr');
+                            uRow.innerHTML = `
+                                <td><strong>${a.firstname || ''} ${a.lastname || ''}</strong></td>
+                                <td>${a.email || 'Keine E-Mail'}</td>
+                                <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
+                                <td><span class="badge badge-active">Aktiv</span></td>
+                            `;
+                            allUsersTable.appendChild(uRow);
+                        }
                     });
                 } catch(e) {}
 
@@ -601,39 +608,43 @@
                     custSnap.forEach((cDoc) => {
                         const c = cDoc.data();
                         totalUsersCount++;
-                        const uRow = document.createElement('tr');
-                        uRow.innerHTML = `
-                            <td><strong>${c.firstname || ''} ${c.lastname || ''}</strong></td>
-                            <td>${c.email || 'Keine E-Mail'}</td>
-                            <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
-                            <td><span class="badge badge-active">Aktiv</span></td>
-                        `;
-                        allUsersTable.appendChild(uRow);
+                        if(allUsersTable) {
+                            const uRow = document.createElement('tr');
+                            uRow.innerHTML = `
+                                <td><strong>${c.firstname || ''} ${c.lastname || ''}</strong></td>
+                                <td>${c.email || 'Keine E-Mail'}</td>
+                                <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
+                                <td><span class="badge badge-active">Aktiv</span></td>
+                            `;
+                            allUsersTable.appendChild(uRow);
+                        }
                     });
                 } catch(e) {}
 
-                if(totalUsersCount === 0) {
+                if(allUsersTable && totalUsersCount === 0) {
                     allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben.</td></tr>`;
                 }
 
                 // 4. Postkasten laden
                 const msgSnapshot = await getDocs(collection(db, "support_messages"));
-                inboxList.innerHTML = "";
+                if(inboxList) inboxList.innerHTML = "";
                 let msgCount = 0;
 
                 if (!msgSnapshot.empty) {
                     msgSnapshot.forEach((msgDoc) => {
                         const m = msgDoc.data();
                         msgCount++;
-                        const msgBox = document.createElement('div');
-                        msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 13px;";
-                        msgBox.innerHTML = `<strong>Salon: ${m.salonName}</strong><p style="margin: 5px 0;">${m.messageText}</p>`;
-                        inboxList.appendChild(msgBox);
+                        if(inboxList) {
+                            const msgBox = document.createElement('div');
+                            msgBox.style.cssText = "background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 13px;";
+                            msgBox.innerHTML = `<strong>Salon: ${m.salonName}</strong><p style="margin: 5px 0;">${m.messageText}</p>`;
+                            inboxList.appendChild(msgBox);
+                        }
                     });
                 } else {
-                    inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
+                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
                 }
-                kpiMessages.innerText = msgCount;
+                if(kpiMessages) kpiMessages.innerText = msgCount;
 
             } catch (error) {
                 console.error("Fehler beim Laden der Daten:", error);
@@ -652,44 +663,46 @@
 
         // Benutzer anlegen
         const userForm = document.getElementById('universal-user-form');
-        userForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const roleType = document.getElementById('user-role-type').value;
-            const firstname = document.getElementById('user-firstname').value.trim();
-            const lastname = document.getElementById('user-lastname').value.trim();
-            const email = document.getElementById('user-email').value.trim() || 'Keine E-Mail';
-            const password = document.getElementById('user-password').value;
+        if(userForm) {
+            userForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const roleType = document.getElementById('user-role-type').value;
+                const firstname = document.getElementById('user-firstname').value.trim();
+                const lastname = document.getElementById('user-lastname').value.trim();
+                const email = document.getElementById('user-email').value.trim() || 'Keine E-Mail';
+                const password = document.getElementById('user-password').value;
 
-            function isPasswordSecure(password) {
-                return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
-            }
-
-            if (!isPasswordSecure(password)) {
-                alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
-                return;
-            }
-
-            try {
-                if (roleType === 'admin') {
-                    await addDoc(collection(db, "admin_users"), { firstname, lastname, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
-                } else if (roleType === 'partner') {
-                    const salonName = document.getElementById('user-salonname').value.trim() || 'Salon ohne Namen';
-                    const location = document.getElementById('user-location').value.trim() || 'Rheinfelden';
-                    const type = document.getElementById('user-service-type').value;
-                    await addDoc(collection(db, "partners"), { name: salonName, salonName, firstname, lastname, email, location, type, status: 'active', createdAt: new Date().toISOString() });
-                } else if (roleType === 'customer') {
-                    await addDoc(collection(db, "customers"), { firstname, lastname, email, createdAt: new Date().toISOString() });
+                function isPasswordSecure(password) {
+                    return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
                 }
 
-                alert('Benutzer erfolgreich in Firestore gespeichert!');
-                userForm.reset();
-                toggleUserFields();
-                loadAdminDataFromFirebase();
-            } catch (error) {
-                console.error("Fehler beim Speichern:", error);
-                alert('Fehler beim Speichern in Firestore: ' + error.message);
-            }
-        });
+                if (!isPasswordSecure(password)) {
+                    alert('Das Passwort entspricht nicht den Sicherheitsrichtlinien!\n\nMindestvoraussetzungen:\n- Mindestens 8 Zeichen\n- Mindestens 1 Groß- und 1 Kleinbuchstabe\n- Mindestens 1 Zahl\n- Mindestens 1 Sonderzeichen');
+                    return;
+                }
+
+                try {
+                    if (roleType === 'admin') {
+                        await addDoc(collection(db, "admin_users"), { firstname, lastname, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
+                    } else if (roleType === 'partner') {
+                        const salonName = document.getElementById('user-salonname').value.trim() || 'Salon ohne Namen';
+                        const location = document.getElementById('user-location').value.trim() || 'Rheinfelden';
+                        const type = document.getElementById('user-service-type').value;
+                        await addDoc(collection(db, "partners"), { name: salonName, salonName, firstname, lastname, email, location, type, status: 'active', createdAt: new Date().toISOString() });
+                    } else if (roleType === 'customer') {
+                        await addDoc(collection(db, "customers"), { firstname, lastname, email, createdAt: new Date().toISOString() });
+                    }
+
+                    alert('Benutzer erfolgreich in Firestore gespeichert!');
+                    userForm.reset();
+                    toggleUserFields();
+                    loadAdminDataFromFirebase();
+                } catch (error) {
+                    console.error("Fehler beim Speichern:", error);
+                    alert('Fehler beim Speichern in Firestore: ' + error.message);
+                }
+            });
+        }
 
         // Falls beim Laden direkt eingeloggt
         if (sessionStorage.getItem('frisorando_admin_logged') === 'true') {
