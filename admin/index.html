@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.6</title>
+    <title>Frisorando Admin - v1.1.7</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -246,7 +246,7 @@
             width: 100%; 
             border-collapse: collapse; 
             font-size: 13px;
-            min-width: 550px;
+            min-width: 600px;
         }
         .pro-table th, .pro-table td {
             padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-color);
@@ -262,6 +262,10 @@
             background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
         }
 
+        .btn-edit {
+            background: var(--primary); color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; margin-right: 4px;
+        }
+
         .btn-danger {
             background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
         }
@@ -273,6 +277,16 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
         .form-input, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; background: #fff; }
+
+        /* Modal für Bearbeitung */
+        #edit-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 10000;
+        }
+        .modal-card {
+            background: white; padding: 25px; border-radius: var(--radius); width: 90%; max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
 
         /* Passwort-Container mit Augen-Icon */
         .password-wrapper {
@@ -313,7 +327,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.6</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin <span style="font-size: 11px; color: var(--text-muted);">v1.1.7</span></h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -331,6 +345,38 @@
 
             <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
             <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center;"></div>
+        </div>
+    </div>
+
+    <!-- BEARBEITUNGS-MODAL -->
+    <div id="edit-modal">
+        <div class="modal-card">
+            <h3 style="margin-top: 0; color: var(--primary);">Benutzer bearbeiten</h3>
+            <form id="edit-user-form" onsubmit="window.saveEditedUser(event)">
+                <input type="hidden" id="edit-col-name">
+                <input type="hidden" id="edit-doc-id">
+                
+                <div class="form-group">
+                    <label>Vorname / Name / Salon</label>
+                    <input type="text" id="edit-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>E-Mail-Adresse</label>
+                    <input type="email" id="edit-email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="edit-status" class="form-select">
+                        <option value="active">Aktiv</option>
+                        <option value="pending">Wartet (Pending)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-action" style="flex: 1; padding: 10px;">Speichern</button>
+                    <button type="button" class="btn-danger" style="flex: 1; padding: 10px;" onclick="document.getElementById('edit-modal').style.display='none'">Abbrechen</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -382,7 +428,7 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.6)</h3>
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Sicherer Admin-Bereich aktiv (v1.1.7)</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Du bist erfolgreich als Administrator angemeldet.</p>
                 </div>
             </div>
@@ -498,7 +544,7 @@
                                     <th>E-Mail</th>
                                     <th>Rolle / Typ</th>
                                     <th>Status</th>
-                                    <th>Aktion</th>
+                                    <th>Aktionen</th>
                                 </tr>
                             </thead>
                             <tbody id="all-users-table">
@@ -588,7 +634,7 @@
 
             if (validUser && validPass) {
                 sessionStorage.setItem('frisorando_admin_logged', 'true');
-                sessionStorage.setItem('frisorando_admin_user', user); // Speichert den aktuell eingeloggten Benutzer
+                sessionStorage.setItem('frisorando_admin_user', user);
                 document.getElementById('login-overlay').style.display = 'none';
                 if (typeof loadAdminDataFromFirebase === 'function') {
                     loadAdminDataFromFirebase();
@@ -615,7 +661,7 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Integrierte Firebase-Logik inklusive dynamisch geschütztem Account -->
+    <!-- Integrierte Firebase-Logik inklusive Bearbeiten- und Löschfunktion -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -647,7 +693,7 @@
                 let totalUsersCount = 0;
                 const currentLoggedUser = sessionStorage.getItem('frisorando_admin_user') || 'Ritter2407';
 
-                // Dynamischer eigener Account-Eintrag für den aktuell angemeldeten Admin
+                // Eigener geschützter Account
                 totalUsersCount++;
                 const myAccountRow = document.createElement('tr');
                 myAccountRow.innerHTML = `
@@ -655,7 +701,7 @@
                     <td>${currentLoggedUser.includes('@') ? currentLoggedUser : 'kevin.ritter1606@googlemail.com'}</td>
                     <td><span class="badge" style="background: var(--primary); color: white;">Super-Admin (Du)</span></td>
                     <td><span class="badge badge-active">Aktiv</span></td>
-                    <td><button class="btn-disabled" title="Eigener Account kann nicht gelöscht werden">Geschützt</button></td>
+                    <td><button class="btn-disabled" title="Eigener Account geschützt">Geschützt</button></td>
                 `;
                 allUsersTable.appendChild(myAccountRow);
 
@@ -688,12 +734,19 @@
                     totalUsersCount++;
                     if (allUsersTable) {
                         const uRow = document.createElement('tr');
+                        const safeName = p.name || p.salonName || p.firstname || 'Partner';
+                        const safeEmail = p.email || '';
+                        const safeStatus = p.status || 'active';
+                        
                         uRow.innerHTML = `
-                            <td><strong>${p.name || p.salonName || 'Partner'}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
-                            <td>${p.email || 'Keine E-Mail'}</td>
+                            <td><strong>${safeName}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
+                            <td>${safeEmail || 'Keine E-Mail'}</td>
                             <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
-                            <td><span class="badge badge-active">${p.status || 'active'}</span></td>
-                            <td><button class="btn-danger" onclick="window.deleteUserFromSystem('partners', '${docId}')">Löschen</button></td>
+                            <td><span class="badge badge-active">${safeStatus}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="window.openEditModal('partners', '${docId}', '${safeName}', '${safeEmail}', '${safeStatus}')">Bearbeiten</button>
+                                <button class="btn-danger" onclick="window.deleteUserFromSystem('partners', '${docId}')">Löschen</button>
+                            </td>
                         `;
                         allUsersTable.appendChild(uRow);
                     }
@@ -713,12 +766,17 @@
                         totalUsersCount++;
                         if(allUsersTable) {
                             const uRow = document.createElement('tr');
+                            const aName = `${a.firstname || ''} ${a.lastname || ''}`.trim() || 'Admin';
+                            const aEmail = a.email || '';
                             uRow.innerHTML = `
-                                <td><strong>${a.firstname || ''} ${a.lastname || ''}</strong></td>
-                                <td>${a.email || 'Keine E-Mail'}</td>
+                                <td><strong>${aName}</strong></td>
+                                <td>${aEmail || 'Keine E-Mail'}</td>
                                 <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role || 'Super-Admin'})</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
-                                <td><button class="btn-danger" onclick="window.deleteUserFromSystem('admin_users', '${aId}')">Löschen</button></td>
+                                <td>
+                                    <button class="btn-edit" onclick="window.openEditModal('admin_users', '${aId}', '${aName}', '${aEmail}', 'active')">Bearbeiten</button>
+                                    <button class="btn-danger" onclick="window.deleteUserFromSystem('admin_users', '${aId}')">Löschen</button>
+                                </td>
                             `;
                             allUsersTable.appendChild(uRow);
                         }
@@ -734,12 +792,17 @@
                         totalUsersCount++;
                         if(allUsersTable) {
                             const uRow = document.createElement('tr');
+                            const cName = `${c.firstname || ''} ${c.lastname || ''}`.trim() || 'Kunde';
+                            const cEmail = c.email || '';
                             uRow.innerHTML = `
-                                <td><strong>${c.firstname || ''} ${c.lastname || ''}</strong></td>
-                                <td>${c.email || 'Keine E-Mail'}</td>
+                                <td><strong>${cName}</strong></td>
+                                <td>${cEmail || 'Keine E-Mail'}</td>
                                 <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
-                                <td><button class="btn-danger" onclick="window.deleteUserFromSystem('customers', '${cId}')">Löschen</button></td>
+                                <td>
+                                    <button class="btn-edit" onclick="window.openEditModal('customers', '${cId}', '${cName}', '${cEmail}', 'active')">Bearbeiten</button>
+                                    <button class="btn-danger" onclick="window.deleteUserFromSystem('customers', '${cId}')">Löschen</button>
+                                </td>
                             `;
                             allUsersTable.appendChild(uRow);
                         }
@@ -763,7 +826,7 @@
                         }
                     });
                 } else {
-                    if(inboxList) inboxList.innerHtml = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
+                    if(inboxList) inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
                 }
                 if(kpiMessages) kpiMessages.innerText = msgCount;
 
@@ -792,6 +855,43 @@
                     console.error("Fehler beim Löschen:", error);
                     alert('Fehler beim Löschen: ' + error.message);
                 }
+            }
+        }
+
+        window.openEditModal = function(colName, docId, name, email, status) {
+            document.getElementById('edit-col-name').value = colName;
+            document.getElementById('edit-doc-id').value = docId;
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-email').value = email;
+            document.getElementById('edit-status').value = status;
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        window.saveEditedUser = async function(e) {
+            e.preventDefault();
+            const colName = document.getElementById('edit-col-name').value;
+            const docId = document.getElementById('edit-doc-id').value;
+            const newName = document.getElementById('edit-name').value.trim();
+            const newEmail = document.getElementById('edit-email').value.trim();
+            const newStatus = document.getElementById('edit-status').value;
+
+            try {
+                const docRef = doc(db, colName, docId);
+                let updateData = { email: newEmail, status: newStatus };
+                if (colName === 'partners') {
+                    updateData.name = newName;
+                    updateData.salonName = newName;
+                } else {
+                    updateData.firstname = newName;
+                }
+
+                await updateDoc(docRef, updateData);
+                alert('Benutzerdaten erfolgreich aktualisiert!');
+                document.getElementById('edit-modal').style.display = 'none';
+                loadAdminDataFromFirebase();
+            } catch (error) {
+                console.error("Fehler beim Aktualisieren:", error);
+                alert('Fehler beim Speichern: ' + error.message);
             }
         }
 
