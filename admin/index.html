@@ -562,10 +562,23 @@
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
     </script>
 
-    <!-- Firebase & Hauptlogik als Modul (Pfad angepasst für admin/index.html) -->
+    <!-- Integrierte Firebase-Logik -->
     <script type="module">
-        import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js?v=orig_folder_2026";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBmJ62-6_2d4gbSdMObFHE5XI",
+          authDomain: "frisorando-dev.firebaseapp.com",
+          projectId: "frisorando-dev",
+          storageBucket: "frisorando-dev.appspot.com",
+          messagingSenderId: "947221498541",
+          appId: "1:947221498541:web:04dd9ca3f9e3",
+          measurementId: "G-1W0LP8GB2K"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
