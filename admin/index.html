@@ -252,7 +252,7 @@
                 <input type="password" id="login-pass" class="form-input" required autocomplete="current-password">
             </div>
 
-            <button type="button" class="btn-action" onclick="handleLogin()" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
+            <button type="button" id="login-btn" class="btn-action" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">Anmelden</button>
             <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center;"></div>
         </div>
     </div>
@@ -281,7 +281,7 @@
             </div>
             <div class="user-profile">
                 <span id="current-admin-name">👤 Administrator</span>
-                <button class="logout-btn" onclick="logoutAdmin()">Abmelden</button>
+                <button class="logout-btn" id="logout-btn">Abmelden</button>
             </div>
         </header>
 
@@ -381,7 +381,7 @@
                             <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de (optional)">
                         </div>
 
-                        <!-- Passwort-Feld mit dezentem Info-Hinweis -->
+                        <!-- Passwort-Feld -->
                         <div class="form-group">
                             <label>Sicheres Passwort</label>
                             <input type="password" id="user-password" class="form-input" required>
@@ -484,9 +484,22 @@
         </div>
     </div>
 
-    <!-- Login-Logik -->
-    <script>
-        window.handleLogin = function() {
+    <!-- Firebase & Hauptlogik als sauberes Modul -->
+    <script type="module">
+        import { db } from "../assets/js/firebase.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Login-Prüfung beim Start
+        window.addEventListener('DOMContentLoaded', () => {
+            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
+            if (loggedIn === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                loadAdminDataFromFirebase();
+            }
+        });
+
+        // Login Klick-Handler
+        document.getElementById('login-btn').addEventListener('click', () => {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value;
             const errDiv = document.getElementById('login-error');
@@ -501,28 +514,16 @@
             } else {
                 errDiv.innerText = "Falscher Benutzername oder falsches Passwort!";
             }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
-            if (loggedIn === 'true') {
-                document.getElementById('login-overlay').style.display = 'none';
-                loadAdminDataFromFirebase();
-            }
         });
 
-        window.logoutAdmin = function() {
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
             sessionStorage.removeItem('frisorando_admin_logged');
             location.reload();
-        }
-    </script>
+        });
 
-    <!-- Firebase & Hauptlogik -->
-    <script type="module">
-        import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        window.loadAdminDataFromFirebase = async function() {
+        // Daten aus Firebase laden
+        async function loadAdminDataFromFirebase() {
             const fullTable = document.getElementById('full-partners-table');
             const inboxList = document.getElementById('inbox-messages-container');
             const allUsersTable = document.getElementById('all-users-table');
@@ -555,7 +556,7 @@
                         <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
                         <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
                         <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
-                        <td>${isPending ? `<button class="btn-action" onclick="approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
+                        <td>${isPending ? `<button class="btn-action" onclick="window.approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
                     `;
                     fullTable.appendChild(row);
 
@@ -610,7 +611,7 @@
                 } catch(e) {}
 
                 if(totalUsersCount === 0) {
-                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben, um den ersten Benutzer anzulegen.</td></tr>`;
+                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine Benutzer erfasst. Nutze das Formular oben.</td></tr>`;
                 }
 
                 // 4. Postkasten laden
@@ -647,6 +648,7 @@
             }
         }
 
+        // Benutzer anlegen
         const userForm = document.getElementById('universal-user-form');
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
