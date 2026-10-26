@@ -484,22 +484,9 @@
         </div>
     </div>
 
-    <!-- Firebase & Hauptlogik als sauberes Modul -->
-    <script type="module">
-        import { db } from "../assets/js/firebase.js";
-        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Login-Prüfung beim Start
-        window.addEventListener('DOMContentLoaded', () => {
-            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
-            if (loggedIn === 'true') {
-                document.getElementById('login-overlay').style.display = 'none';
-                loadAdminDataFromFirebase();
-            }
-        });
-
-        // Login Klick-Handler
-        document.getElementById('login-btn').addEventListener('click', () => {
+    <!-- Login-Logik -->
+    <script>
+        window.handleLogin = function() {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value;
             const errDiv = document.getElementById('login-error');
@@ -514,16 +501,31 @@
             } else {
                 errDiv.innerText = "Falscher Benutzername oder falsches Passwort!";
             }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const loggedIn = sessionStorage.getItem('frisorando_admin_logged');
+            if (loggedIn === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                // Versuche Daten zu laden, sobald Firebase bereit ist
+            }
         });
 
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
+        window.logoutAdmin = function() {
             sessionStorage.removeItem('frisorando_admin_logged');
             location.reload();
-        });
+        }
 
-        // Daten aus Firebase laden
-        async function loadAdminDataFromFirebase() {
+        document.getElementById('login-btn').addEventListener('click', window.handleLogin);
+        document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
+    </script>
+
+    <!-- Firebase & Hauptlogik als sauberes Modul -->
+    <script type="module">
+        import { db } from "../assets/js/firebase.js";
+        import { collection, getDocs, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        window.loadAdminDataFromFirebase = async function() {
             const fullTable = document.getElementById('full-partners-table');
             const inboxList = document.getElementById('inbox-messages-container');
             const allUsersTable = document.getElementById('all-users-table');
@@ -688,6 +690,11 @@
                 alert('Fehler beim Speichern in Firestore: ' + error.message);
             }
         });
+
+        // Falls beim Laden direkt eingeloggt
+        if (sessionStorage.getItem('frisorando_admin_logged') === 'true') {
+            loadAdminDataFromFirebase();
+        }
     </script>
 
     <!-- Navigation & UI Logik -->
