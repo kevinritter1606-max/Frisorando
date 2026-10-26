@@ -236,7 +236,7 @@
 </head>
 <body>
 
-    <!-- SICHERES LOGIN-FENSTER (Felder sind leer) -->
+    <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
             <h2 style="margin-top: 0; color: var(--primary); font-size: 22px;">Frisorando Admin</h2>
@@ -476,6 +476,7 @@
             }
         });
 
+        // Login Formular absenden (Mit deinen exakten Daten und direktem Feedback)
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -491,7 +492,7 @@
                 document.getElementById('login-overlay').style.display = 'none';
                 loadAdminData();
             } else {
-                errDiv.innerText = "Ungültiger Benutzername oder falsches Passwort!";
+                errDiv.innerText = "Falscher Benutzername oder falsches Passwort!";
             }
         });
 
