@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.1.13</title>
+    <title>Frisorando Admin - v1.1.14</title>
     <style>
         :root {
             --sidebar-bg: #1e293b;
@@ -349,9 +349,16 @@
         }
         .pro-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; font-size: 9px; text-transform: uppercase; }
 
-        .badge { padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: 700; display: inline-block; }
+        .badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 700; display: inline-block; }
         .badge-pending { background: var(--warning-bg); color: var(--warning); display: inline-flex; align-items: center; gap: 2px; }
         .badge-active { background: var(--success-bg); color: var(--success); }
+        
+        /* Dezente grüne Rollen-Badges */
+        .badge-role {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(19, 115, 51, 0.2);
+        }
 
         .btn-action {
             background: var(--success); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 10px;
@@ -428,7 +435,7 @@
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.13</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.1.14</span></h2>
             <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -511,7 +518,7 @@
 
         <div class="content-area">
             
-            <!-- 1. Dashboard (Vollständig per Drag & Drop verschiebbar) -->
+            <!-- 1. Dashboard -->
             <div id="section-dashboard" class="admin-section active">
                 <div id="sortable-dashboard-container">
                     
@@ -550,7 +557,7 @@
 
                     <!-- Info Box -->
                     <div class="card draggable-card" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)" style="padding: 10px 12px;">
-                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.13) – Tipp: Dashboard-Elemente lassen sich per Drag & Drop anordnen.</p>
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.1.14) – Dashboard-Elemente sind per Drag & Drop verschiebbar.</p>
                     </div>
 
                 </div>
@@ -797,7 +804,6 @@
         document.getElementById('login-btn').addEventListener('click', window.handleLogin);
         document.getElementById('logout-btn').addEventListener('click', window.logoutAdmin);
 
-        // Drag & Drop Funktionen für das Dashboard
         let draggedCard = null;
 
         window.drag = function(e) {
@@ -918,7 +924,7 @@
                 myAccountRow.innerHTML = `
                     <td><strong>${currentLoggedUser}</strong><br><span style="font-size: 9px; color: var(--text-muted);">Admin</span></td>
                     <td>${currentEmail}</td>
-                    <td><span class="badge" style="background: var(--primary); color: white;">Super-Admin (Du)</span></td>
+                    <td><span class="badge badge-role">Super-Admin (Du)</span></td>
                     <td><span class="badge badge-active">Aktiv</span></td>
                     <td>
                         <button class="btn-edit" onclick="window.openEditModal('my_account', 'self', '${currentLoggedUser}', '${currentEmail}', 'active')">Bearbeiten</button>
@@ -962,7 +968,7 @@
                         uRow.innerHTML = `
                             <td><strong>${safeName}</strong><br><span style="font-size: 9px; color: var(--text-muted);">${p.firstname || ''} ${p.lastname || ''}</span></td>
                             <td>${safeEmail || 'Keine E-Mail'}</td>
-                            <td><span class="badge" style="background: var(--primary); color: white;">Partner</span></td>
+                            <td><span class="badge badge-role">Partner</span></td>
                             <td><span class="badge badge-active">${safeStatus}</span></td>
                             <td>
                                 ${safeEmail ? `<a href="mailto:${safeEmail}" class="btn-mail">E-Mail</a>` : ''}
@@ -993,7 +999,7 @@
                             uRow.innerHTML = `
                                 <td><strong>${aName}</strong></td>
                                 <td>${aEmail || 'Keine E-Mail'}</td>
-                                <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin</span></td>
+                                <td><span class="badge badge-role">Admin</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
                                 <td>
                                     ${aEmail ? `<a href="mailto:${aEmail}" class="btn-mail">E-Mail</a>` : ''}
@@ -1019,7 +1025,7 @@
                             uRow.innerHTML = `
                                 <td><strong>${cName}</strong></td>
                                 <td>${cEmail || 'Keine E-Mail'}</td>
-                                <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Kunde</span></td>
+                                <td><span class="badge badge-role">Kunde</span></td>
                                 <td><span class="badge badge-active">Aktiv</span></td>
                                 <td>
                                     ${cEmail ? `<a href="mailto:${cEmail}" class="btn-mail">E-Mail</a>` : ''}
