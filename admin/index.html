@@ -277,7 +277,7 @@
             <li class="sidebar-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
             <li class="sidebar-item" onclick="switchTab('partners', this)">✂️ Partner & Prüfung</li>
             <li class="sidebar-item" onclick="switchTab('inbox', this)">📥 Postkasten</li>
-            <li class="sidebar-item" onclick="switchTab('admins', this)">👥 Admin-Benutzer</li>
+            <li class="sidebar-item" onclick="switchTab('users', this)">👥 Benutzerverwaltung</li>
             <li class="sidebar-item" onclick="switchTab('settings', this)">⚙️ Einstellungen</li>
         </ul>
     </aside>
@@ -313,7 +313,7 @@
 
                 <div class="card">
                     <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Willkommen im Admin-Cockpit</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Über die linke Navigation kannst du nun auch neue Admin-Benutzer anlegen, die Zugriff auf das Backend erhalten.</p>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Unter „Benutzerverwaltung“ kannst du ab sofort **Admins, Friseure/Partner und Kunden** manuell anlegen und verwalten.</p>
                 </div>
             </div>
 
@@ -350,43 +350,60 @@
                 </div>
             </div>
 
-            <!-- 4. Admin-Benutzer (NEU) -->
-            <div id="section-admins" class="admin-section">
+            <!-- 4. Benutzerverwaltung (Admin, Friseur, Kunde) -->
+            <div id="section-users" class="admin-section">
                 <div class="card">
-                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Neuen Administrator anlegen</h3>
-                    <form id="admin-create-form" style="margin-bottom: 25px;">
+                    <h3 style="margin-top: 0; font-size: 14px; color: var(--primary);">Neuen Benutzer manuell anlegen (Admin, Friseur, Kunde)</h3>
+                    <form id="universal-user-form" style="margin-bottom: 25px;">
                         <div class="form-group">
-                            <label>Name des Administrators</label>
-                            <input type="text" id="new-admin-name" class="form-input" placeholder="z. B. Max Mustermann" required>
+                            <label>Benutzer-Rolle / Typ</label>
+                            <select id="user-role-type" class="form-select" onchange="toggleUserFields()">
+                                <option value="admin">Administrator / Support</option>
+                                <option value="partner">Friseur / Salon-Partner</option>
+                                <option value="customer">Endkunde</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Vollständiger Name / Salonname</label>
+                            <input type="text" id="user-name" class="form-input" placeholder="z. B. Max Mustermann oder Salon Hair" required>
                         </div>
                         <div class="form-group">
                             <label>E-Mail-Adresse</label>
-                            <input type="email" id="new-admin-email" class="form-input" placeholder="admin@frisorando.de" required>
+                            <input type="email" id="user-email" class="form-input" placeholder="name@beispiel.de" required>
                         </div>
-                        <div class="form-group">
-                            <label>Rolle / Berechtigung</label>
-                            <select id="new-admin-role" class="form-select">
-                                <option value="Super-Admin">Super-Admin (Vollzugriff)</option>
-                                <option value="Support">Support & Postkasten</option>
-                                <option value="Buchhaltung">Buchhaltung & Finanzen</option>
-                            </select>
+                        
+                        <!-- Zusätzliche Felder nur für Friseure/Partner -->
+                        <div id="partner-extra-fields" style="display: none;">
+                            <div class="form-group">
+                                <label>Standort / PLZ</label>
+                                <input type="text" id="user-location" class="form-input" placeholder="z. B. 79618 Rheinfelden">
+                            </div>
+                            <div class="form-group">
+                                <label>Service-Typ</label>
+                                <select id="user-service-type" class="form-select">
+                                    <option value="salon">Salon vor Ort</option>
+                                    <option value="mobile">Nur Mobil</option>
+                                    <option value="both">Hybrid (Salon & Mobil)</option>
+                                </select>
+                            </div>
                         </div>
-                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Admin-Zugang erstellen</button>
+
+                        <button type="submit" class="btn-action" style="padding: 10px 18px;">Benutzer manuell anlegen</button>
                     </form>
 
-                    <h3 style="font-size: 14px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 20px;">Berechtigte Administratoren</h3>
+                    <h3 style="font-size: 14px; color: var(--primary); border-top: 1px solid var(--border-color); padding-top: 20px;">Alle im System erfassten Benutzer</h3>
                     <div style="overflow-x: auto;">
                         <table class="pro-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>Name / Salon</th>
                                     <th>E-Mail</th>
-                                    <th>Rolle</th>
+                                    <th>Rolle / Typ</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="admin-users-table">
-                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Lade Administratoren...</td></tr>
+                            <tbody id="all-users-table">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Lade Benutzer...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -457,7 +474,7 @@
         async function loadAdminData() {
             const fullTable = document.getElementById('full-partners-table');
             const inboxList = document.getElementById('inbox-messages-container');
-            const adminUsersTable = document.getElementById('admin-users-table');
+            const allUsersTable = document.getElementById('all-users-table');
             
             const kpiActive = document.getElementById('kpi-active');
             const kpiPending = document.getElementById('kpi-pending');
@@ -467,6 +484,7 @@
                 // 1. Partner laden
                 const querySnapshot = await getDocs(collection(db, "partners"));
                 fullTable.innerHTML = "";
+                allUsersTable.innerHTML = "";
                 let activeCount = 0;
                 let pendingCount = 0;
 
@@ -478,15 +496,26 @@
                     if (isPending) pendingCount++;
                     else activeCount++;
 
+                    // Partner Tabelle
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><strong>${p.name}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.ownerFirstname} ${p.ownerLastname}</span></td>
-                        <td>${p.location}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type}</span></td>
+                        <td><strong>${p.name}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${p.ownerFirstname || ''} ${p.ownerLastname || ''}</span></td>
+                        <td>${p.location || 'k.A.'}<br><span style="font-size: 11px; color: var(--text-muted);">${p.type || 'salon'}</span></td>
                         <td><strong>${p.masterNumber || 'k.A.'}</strong></td>
                         <td><span class="badge ${isPending ? 'badge-pending' : 'badge-active'}">${isPending ? 'Wartet' : 'Aktiv'}</span></td>
                         <td>${isPending ? `<button class="btn-action" onclick="approvePartner('${docId}')">Freigeben</button>` : '<span style="font-size: 11px; color: var(--success);">Aktiv</span>'}</td>
                     `;
                     fullTable.appendChild(row);
+
+                    // Auch in die globale Benutzer-Tabelle eintragen
+                    const uRow = document.createElement('tr');
+                    uRow.innerHTML = `
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.email || 'k.A.'}</td>
+                        <td><span class="badge" style="background: var(--primary); color: white;">Friseur / Partner</span></td>
+                        <td><span class="badge badge-active">${p.status || 'active'}</span></td>
+                    `;
+                    allUsersTable.appendChild(uRow);
                 });
 
                 if(fullTable.innerHTML === "") fullTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keine Partner.</td></tr>`;
@@ -494,18 +523,47 @@
                 kpiActive.innerText = activeCount;
                 kpiPending.innerText = pendingCount;
 
-                // 2. Postkasten laden
+                // 2. Admins und Kunden aus Firestore laden und in die Tabelle schreiben
                 try {
-                    const msgSnapshot = await getDocs(collection(db, "support_messages"));
-                    inboxList.innerHTML = "";
-                    let msgCount = 0;
+                    const adminSnap = await getDocs(collection(db, "admin_users"));
+                    adminSnap.forEach((aDoc) => {
+                        const a = aDoc.data();
+                        const uRow = document.createElement('tr');
+                        uRow.innerHTML = `
+                            <td><strong>${a.name}</strong></td>
+                            <td>${a.email}</td>
+                            <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">Admin (${a.role})</span></td>
+                            <td><span class="badge badge-active">Aktiv</span></td>
+                        `;
+                        allUsersTable.appendChild(uRow);
+                    });
+                } catch(e) {}
 
-                    if (msgSnapshot.empty) {
-                        inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
-                        kpiMessages.innerText = "0";
-                        return;
-                    }
+                try {
+                    const custSnap = await getDocs(collection(db, "customers"));
+                    custSnap.forEach((cDoc) => {
+                        const c = cDoc.data();
+                        const uRow = document.createElement('tr');
+                        uRow.innerHTML = `
+                            <td><strong>${c.name}</strong></td>
+                            <td>${c.email}</td>
+                            <td><span class="badge" style="background: #edf2f7; color: var(--text-muted);">Endkunde</span></td>
+                            <td><span class="badge badge-active">Aktiv</span></td>
+                        `;
+                        allUsersTable.appendChild(uRow);
+                    });
+                } catch(e) {}
 
+                if(allUsersTable.innerHTML === "") {
+                    allUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Keine Benutzer erfasst.</td></tr>`;
+                }
+
+                // 3. Postkasten laden
+                const msgSnapshot = await getDocs(collection(db, "support_messages"));
+                inboxList.innerHTML = "";
+                let msgCount = 0;
+
+                if (!msgSnapshot.empty) {
                     msgSnapshot.forEach((msgDoc) => {
                         const m = msgDoc.data();
                         msgCount++;
@@ -514,36 +572,10 @@
                         msgBox.innerHTML = `<strong>Salon: ${m.salonName}</strong><p style="margin: 5px 0;">${m.messageText}</p>`;
                         inboxList.appendChild(msgBox);
                     });
-
-                    kpiMessages.innerText = msgCount;
-                } catch(e) {
-                    inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten.</p>`;
+                } else {
+                    inboxList.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Keine Nachrichten im Postkasten.</p>`;
                 }
-
-                // 3. Admin-Benutzer laden (Collection: admin_users)
-                try {
-                    const adminSnapshot = await getDocs(collection(db, "admin_users"));
-                    adminUsersTable.innerHTML = "";
-
-                    if (adminSnapshot.empty) {
-                        adminUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Noch keine zusätzlichen Admins angelegt.</td></tr>`;
-                        return;
-                    }
-
-                    adminSnapshot.forEach((adminDoc) => {
-                        const a = adminDoc.data();
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td><strong>${a.name}</strong></td>
-                            <td>${a.email}</td>
-                            <td><span class="badge" style="background: #e2e8f0; color: var(--text-main);">${a.role}</span></td>
-                            <td><span class="badge badge-active">Aktiv</span></td>
-                        `;
-                        adminUsersTable.appendChild(row);
-                    });
-                } catch(e) {
-                    adminUsersTable.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Admin-Tabelle wird initialisiert...</td></tr>`;
-                }
+                kpiMessages.innerText = msgCount;
 
             } catch (error) {
                 console.error("Fehler:", error);
@@ -560,38 +592,53 @@
             }
         }
 
-        // Neuen Admin speichern
-        const adminForm = document.getElementById('admin-create-form');
-        adminForm.addEventListener('submit', async (e) => {
+        // Universelles Formular zum manuellen Anlegen von Benutzern
+        const userForm = document.getElementById('universal-user-form');
+        userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('new-admin-name').value;
-            const email = document.getElementById('new-admin-email').value;
-            const role = document.getElementById('new-admin-role').value;
+            const roleType = document.getElementById('user-role-type').value;
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
 
             try {
-                await addDoc(collection(db, "admin_users"), {
-                    name: name,
-                    email: email,
-                    role: role,
-                    createdAt: new Date().toISOString()
-                });
-                alert('Administrator erfolgreich angelegt!');
-                adminForm.reset();
+                if (roleType === 'admin') {
+                    await addDoc(collection(db, "admin_users"), { name, email, role: 'Super-Admin', createdAt: new Date().toISOString() });
+                } else if (roleType === 'partner') {
+                    const location = document.getElementById('user-location').value || 'Rheinfelden';
+                    const type = document.getElementById('user-service-type').value;
+                    await addDoc(collection(db, "partners"), { name, email, location, type, status: 'active', createdAt: new Date().toISOString() });
+                } else if (roleType === 'customer') {
+                    await addDoc(collection(db, "customers"), { name, email, createdAt: new Date().toISOString() });
+                }
+
+                alert('Benutzer erfolgreich manuell angelegt!');
+                userForm.reset();
+                toggleUserFields();
                 loadAdminData();
             } catch (error) {
                 console.error("Fehler:", error);
-                alert('Fehler beim Speichern des Administrators.');
+                alert('Fehler beim Speichern des Benutzers.');
             }
         });
 
         loadAdminData();
     </script>
 
-    <!-- Navigation & Mobile Toggle Logik -->
+    <!-- Navigation & UI Logik -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('mobile-open');
+        }
+
+        function toggleUserFields() {
+            const role = document.getElementById('user-role-type').value;
+            const partnerFields = document.getElementById('partner-extra-fields');
+            if (role === 'partner') {
+                partnerFields.style.display = 'block';
+            } else {
+                partnerFields.style.display = 'none';
+            }
         }
 
         function switchTab(tabId, element) {
@@ -605,7 +652,7 @@
                 'dashboard': 'Dashboard & Live-Kennzahlen',
                 'partners': 'Partner & Verifizierung',
                 'inbox': 'Postkasten & Support-Anfragen',
-                'admins': 'Admin-Benutzerverwaltung',
+                'users': 'Universelle Benutzerverwaltung',
                 'settings': 'Plattform-Einstellungen'
             };
             document.getElementById('page-title').innerText = titles[tabId];
