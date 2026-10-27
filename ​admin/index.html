@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisorando Admin - v1.2.0</title>
+    <title>Frisorando Admin - v1.2.1</title>
     <!-- Verlinkung auf das externe Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-    <!-- Hintergrund-Abdunklung für Klick zum Schließen des Menüs -->
+    <!-- Hintergrund-Abdunklung für Klick zum Schließen des mobilen Menüs -->
     <div id="mobile-backdrop" onclick="toggleSidebar()"></div>
 
     <!-- SICHERES LOGIN-FENSTER -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.2.0</span></h2>
+            <h2 style="margin-top: 0; color: var(--primary); font-size: 18px;">Frisorando Admin <span style="font-size: 9px; color: var(--text-muted);">v1.2.1</span></h2>
             <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Bitte melde dich mit deinen Zugangsdaten an.</p>
             
             <div class="form-group">
@@ -68,11 +68,11 @@
         </div>
     </div>
 
-    <!-- Linke Sidebar -->
+    <!-- Linke Sidebar mit integriertem Schließen-Button -->
     <aside id="sidebar">
         <div class="sidebar-brand">
             Frisorando Admin
-            <span style="font-size: 15px; cursor: pointer; display: inline-block;" class="menu-toggle" onclick="toggleSidebar()">✕</span>
+            <span style="font-size: 16px; cursor: pointer; padding: 4px;" class="menu-toggle" onclick="toggleSidebar()">✕</span>
         </div>
         <ul class="sidebar-menu">
             <li class="sidebar-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
@@ -87,7 +87,8 @@
     <div class="main-wrapper">
         <header>
             <div class="header-left">
-                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <!-- Hamburger-Menü-Button für Mobilgeräte -->
+                <button class="menu-toggle" onclick="toggleSidebar()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-main); padding: 4px;">☰</button>
                 <div class="header-title" id="page-title">Dashboard & Live-Kennzahlen</div>
             </div>
             <div class="user-profile">
@@ -134,7 +135,7 @@
                     </div>
 
                     <div class="card" style="padding: 10px 12px;">
-                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.2.0 – Modulare Struktur)</p>
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Sicherer Admin-Bereich aktiv (v1.2.1 – Modulare Struktur mit Menü)</p>
                     </div>
 
                 </div>
@@ -327,8 +328,7 @@
         </div>
     </div>
 
-    <!-- Einbindung der externen Skripte -->
+    <!-- Einbindung des externen JavaScript-Moduls -->
     <script src="assets/js/admin.js" type="module"></script>
 </body>
 </html>
-
