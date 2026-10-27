@@ -43,7 +43,7 @@
             border-radius: 12px;
             display: flex;
             align-items: center;
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
@@ -51,11 +51,10 @@
             flex: 1;
             border: none;
             padding: 10px;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
             background: transparent;
         }
-        /* Deutlicher, gut sichtbarer Standort-Button */
         .gps-btn {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
@@ -256,7 +255,7 @@
 
         <div class="search-box-wrapper">
             <button class="gps-btn" onclick="getGeoLocation()">📍 Standort</button>
-            <input type="text" class="search-input" id="search-location" value="Rheinfelden (Baden)" placeholder="PLZ oder Ort eingeben...">
+            <input type="text" class="search-input" id="search-location" value="Rheinfelden (Baden)" placeholder="Straße, PLZ oder Ort eingeben...">
             <button class="search-btn">Suchen</button>
         </div>
     </div>
@@ -277,7 +276,7 @@
         </div>
     </div>
 
-    <!-- Firebase Live-Anbindung & Geolocation Logik -->
+    <!-- Firebase Live-Anbindung & Geolocation Logik (mit Straße & Ort) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -350,6 +349,7 @@
             });
         }
 
+        // Erweiterte GPS-Standortbestimmung inkl. Straße, Hausnummer und Stadt
         window.getGeoLocation = function() {
             const input = document.getElementById('search-location');
             if (!navigator.geolocation) {
@@ -357,19 +357,33 @@
                 return;
             }
 
-            input.value = 'Ermittle Standort...';
+            input.value = 'Ermittle genaue Adresse...';
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 
                 try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=de`);
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1&accept-language=de`);
                     const data = await response.json();
                     
-                    const city = data.address.city || data.address.town || data.address.village || data.address.municipality || 'Aktueller Standort';
-                    const postcode = data.address.postcode ? `(${data.address.postcode})` : '';
-                    
-                    input.value = `${city} ${postcode}`.trim();
+                    if (data && data.address) {
+                        const addr = data.address;
+                        const road = addr.road || addr.pedestrian || addr.suburb || '';
+                        const houseNumber = addr.house_number ? ` ${addr.house_number}` : '';
+                        const city = addr.city || addr.town || addr.village || addr.municipality || '';
+                        const postcode = addr.postcode ? ` ${addr.postcode}` : '';
+
+                        let fullAddress = '';
+                        if (road) {
+                            fullAddress = `${road}${houseNumber},${postcode} ${city}`.trim();
+                        } else {
+                            fullAddress = `${city}${postcode}`.trim();
+                        }
+
+                        input.value = fullAddress || 'Aktueller Standort';
+                    } else {
+                        input.value = 'Standort ermittelt';
+                    }
                 } catch (err) {
                     input.value = 'Standort gefunden (GPS)';
                 }
