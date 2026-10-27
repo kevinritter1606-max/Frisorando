@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frisorando - Dein Friseur & Mobiles Styling</title>
-    <!-- CSS-Pfad im Hauptverzeichnis -->
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, #ff5a79 100%);
             color: white;
-            padding: 35px 20px 45px 20px;
+            padding: 30px 20px 40px 20px;
             text-align: center;
         }
         .mode-switch {
@@ -19,11 +18,11 @@
             padding: 4px;
             border-radius: 12px;
             max-width: 340px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 15px auto;
         }
         .mode-btn {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             border: none;
             background: transparent;
             color: white;
@@ -40,10 +39,10 @@
         }
         .search-box-wrapper {
             background: white;
-            padding: 8px;
+            padding: 6px;
             border-radius: 12px;
             display: flex;
-            max-width: 450px;
+            max-width: 480px;
             margin: 0 auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
@@ -53,6 +52,34 @@
             padding: 10px;
             font-size: 14px;
             outline: none;
+        }
+        /* Lieferando-Filter-Leiste */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px 15px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        .filter-chip {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .filter-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
         .partner-card {
             background: white;
@@ -72,7 +99,7 @@
     <!-- Header -->
     <header style="background: white; padding: 12px 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
         <a href="index.html" style="font-size: 20px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
             <a href="customer/profile.html" style="font-size: 12px; font-weight: 600; color: var(--text-main); text-decoration: none;">👤 Profil</a>
             <a href="admin/index.html" style="font-size: 11px; background: var(--sidebar-bg); color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none;">Admin</a>
         </div>
@@ -80,10 +107,10 @@
 
     <!-- Hero / Lieferando-Suchbereich -->
     <div class="hero">
-        <h1 style="margin: 0 0 8px 0; font-size: 22px;">Dein Friseur. Wann & wo du willst.</h1>
-        <p style="margin: 0 0 20px 0; font-size: 13px; opacity: 0.9;">Im Salon oder direkt per Hausbesuch in deiner Nähe.</p>
+        <h1 style="margin: 0 0 6px 0; font-size: 21px;">Dein Friseur. Direkt vor Ort oder Mobil.</h1>
+        <p style="margin: 0 0 18px 0; font-size: 12px; opacity: 0.9;">Gleich wie bei Lieferando: Adresse eingeben, vergleichen & buchen.</p>
 
-        <!-- Modus-Umschaltung (Lieferando-Prinzip) -->
+        <!-- Modus-Umschaltung -->
         <div class="mode-switch">
             <button class="mode-btn active" onclick="switchMode('salon')">✂️ Im Salon</button>
             <button class="mode-btn" onclick="switchMode('mobile')">🚗 Hausbesuch</button>
@@ -91,21 +118,29 @@
 
         <!-- Suchleiste -->
         <div class="search-box-wrapper">
-            <input type="text" class="search-input" value="Rheinfelden (Baden)" placeholder="PLZ oder Ort eingeben...">
-            <button class="btn-action" style="padding: 10px 18px; font-size: 13px; border-radius: 8px;">Suchen</button>
+            <input type="text" class="search-input" id="search-location" value="Rheinfelden (Baden)" placeholder="Gib deine PLZ oder Straße ein...">
+            <button class="btn-action" style="padding: 10px 18px; font-size: 13px; border-radius: 8px;">Finden</button>
         </div>
     </div>
 
-    <!-- Hauptinhalt: Dynamische Partner-Liste aus Firebase -->
-    <div style="max-width: 650px; margin: -15px auto 30px auto; padding: 0 15px;">
-        <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">Verfügbare Partner in deiner Nähe</h3>
+    <!-- Lieferando-Filterchips -->
+    <div class="filter-bar">
+        <button class="filter-chip active" onclick="filterPartners('all', this)">⚡ Alle anzeigen</button>
+        <button class="filter-chip" onclick="filterPartners('top', this)">⭐ Top bewertet (4.8+)</button>
+        <button class="filter-chip" onclick="filterPartners('mobile', this)">🚗 Nur Hausbesuch</button>
+        <button class="filter-chip" onclick="filterTrending(this)">🔥 Beliebt in Rheinfelden</button>
+    </div>
+
+    <!-- Hauptinhalt: Partner-Liste -->
+    <div style="max-width: 650px; margin: 0 auto 30px auto; padding: 0 15px;">
+        <h3 style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="result-heading">Verfügbare Partner in deiner Nähe</h3>
         
         <div id="partners-list">
-            <p style="text-align: center; color: var(--text-muted); font-size: 13px;">Lade aktive Partner aus der Datenbank...</p>
+            <p style="text-align: center; color: var(--text-muted); font-size: 13px;">Lade Partner aus der Datenbank...</p>
         </div>
     </div>
 
-    <!-- Firebase Live-Anbindung für die Hauptseite -->
+    <!-- Firebase Live-Anbindung & Filterlogik -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -123,10 +158,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let allPartnersCache = [];
+
         async function loadHomePartners() {
             const container = document.getElementById('partners-list');
             try {
                 const querySnapshot = await getDocs(collection(db, "partners"));
+                allPartnersCache = [];
                 container.innerHTML = "";
 
                 if (querySnapshot.empty) {
@@ -136,26 +174,64 @@
 
                 querySnapshot.forEach((docSnap) => {
                     const p = docSnap.data();
-                    if (p.status !== 'active') return; // Nur freigegebene anzeigen
-
-                    const card = document.createElement('div');
-                    card.className = 'partner-card';
-                    card.innerHTML = `
-                        <div>
-                            <h4 style="margin: 0 0 3px 0; font-size: 15px; color: var(--text-main);">${p.name || p.salonName || 'Salon'}</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 5px 0;">📍 ${p.location || 'Rheinfelden'} • ⭐ 4,9</p>
-                            <span class="badge ${p.type === 'mobile' ? 'badge-pending' : 'badge-active'}">${p.type === 'mobile' ? '🚗 Mobiler Service' : '⚡ Salon vor Ort'}</span>
-                        </div>
-                        <div>
-                            <a href="salon/index.html" class="btn-action" style="padding: 7px 14px; font-size: 12px; text-decoration: none; display: inline-block;">Zum Salon ➔</a>
-                        </div>
-                    `;
-                    container.appendChild(card);
+                    if (p.status !== 'active') return; 
+                    allPartnersCache.push(p);
                 });
+
+                renderPartnerCards(allPartnersCache);
             } catch (error) {
                 console.error("Fehler beim Laden:", error);
                 container.innerHTML = `<div class="partner-card" style="justify-content: center; color: var(--danger);">Fehler beim Laden der Partner.</div>`;
             }
+        }
+
+        window.renderPartnerCards = function(partners) {
+            const container = document.getElementById('partners-list');
+            container.innerHTML = "";
+
+            if (partners.length === 0) {
+                container.innerHTML = `<div class="partner-card" style="justify-content: center; color: var(--text-muted);">Keine Partner gefunden, die diesen Kriterien entsprechen.</div>`;
+                return;
+            }
+
+            partners.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'partner-card';
+                card.innerHTML = `
+                    <div>
+                        <h4 style="margin: 0 0 3px 0; font-size: 15px; color: var(--text-main);">${p.name || p.salonName || 'Salon'}</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 6px 0;">📍 ${p.location || 'Rheinfelden'} • ⭐ 4,9 (18)</p>
+                        <div style="display: flex; gap: 5px;">
+                            <span class="badge ${p.type === 'mobile' ? 'badge-pending' : 'badge-active'}">${p.type === 'mobile' ? '🚗 Mobiler Service' : '⚡ Salon vor Ort'}</span>
+                            <span style="font-size: 10px; background: #e2e8f0; padding: 2px 6px; border-radius: 3px; color: var(--text-main);">⏱️ ca. 20-35 Min</span>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="salon/index.html" class="btn-action" style="padding: 7px 14px; font-size: 12px; text-decoration: none; display: inline-block;">Menü & Wahl ➔</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.filterPartners = function(type, btn) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (type === 'all') {
+                renderPartnerCards(allPartnersCache);
+            } else if (type === 'mobile') {
+                const filtered = allPartnersCache.filter(p => p.type === 'mobile' || p.type === 'both');
+                renderPartnerCards(filtered);
+            } else if (type === 'top') {
+                renderPartnerCards(allPartnersCache); // Mock für Top-Bewertungen
+            }
+        }
+
+        window.filterTrending = function(btn) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            renderPartnerCards(allPartnersCache);
         }
 
         loadHomePartners();
