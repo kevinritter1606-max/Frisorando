@@ -540,4 +540,3 @@ window.switchSettingsTab = function(tabName, btnElement) {
     document.getElementById('stab-' + tabName).classList.add('active');
     btnElement.classList.add('active');
 }
-
