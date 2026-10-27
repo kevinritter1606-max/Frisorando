@@ -52,6 +52,38 @@
             padding: 10px;
             font-size: 14px;
             outline: none;
+            background: transparent;
+        }
+        /* Dezenter, eleganter Suchen-Button */
+        .search-btn {
+            background: var(--sidebar-bg);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-btn:hover {
+            background: #1e293b;
+        }
+        /* Dezenter Outline-Anmelde-Button im Header */
+        .auth-header-btn {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auth-header-btn:hover {
+            background: #f1f5f9;
+            border-color: var(--text-muted);
         }
         .filter-bar {
             display: flex;
@@ -137,8 +169,8 @@
     <header style="background: white; padding: 12px 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
         <a href="index.html" style="font-size: 20px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
         <div style="display: flex; gap: 8px; align-items: center;">
-            <button onclick="openAuthModal()" class="btn-action" style="padding: 6px 12px; font-size: 11px;">👤 Anmelden</button>
-            <a href="admin/index.html" style="font-size: 11px; background: var(--sidebar-bg); color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none;">Admin</a>
+            <button onclick="openAuthModal()" class="auth-header-btn">👤 Anmelden</button>
+            <a href="admin/index.html" style="font-size: 11px; background: var(--sidebar-bg); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600;">Admin</a>
         </div>
     </header>
 
@@ -210,7 +242,7 @@
         <!-- Suchleiste -->
         <div class="search-box-wrapper">
             <input type="text" class="search-input" id="search-location" value="Rheinfelden (Baden)" placeholder="PLZ oder Ort eingeben...">
-            <button class="btn-action" style="padding: 10px 20px; font-size: 13px; border-radius: 8px;">Suchen</button>
+            <button class="search-btn">Suchen</button>
         </div>
     </div>
 
