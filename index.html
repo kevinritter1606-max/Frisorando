@@ -6,12 +6,6 @@
     <title>Frisorando - Premium Friseur- & Haardienstleistungen</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        .hero {
-            background: linear-gradient(135deg, var(--sidebar-bg) 0%, #334155 100%);
-            color: white;
-            padding: 40px 20px 50px 20px;
-            text-align: center;
-        }
         .mode-switch {
             display: flex;
             background: rgba(255,255,255,0.15);
@@ -54,9 +48,8 @@
             outline: none;
             background: transparent;
         }
-        /* Dezenter, eleganter Suchen-Button */
         .search-btn {
-            background: var(--sidebar-bg);
+            background: #1e293b;
             color: white;
             border: none;
             padding: 10px 22px;
@@ -67,9 +60,8 @@
             transition: background 0.2s;
         }
         .search-btn:hover {
-            background: #1e293b;
+            background: #334155;
         }
-        /* Dezenter Outline-Anmelde-Button im Header */
         .auth-header-btn {
             background: transparent;
             color: var(--text-main);
@@ -123,7 +115,6 @@
             justify-content: space-between;
             align-items: center;
         }
-        /* Auth Modal Styling */
         #auth-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -170,11 +161,11 @@
         <a href="index.html" style="font-size: 20px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
         <div style="display: flex; gap: 8px; align-items: center;">
             <button onclick="openAuthModal()" class="auth-header-btn">👤 Anmelden</button>
-            <a href="admin/index.html" style="font-size: 11px; background: var(--sidebar-bg); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600;">Admin</a>
+            <a href="admin/index.html" style="font-size: 11px; background: #1e293b; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600;">Admin</a>
         </div>
     </header>
 
-    <!-- AUTH MODAL (Anmelden & Registrieren) -->
+    <!-- AUTH MODAL -->
     <div id="auth-modal">
         <div class="auth-card">
             <div class="auth-tabs">
@@ -182,7 +173,6 @@
                 <button class="auth-tab" id="tab-reg-btn" onclick="switchAuthTab('register')">Registrieren</button>
             </div>
 
-            <!-- Login Form -->
             <form id="form-login" onsubmit="handleUserLogin(event)">
                 <div class="form-group">
                     <label>E-Mail-Adresse</label>
@@ -198,7 +188,6 @@
                 <button type="submit" class="btn-action" style="width: 100%; padding: 8px; font-size: 12px; margin-top: 5px;">Einloggen</button>
             </form>
 
-            <!-- Register Form -->
             <form id="form-register" style="display: none;" onsubmit="handleUserRegister(event)">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
                     <div class="form-group">
@@ -228,18 +217,16 @@
         </div>
     </div>
 
-    <!-- Hero / Professioneller Suchbereich -->
-    <div class="hero">
-        <h1 style="margin: 0 0 8px 0; font-size: 22px;">Professionelle Haardienstleistungen & Mobile Salons</h1>
-        <p style="margin: 0 0 20px 0; font-size: 13px; opacity: 0.85;">Wählen Sie zwischen Salon-Terminen vor Ort oder einem flexiblen Hausbesuch.</p>
+    <!-- Hero / Professioneller Suchbereich mit fixem Dunkel-Hintergrund -->
+    <div style="background: #1e293b; color: white; padding: 40px 20px 50px 20px; text-align: center;">
+        <h1 style="margin: 0 0 8px 0; font-size: 22px; color: white;">Professionelle Haardienstleistungen & Mobile Salons</h1>
+        <p style="margin: 0 0 20px 0; font-size: 13px; opacity: 0.85; color: #94a3b8;">Wählen Sie zwischen Salon-Terminen vor Ort oder einem flexiblen Hausbesuch.</p>
 
-        <!-- Modus-Umschaltung -->
         <div class="mode-switch">
             <button class="mode-btn active" onclick="switchMode('salon')">✂️ Im Salon</button>
             <button class="mode-btn" onclick="switchMode('mobile')">🚗 Hausbesuch</button>
         </div>
 
-        <!-- Suchleiste -->
         <div class="search-box-wrapper">
             <input type="text" class="search-input" id="search-location" value="Rheinfelden (Baden)" placeholder="PLZ oder Ort eingeben...">
             <button class="search-btn">Suchen</button>
@@ -253,7 +240,7 @@
         <button class="filter-chip" onclick="filterPartners('mobile', this)">Nur Mobiler Service</button>
     </div>
 
-    <!-- Hauptinhalt: Partner-Liste -->
+    <!-- Partner-Liste -->
     <div style="max-width: 650px; margin: 0 auto 30px auto; padding: 0 15px;">
         <h3 style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="result-heading">Verfügbare Partner in Ihrer Nähe</h3>
         
@@ -349,7 +336,6 @@
             }
         }
 
-        // Auth Steuerung
         window.openAuthModal = function() { document.getElementById('auth-modal').style.display = 'flex'; }
         window.closeAuthModal = function() { document.getElementById('auth-modal').style.display = 'none'; }
 
