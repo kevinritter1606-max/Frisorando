@@ -53,7 +53,6 @@
             font-size: 14px;
             outline: none;
         }
-        /* Lieferando-Filter-Leiste */
         .filter-bar {
             display: flex;
             gap: 8px;
@@ -92,6 +91,44 @@
             justify-content: space-between;
             align-items: center;
         }
+        /* Auth Modal Styling */
+        #auth-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        .auth-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 8px;
+            background: none;
+            border: none;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: center;
+        }
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -100,10 +137,64 @@
     <header style="background: white; padding: 12px 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
         <a href="index.html" style="font-size: 20px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
         <div style="display: flex; gap: 8px; align-items: center;">
-            <a href="customer/profile.html" style="font-size: 12px; font-weight: 600; color: var(--text-main); text-decoration: none;">👤 Profil</a>
+            <button onclick="openAuthModal()" class="btn-action" style="padding: 6px 12px; font-size: 11px;">👤 Anmelden</button>
             <a href="admin/index.html" style="font-size: 11px; background: var(--sidebar-bg); color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none;">Admin</a>
         </div>
     </header>
+
+    <!-- AUTH MODAL (Anmelden & Registrieren) -->
+    <div id="auth-modal">
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Anmelden</button>
+                <button class="auth-tab" id="tab-reg-btn" onclick="switchAuthTab('register')">Registrieren</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="form-login" onsubmit="handleUserLogin(event)">
+                <div class="form-group">
+                    <label>E-Mail-Adresse</label>
+                    <input type="email5" id="login-email" class="form-input" required placeholder="deine@email.de">
+                </div>
+                <div class="form-group">
+                    <label>Passwort</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" class="form-input" required>
+                        <button type="button" class="toggle-password" onclick="togglePass('login-password', this)">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-action" style="width: 100%; padding: 8px; font-size: 12px; margin-top: 5px;">Einloggen</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="form-register" style="display: none;" onsubmit="handleUserRegister(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div class="form-group">
+                        <label>Vorname</label>
+                        <input type="text" id="reg-firstname" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nachname</label>
+                        <input type="text" id="reg-lastname" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>E-Mail-Adresse</label>
+                    <input type="email" id="reg-email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Passwort</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="reg-password" class="form-input" required>
+                        <button type="button" class="toggle-password" onclick="togglePass('reg-password', this)">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-action" style="width: 100%; padding: 8px; font-size: 12px; margin-top: 5px;">Konto erstellen</button>
+            </form>
+
+            <button onclick="closeAuthModal()" style="background: none; border: none; width: 100%; text-align: center; margin-top: 10px; font-size: 11px; color: var(--text-muted); cursor: pointer;">Schließen</button>
+        </div>
+    </div>
 
     <!-- Hero / Lieferando-Suchbereich -->
     <div class="hero">
@@ -140,10 +231,10 @@
         </div>
     </div>
 
-    <!-- Firebase Live-Anbindung & Filterlogik -->
+    <!-- Firebase Live-Anbindung & Logik -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCbfAJFizefkyNlFtdEr3Law2hGrN3GNlg",
@@ -190,7 +281,7 @@
             container.innerHTML = "";
 
             if (partners.length === 0) {
-                container.innerHTML = `<div class="partner-card" style="justify-content: center; color: var(--text-muted);">Keine Partner gefunden, die diesen Kriterien entsprechen.</div>`;
+                container.innerHTML = `<div class="partner-card" style="justify-content: center; color: var(--text-muted);">Keine Partner gefunden.</div>`;
                 return;
             }
 
@@ -203,7 +294,6 @@
                         <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 6px 0;">📍 ${p.location || 'Rheinfelden'} • ⭐ 4,9 (18)</p>
                         <div style="display: flex; gap: 5px;">
                             <span class="badge ${p.type === 'mobile' ? 'badge-pending' : 'badge-active'}">${p.type === 'mobile' ? '🚗 Mobiler Service' : '⚡ Salon vor Ort'}</span>
-                            <span style="font-size: 10px; background: #e2e8f0; padding: 2px 6px; border-radius: 3px; color: var(--text-main);">⏱️ ca. 20-35 Min</span>
                         </div>
                     </div>
                     <div>
@@ -223,8 +313,8 @@
             } else if (type === 'mobile') {
                 const filtered = allPartnersCache.filter(p => p.type === 'mobile' || p.type === 'both');
                 renderPartnerCards(filtered);
-            } else if (type === 'top') {
-                renderPartnerCards(allPartnersCache); // Mock für Top-Bewertungen
+            } else {
+                renderPartnerCards(allPartnersCache);
             }
         }
 
@@ -232,6 +322,61 @@
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
             btn.classList.add('active');
             renderPartnerCards(allPartnersCache);
+        }
+
+        // Auth Steuerung
+        window.openAuthModal = function() { document.getElementById('auth-modal').style.display = 'flex'; }
+        window.closeAuthModal = function() { document.getElementById('auth-modal').style.display = 'none'; }
+
+        window.switchAuthTab = function(tab) {
+            const loginBtn = document.getElementById('tab-login-btn');
+            const regBtn = document.getElementById('tab-reg-btn');
+            const loginForm = document.getElementById('form-login');
+            const regForm = document.getElementById('form-register');
+
+            if (tab === 'login') {
+                loginBtn.classList.add('active');
+                regBtn.classList.remove('active');
+                loginForm.style.display = 'block';
+                regForm.style.display = 'none';
+            } else {
+                regBtn.classList.add('active');
+                loginBtn.classList.remove('active');
+                regForm.style.display = 'block';
+                loginForm.style.display = 'none';
+            }
+        }
+
+        window.togglePass = function(id, btn) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+
+        window.handleUserLogin = function(e) {
+            e.preventDefault();
+            alert('Erfolgreich angemeldet!');
+            closeAuthModal();
+        }
+
+        window.handleUserRegister = async function(e) {
+            e.preventDefault();
+            const firstname = document.getElementById('reg-firstname').value.trim();
+            const lastname = document.getElementById('reg-lastname').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+
+            try {
+                await addDoc(collection(db, "customers"), { firstname, lastname, email, createdAt: new Date().toISOString() });
+                alert('Konto erfolgreich erstellt und in Firebase gespeichert!');
+                closeAuthModal();
+            } catch (err) {
+                alert('Fehler bei der Registrierung: ' + err.message);
+            }
         }
 
         loadHomePartners();
