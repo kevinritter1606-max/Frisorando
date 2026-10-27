@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisorando - Salon & Buchung</title>
+    <!-- CSS-Pfad angepasst an die Ordnerstruktur -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .salon-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 25px 20px;
+        }
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 0;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 800;
+        }
+        .cat-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .cat-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+            box-shadow: var(--shadow);
+        }
+        .floating-cart {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header style="background: white; padding: 12px 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
+        <a href="../index.html" style="font-size: 18px; font-weight: 800; color: var(--primary); text-decoration: none;">Frisorando</a>
+        <a href="../customer/profile.html" style="font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none;">👤 Mein Profil</a>
+    </header>
+
+    <!-- Salon Header Infos -->
+    <div class="salon-hero">
+        <h1 style="margin: 0 0 5px 0; font-size: 20px;">Haircut Lounge Rheinfelden</h1>
+        <p style="margin: 0; font-size: 12px; opacity: 0.8;">⭐ 4,8 (14 Bewertungen) • Bärenschanzstraße 2</p>
+        <div style="margin-top: 10px; font-size: 11px; background: rgba(255,255,255,0.15); display: inline-block; padding: 3px 8px; border-radius: 4px;">
+            🚗 Mobiler Hausbesuch & Salon verfügbar
+        </div>
+    </div>
+
+    <!-- Kategorien (Studiobooker-Style) -->
+    <div class="category-tabs" style="padding-left: 15px;">
+        <button class="cat-btn active" onclick="filterCategory('all')">Alle</button>
+        <button class="cat-btn" onclick="filterCategory('damen')">✂️ Damen</button>
+        <button class="cat-btn" onclick="filterCategory('herren')">🧔 Herren</button>
+        <button class="cat-btn" onclick="filterCategory('farbe')">🎨 Farbe</button>
+        <button class="cat-btn" onclick="filterCategory('pflege')">🌿 Pflege</button>
+    </div>
+
+    <!-- Leistungsliste -->
+    <div style="padding: 15px; max-width: 600px; margin: 0 auto; padding-bottom: 80px;">
+        <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Wähle deine Dienstleistung</h3>
+        
+        <div class="service-item">
+            <div>
+                <strong>Cut & Go (Kurz)</strong>
+                <div style="font-size: 11px; color: var(--text-muted);">Waschen, Schneiden, Föhnen • 30 Min</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-weight: 700; margin-bottom: 4px;">€ 45,00</div>
+                <button class="btn-action" style="padding: 4px 10px; font-size: 11px;" onclick="addToCart('Cut & Go (Kurz)', 45, 30)">+ Wählen</button>
+            </div>
+        </div>
+
+        <div class="service-item">
+            <div>
+                <strong>Blondierung & Styling</strong>
+                <div style="font-size: 11px; color: var(--text-muted);">Komplettfärbung & Glanz-Finish • 60 Min</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-weight: 700; margin-bottom: 4px;">€ 85,00</div>
+                <button class="btn-action" style="padding: 4px 10px; font-size: 11px;" onclick="addToCart('Blondierung & Styling', 85, 60)">+ Wählen</button>
+            </div>
+        </div>
+
+        <div class="service-item">
+            <div>
+                <strong>Herren-Komplettpaket</strong>
+                <div style="font-size: 11px; color: var(--text-muted);">Haarschnitt, Bartpflege & Styling • 40 Min</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-weight: 700; margin-bottom: 4px;">€ 38,00</div>
+                <button class="btn-action" style="padding: 4px 10px; font-size: 11px;" onclick="addToCart('Herren-Komplettpaket', 38, 40)">+ Wählen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schwebender Lieferando-Warenkorb -->
+    <div id="floating-cart" class="floating-cart" style="display: none;" onclick="goToBooking()">
+        <div>🛒 <span id="cart-count">0</span> Leistungen (<span id="cart-price">€ 0</span>)</div>
+        <div style="background: rgba(0,0,0,0.15); padding: 4px 8px; border-radius: 15px; font-size: 12px;">Zur Buchung ➔</div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function addToCart(name, price, duration) {
+            cart.push({ name, price, duration });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartDiv = document.getElementById('floating-cart');
+            const countSpan = document.getElementById('cart-count');
+            const priceSpan = document.getElementById('cart-price');
+
+            if (cart.length > 0) {
+                cartDiv.style.display = 'flex';
+                countSpan.innerText = cart.length;
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                priceSpan.innerText = '€ ' + total;
+            } else {
+                cartDiv.style.display = 'none';
+            }
+        }
+
+        function goToBooking() {
+            alert('Weiterleitung zur Mitarbeiter- und Zeitauswahl (Studiobooker-Modus)...');
+            // Hier übergeben wir im nächsten Schritt die Warenkorb-Daten an den Kalender-Checkout
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            // Filterlogik folgt in der nächsten Ausbaustufe
+        }
+    </script>
+
+</body>
+</html>
